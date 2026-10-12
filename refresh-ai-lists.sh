@@ -24,22 +24,35 @@ problem=0   # 累计问题表数；严格模式下用于最终退出码
 
 BM7="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Surge"
 VPS="https://raw.githubusercontent.com/VPSDance/ai-proxy-rules/main/rules/surge"
+SUKKA="https://raw.githubusercontent.com/SukkaW/Surge/master/Source/non_ip"
+DLER="https://raw.githubusercontent.com/dler-io/Rules/main/Surge/Surge%203/Provider"
+ACL4="https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset"
+RABBIT="https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Rules"
 
 # 需要剔除的通用 DOMAIN-KEYWORD（太宽，会误抓）
-BAD_KW="sift|datadog|sentry"
+#   colab：ACL4SSR 带 `DOMAIN-KEYWORD,colab` → 会抓 colab.research.google.com（Google Colab，非 AI 服务）
+#   openai/claude/anthropic：VPSDance 等把这些当关键词，太宽（会抓任何含该串的域名）
+BAD_KW="sift|datadog|sentry|colab|openai|claude|anthropic|alkalimakersuite-pa|chatgpt-async-webps-prod|generativelanguage|developerprofiles"
 
 # 需要剔除的通用第三方域名（上游从 AI 登录页的 SDK 引用误收，会误抓一堆非 AI 站点）
-BAD_DOMAIN="algolia.net|auth0.com|stripe.com|sentry.io|intercom.io|intercomcdn.com|segment.io|launchdarkly.com|featuregates.org|identrust.com|observeit.net|statsig.com|statsigapi.net|datadoghq.com|cloudflareinsights.com|growthbook.io|challenges.cloudflare.com|cloudflare.net|azurefd.net|imgix.net"
+BAD_DOMAIN="algolia.net|auth0.com|stripe.com|sentry.io|intercom.io|intercomcdn.com|segment.io|launchdarkly.com|featuregates.org|identrust.com|observeit.net|statsig.com|statsigapi.net|datadoghq.com|cloudflareinsights.com|growthbook.io|challenges.cloudflare.com|cloudflare.net|azurefd.net|imgix.net|workos.com|workoscdn.com|usefathom.com|arkoselabs.com|browser-intake-datadoghq.com"
 
-fetch() { # $1=url  → stdout
-  curl -fsS --max-time 40 "$1" 2>/dev/null
+fetch() { # $1=url  → stdout；失败重试 3 次（源变多了，得抗上游抖动）
+  local i body
+  for i in 1 2 3; do
+    body=$(curl -fsS --max-time 30 "$1" 2>/dev/null) && [ -n "$body" ] && { printf '%s\n' "$body"; return 0; }
+    sleep 2
+  done
+  return 1
 }
 
-filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与通用关键词、剔通用第三方域名
+filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与宽泛 KEYWORD、剔通用第三方域名、规范化
   grep -vE '^[[:space:]]*(#|$)' \
   | grep -vE '^[[:space:]]*IP-ASN,' \
   | grep -viE "^[[:space:]]*DOMAIN-KEYWORD,($BAD_KW)([[:space:]]|$)" \
-  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+\.)?($BAD_DOMAIN)([[:space:]]|$)"
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+\.)?($BAD_DOMAIN)([[:space:]]|$)" \
+  | sed -E 's/[[:space:]]+$//' \
+  | grep -vE '^[[:space:]]*$'
 }
 
 gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
@@ -114,19 +127,32 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
   fi
 }
 
-#                                            输出文件              名称            手动补充表                        远程源
-gen AI-OpenAI.list    "AI-OpenAI"      "AI-Supplement-OpenAI.list" "$BM7/OpenAI/OpenAI.list"   "$VPS/openai.list"
-gen AI-Claude.list    "AI-Claude"      "AI-Supplement-Claude.list" "$BM7/Claude/Claude.list"   "$BM7/Anthropic/Anthropic.list" "$VPS/anthropic.list"
-gen AI-Gemini.list    "AI-Gemini"      "AI-Supplement-Gemini.list" "$BM7/Gemini/Gemini.list"   "$BM7/BardAI/BardAI.list"       "$VPS/google-ai.list"
-gen AI-Copilot.list   "AI-Copilot"     "-"                         "$BM7/Copilot/Copilot.list" "$VPS/copilot.list"
-gen AI-Jetbrains.list "AI-Jetbrains"   "-"                         "$BM7/Jetbrains/Jetbrains.list" "$VPS/jetbrains-ai.list"
-gen AI-Misc.list      "AI-Misc"        "AI-Supplement.list"        "$VPS/x-ai.list" "$VPS/meta-ai.list" \
-                                                                   "$VPS/cursor.list" "$VPS/windsurf.list" \
-                                                                   "$VPS/opencode.list" "$VPS/cline.list" \
-                                                                   "$VPS/zed.list" "$VPS/model.list" \
-                                                                   "$VPS/media.list" \
-                                                                   "$BM7/aiXcoder/aiXcoder.list" \
-                                                                   "$BM7/Civitai/Civitai.list"
+#                                            输出文件              名称            手动补充表                        远程源（多源并集，越全越好）
+gen AI-OpenAI.list    "AI-OpenAI"      "AI-Supplement-OpenAI.list" \
+    "$BM7/OpenAI/OpenAI.list" "$VPS/openai.list" "$SUKKA/ai.conf" "$DLER/AI%20Suite.list" "$ACL4/OpenAi.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+
+gen AI-Claude.list    "AI-Claude"      "AI-Supplement-Claude.list" \
+    "$BM7/Claude/Claude.list" "$BM7/Anthropic/Anthropic.list" "$VPS/anthropic.list" "$SUKKA/ai.conf" "$ACL4/Claude.list" "$ACL4/ClaudeAI.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+
+gen AI-Gemini.list    "AI-Gemini"      "AI-Supplement-Gemini.list" \
+    "$BM7/Gemini/Gemini.list" "$BM7/BardAI/BardAI.list" "$VPS/google-ai.list" "$SUKKA/ai.conf" "$ACL4/Gemini.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+
+gen AI-Copilot.list   "AI-Copilot"     "-" \
+    "$BM7/Copilot/Copilot.list" "$VPS/copilot.list" "$ACL4/AI.list"
+
+gen AI-Jetbrains.list "AI-Jetbrains"   "-" \
+    "$BM7/Jetbrains/Jetbrains.list" "$VPS/jetbrains-ai.list" "$ACL4/JetBrains.list"
+
+gen AI-Misc.list      "AI-Misc"        "AI-Supplement.list" \
+    "$VPS/x-ai.list" "$VPS/meta-ai.list" "$VPS/cursor.list" "$VPS/windsurf.list" \
+    "$VPS/opencode.list" "$VPS/cline.list" "$VPS/zed.list" "$VPS/model.list" "$VPS/media.list" \
+    "$VPS/global.list" "$VPS/coding.list" "$VPS/all.list" \
+    "$BM7/aiXcoder/aiXcoder.list" "$BM7/Civitai/Civitai.list" \
+    "$SUKKA/ai.conf" "$DLER/AI%20Suite.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+
+# 国内 AI —— 全部 DIRECT。源：VPSDance cn 聚合 + 手写补充（该走的 ChinaMax 走 ChinaMax）。
+gen AI-CN.list        "AI-CN"          "AI-Supplement-CN.list" \
+    "$VPS/cn.list"
 
 echo "完成。Surge 会自动重载本机 list（无需手动 reload）。"
 

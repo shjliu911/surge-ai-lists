@@ -1,0 +1,59 @@
+# NAME: AI-Supplement-CN
+# DESC: 国内 AI 服务 —— VPSDance cn.list 未覆盖、或需显式钉住直连的域名
+# USE:  RULE-SET,AI-CN.list,DIRECT   （本文件由 refresh-ai-lists.sh 折进 AI-CN.list）
+# NOTE: 手动维护。国内 AI 一律 DIRECT —— 避免 ChinaMax 遗漏时被误走代理。
+#       来源：VPSDance cn.list 的补集 + 各厂商官网实查。
+
+# ============ 大模型 / 对话 ============
+DOMAIN-SUFFIX,deepseek.cn
+DOMAIN-SUFFIX,deepseek.ai
+DOMAIN-SUFFIX,kimi.moonshot.cn
+DOMAIN-SUFFIX,platform.moonshot.cn
+DOMAIN-SUFFIX,zhipuai.com
+DOMAIN-SUFFIX,z.ai
+DOMAIN-SUFFIX,open.bigmodel.cn
+DOMAIN-SUFFIX,baichuan-ai.com
+DOMAIN-SUFFIX,baichuan.com
+DOMAIN-SUFFIX,minimax.com
+DOMAIN-SUFFIX,minimaxi.com
+DOMAIN-SUFFIX,hailuoai.com
+DOMAIN-SUFFIX,hailuo.com
+DOMAIN-SUFFIX,stepfun.cn
+DOMAIN-SUFFIX,stepfun.ai
+DOMAIN-SUFFIX,sensenova.cn
+DOMAIN-SUFFIX,sensenova.com
+DOMAIN-SUFFIX,sensetime.com
+DOMAIN-SUFFIX,xfyun.cn
+DOMAIN-SUFFIX,xinghuo.xfyun.cn
+DOMAIN-SUFFIX,tiangong.cn
+DOMAIN-SUFFIX,modelbest.cn
+DOMAIN-SUFFIX,openbmb.cn
+DOMAIN-SUFFIX,langboat.com
+DOMAIN-SUFFIX,4paradigm.com
+DOMAIN-SUFFIX,zhuiyi.com
+DOMAIN-SUFFIX,01.ai
+DOMAIN-SUFFIX,msai.cn
+
+# ============ 平台 / 推理 / 云 API ============
+DOMAIN-SUFFIX,volcengine.com
+DOMAIN-SUFFIX,volces.com
+DOMAIN-SUFFIX,aliyun.com
+DOMAIN-SUFFIX,baidubce.com
+DOMAIN-SUFFIX,tencentcloudapi.com
+DOMAIN-SUFFIX,modelscope.com
+DOMAIN-SUFFIX,ppio.com
+DOMAIN-SUFFIX,ppio.cn
+
+# ============ 编码助手 / 开发 ============
+DOMAIN-SUFFIX,codegeex.cn
+DOMAIN-SUFFIX,marscode.cn
+DOMAIN-SUFFIX,trae.cn
+
+# ============ 生成式 / 多模态 ============
+DOMAIN-SUFFIX,jimeng.jianying.com
+DOMAIN-SUFFIX,capcut.cn
+DOMAIN-SUFFIX,vidu.com
+DOMAIN-SUFFIX,vidu.studio
+DOMAIN-SUFFIX,shengshu.com
+DOMAIN-SUFFIX,pai.com
+DOMAIN-SUFFIX,klingai.cn

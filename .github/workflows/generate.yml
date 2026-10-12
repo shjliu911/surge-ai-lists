@@ -10,10 +10,10 @@ on:
   workflow_dispatch:          # 手动补跑
   push:
     branches: [main]
-    paths:                    # 只改了生成器/手写表就重建（规则表由 workflow 自己提交，不触发）
+    paths:                    # 只改了生成器/校验/手写表就重建（规则表由 workflow 自己提交，不触发）
       - "refresh-ai-lists.sh"
+      - "check-ai-lists.sh"
       - "AI-Supplement*.list"
-      - "AI-CN.list"
       - ".github/workflows/generate.yml"
 
 permissions:
@@ -41,6 +41,9 @@ jobs:
         env:
           CI_STRICT: "1"
         run: ./refresh-ai-lists.sh
+
+      - name: 校验产物（格式 / 关键国内 AI 域名 / SaaS 泄漏）
+        run: ./check-ai-lists.sh
 
       - name: 提交并推送
         run: |
