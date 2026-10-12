@@ -1,0 +1,12 @@
+# NAME: AI-CN
+# DESC: 国内 AI 服务 —— 直连（ChinaMax 未收录的补上）
+# USE:  RULE-SET,AI-CN.list,DIRECT
+# NOTE: 手动维护；格式同 Surge 外部规则集（一行一条，不带策略）
+
+DOMAIN-SUFFIX,moonshot.cn
+DOMAIN-SUFFIX,bigmodel.cn
+DOMAIN-SUFFIX,zhipuai.cn
+DOMAIN-SUFFIX,siliconflow.cn
+DOMAIN-SUFFIX,siliconflow.com
+DOMAIN-SUFFIX,sensenova.cn
+DOMAIN-SUFFIX,xfyun.cn

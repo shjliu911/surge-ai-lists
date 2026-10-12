@@ -1,0 +1,25 @@
+# NAME: AI-Supplement-OpenAI
+# DESC: blackmatrix7 OpenAI.list 未覆盖、但确属 OpenAI 的域名
+# USE:  RULE-SET,AI-Supplement-OpenAI.list,🧠 ChatGPT
+# NOTE: 手动维护。源：VPSDance/ai-proxy-rules openai.list，已剔除宽泛项(statsigapi.net)。
+# GEN:  2026-10-11
+
+DOMAIN-SUFFIX,chat.com
+DOMAIN-SUFFIX,crixet.com
+DOMAIN-SUFFIX,sora.com
+DOMAIN-SUFFIX,chatgpt.site
+DOMAIN-SUFFIX,oaistatsig.com
+DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net
+DOMAIN,openaiassets.blob.core.windows.net
+DOMAIN-KEYWORD,chatgpt-async-webps-prod
+
+PROCESS-NAME,ChatGPT
+PROCESS-NAME,ChatGPT.exe
+PROCESS-NAME,Codex
+PROCESS-NAME,Codex.exe
+PROCESS-NAME,chatgpt
+PROCESS-NAME,codex
+
+IP-CIDR,199.47.142.0/23,no-resolve
+IP-CIDR6,2604:f20::/32,no-resolve
+IP-ASN,401518,no-resolve

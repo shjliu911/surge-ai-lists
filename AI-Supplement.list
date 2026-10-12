@@ -1,0 +1,63 @@
+# NAME: AI-Supplement
+# DESC: 本机补充 —— 社区 list（blackmatrix7 / Rabbit-Spec）未覆盖的 AI 域名
+# USE:  RULE-SET,AI-Supplement.list,🤖 AI 服务
+# NOTE: 手动维护；格式同 Surge 外部规则集（一行一条，不带策略）
+
+# ============ Hugging Face ============
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,huggingface.com
+DOMAIN-SUFFIX,hf.co
+DOMAIN-SUFFIX,hf.space
+
+# ============ 绘图 / 图像生成 ============
+DOMAIN-SUFFIX,midjourney.com
+DOMAIN-SUFFIX,leonardo.ai
+DOMAIN-SUFFIX,ideogram.ai
+DOMAIN-SUFFIX,recraft.ai
+DOMAIN-SUFFIX,stability.ai
+DOMAIN-SUFFIX,dreamstudio.ai
+DOMAIN-SUFFIX,krea.ai
+DOMAIN-SUFFIX,playgroundai.com
+DOMAIN-SUFFIX,photoroom.com
+DOMAIN-SUFFIX,remove.bg
+
+# ============ 音频 / 视频生成 ============
+DOMAIN-SUFFIX,suno.com
+DOMAIN-SUFFIX,suno.ai
+DOMAIN-SUFFIX,udio.com
+DOMAIN-SUFFIX,elevenlabs.io
+DOMAIN-SUFFIX,runwayml.com
+DOMAIN-SUFFIX,runway.com
+DOMAIN-SUFFIX,lumalabs.ai
+DOMAIN-SUFFIX,pika.art
+DOMAIN-SUFFIX,heygen.com
+DOMAIN-SUFFIX,descript.com
+DOMAIN-SUFFIX,assemblyai.com
+DOMAIN-SUFFIX,deepgram.com
+
+# ============ 模型 / 推理平台 ============
+DOMAIN-SUFFIX,mistral.ai
+DOMAIN-SUFFIX,cohere.ai
+DOMAIN-SUFFIX,cohere.com
+DOMAIN-SUFFIX,together.ai
+DOMAIN-SUFFIX,replicate.com
+DOMAIN-SUFFIX,fireworks.ai
+DOMAIN-SUFFIX,deepinfra.com
+DOMAIN-SUFFIX,perplexity.com
+DOMAIN-SUFFIX,pplx.ai
+
+# ============ AI 编程助手 ============
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN-SUFFIX,githubcopilot.app
+DOMAIN-SUFFIX,windsurf.com
+DOMAIN-SUFFIX,codeium.com
+DOMAIN-SUFFIX,tabnine.com
+DOMAIN-SUFFIX,sourcegraph.com
+DOMAIN-SUFFIX,blackbox.ai
+
+# ============ xAI / 其他对话类 ============
+DOMAIN-SUFFIX,grokipedia.com
+DOMAIN-SUFFIX,grokusercontent.com
+DOMAIN-SUFFIX,character.ai
+DOMAIN-SUFFIX,pi.ai
+DOMAIN-SUFFIX,hume.ai

@@ -1,0 +1,44 @@
+# NAME: AI-Supplement-Claude
+# DESC: blackmatrix7 Claude.list 未覆盖、且确属 Anthropic/Claude 的域名
+# USE:  RULE-SET,AI-Supplement-Claude.list,🎭 Claude
+# NOTE: 手动维护。源：VPSDance anthropic.list + AI-Supplement.list(MCP)。
+#       已剔除宽泛 SaaS：intercom.io / intercomcdn.com / sentry.io / statsigapi.net /
+#       browser-intake-us5-datadoghq.com / cdn.growthbook.io / storage.googleapis.com /
+#       DOMAIN-KEYWORD,datadog|sentry|sift，以及可疑域名(clau.de/muthos.com 等)。
+# GEN:  2026-10-11
+
+# --- Anthropic / Claude 官方 ---
+DOMAIN-SUFFIX,anthropic.com.cn
+DOMAIN-SUFFIX,anthropic.team
+DOMAIN-SUFFIX,claude.com
+DOMAIN-SUFFIX,claude.app
+DOMAIN-SUFFIX,claude.dev
+DOMAIN-SUFFIX,claude.new
+DOMAIN-SUFFIX,claude.site
+DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,claudepages.dev
+DOMAIN-SUFFIX,claudestudio.com
+DOMAIN-SUFFIX,claudemcpclient.com
+DOMAIN-SUFFIX,claudemcpcontent.com
+DOMAIN,anthropic-com.ghost.io
+DOMAIN,anthropic.auth0.com
+DOMAIN,anthropic.com.cdn.cloudflare.net
+DOMAIN,servd-anthropic-website.b-cdn.net
+
+# --- MCP / Model Context Protocol ---
+DOMAIN-SUFFIX,modelcontextprotocol.io
+DOMAIN-SUFFIX,modelcontextprotocol.com
+DOMAIN-SUFFIX,modelcontextprotocol.net
+DOMAIN-SUFFIX,modelcontextprotocol.org
+
+# --- 编程工具进程 ---
+PROCESS-NAME,Claude
+PROCESS-NAME,Claude.exe
+PROCESS-NAME,claude
+PROCESS-NAME,claude.exe
+PROCESS-NAME,cowork-svc.exe
+
+# --- Anthropic 自有网段（API 直连需要）---
+IP-CIDR,160.79.104.0/21,no-resolve
+IP-CIDR6,2607:6bc0::/32,no-resolve
+IP-ASN,399358,no-resolve
