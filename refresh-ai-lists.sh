@@ -55,7 +55,7 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
     if [ -f "$out" ] && \
        diff -q <(grep -vE '^#' "$out") <(grep -vE '^#' "$out.tmp") >/dev/null 2>&1; then
       rm -f "$out.tmp" "$tmp"
-      printf '--   %-28s %s 行（无变化）\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+      printf '%s   %-28s %s 行（无变化）\n' '--' "$out" "$(grep -cvE '^#|^$' "$out")"
     else
       mv "$out.tmp" "$out"; rm -f "$tmp"
       printf 'OK   %-28s %s 行\n' "$out" "$(grep -cvE '^#|^$' "$out")"

@@ -35,21 +35,31 @@
 Surge **无法对远程 list 做预过滤**（`RULE-SET` 只接受 URL 或本地路径），
 所以「实时同步上游」与「不误抓」只能二选一 → 用**本地生成 + 定时任务**两全。
 
-## 刷新流程
+## 日常维护：一条命令
 
 ```bash
-# 1) 手动跑一次（正常由 launchd 每天 09:17 / 21:17 自动跑）
-./refresh-ai-lists.sh
-
-# 2) 同步回 Surge（本机副本 → Surge Profiles）
-cp AI-*.list refresh-ai-lists.sh \
-   "/Users/coniublity/Library/Application Support/Surge/Profiles/"
-
-# 3) 提交留痕
-git add -A && git commit -m "refresh: $(date +%F)"
+cd ~/surge-ai-lists && ./sync.sh
 ```
 
+`sync.sh` 把全流程串起来：**拉上游刷新 6 张生成表 → 部署到 Surge Profiles → 有实质变化才提交+推送**。
+
+| 命令 | 用途 |
+|---|---|
+| `./sync.sh` | 标准流程：刷新 + 部署 + 提交推送 |
+| `./sync.sh --no-pull` | 只改了**手写表**时用：跳过拉上游，直接部署+提交 |
+| `./sync.sh --dry-run` | 先看会动哪些文件，不做任何修改 |
+
+关键性质：**幂等**。生成表内嵌的 `# GEN` 时间戳每次都不同，但脚本只在**规则内容真变**时才重写文件、
+才提交 —— 上游没更新时跑一次只会输出「内容无变化，无需提交」，不会产生噪声提交。
+
 Surge **会自动热重载本机 list，无需手动 reload**。
+
+### 两种维护场景
+
+| 场景 | 怎么做 |
+|---|---|
+| **上游规则更新**（黑名单收敛/新增域名） | launchd 每天 09:17 / 21:17 自动刷新生效；想立刻入库就 `./sync.sh` |
+| **自己要加/删域名**（上游没收录的服务） | 编辑 `AI-Supplement*.list`（走代理）或 `AI-CN.list`（直连）→ `./sync.sh --no-pull` |
 
 ## launchd
 
