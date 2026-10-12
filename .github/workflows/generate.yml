@@ -9,9 +9,11 @@ on:
     - cron: "17 13 * * *"
   workflow_dispatch:          # 手动补跑
   push:
-    paths:                    # 改了生成器/手写表就重建
+    branches: [main]
+    paths:                    # 只改了生成器/手写表就重建（规则表由 workflow 自己提交，不触发）
       - "refresh-ai-lists.sh"
-      - "AI-*.list"
+      - "AI-Supplement*.list"
+      - "AI-CN.list"
       - ".github/workflows/generate.yml"
 
 permissions:
@@ -44,12 +46,17 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # 只提交规则表，避免把其它杂项带进来
           git add 'AI-*.list'
           if git diff --cached --quiet; then
             echo "无变化，跳过提交"
-          else
-            SUMMARY=$(git diff --cached --numstat -- '*.list' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
-            git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
-            git push
+            exit 0
           fi
+          SUMMARY=$(git diff --cached --numstat -- '*.list' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+          git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
+          # 竞态兜底：checkout 期间若有人手动 push，远端会领先。
+          # 重试：先 rebase 到最新 main（规则表不会被手动改动，冲突概率极低），再 push。
+          for i in 1 2 3; do
+            if git push; then break; fi
+            echo "push 被拒，尝试 rebase 后重试 (#$i)…"
+            git pull --rebase --autostash origin main || { echo "::error::rebase 冲突，需人工处理"; exit 1; }
+          done

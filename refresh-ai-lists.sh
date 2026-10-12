@@ -122,7 +122,7 @@ gen AI-Jetbrains.list "AI-Jetbrains"   "-"                         "$BM7/Jetbrai
 gen AI-Misc.list      "AI-Misc"        "AI-Supplement.list"        "$VPS/x-ai.list" "$VPS/meta-ai.list" \
                                                                    "$VPS/cursor.list" "$VPS/windsurf.list" \
                                                                    "$VPS/opencode.list" "$VPS/cline.list" \
-                                                                   "$VPS/zed.list" "$VPS/model-NOPE.list" \
+                                                                   "$VPS/zed.list" "$VPS/model.list" \
                                                                    "$VPS/media.list" \
                                                                    "$BM7/aiXcoder/aiXcoder.list" \
                                                                    "$BM7/Civitai/Civitai.list"

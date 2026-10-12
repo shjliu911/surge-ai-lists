@@ -71,7 +71,14 @@ if [ "$DRY" = 1 ]; then
   echo "    [dry-run] git push"
 else
   say "推送到 GitHub"
-  git push -q origin main && echo "    ✓ 已推送"
+  # 竞态兜底：CI 可能刚好同时推过，remote 领先 → 先 rebase 再重试。
+  ok=0
+  for i in 1 2 3; do
+    if git push -q origin main; then ok=1; break; fi
+    echo "    push 被拒，rebase 后重试 (#$i)…"
+    git pull -q --rebase --autostash origin main || { echo "    ✗ rebase 冲突，需人工处理"; break; }
+  done
+  [ "$ok" = 1 ] && echo "    ✓ 已推送" || echo "    ✗ 推送未成功"
 fi
 
 # ── 5. 让 Surge 立刻重拉远程 list ─────────────────────────
