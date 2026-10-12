@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 10:55:59
+# GEN:  2026-10-12 11:07:26
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -25,7 +25,7 @@ DOMAIN,default.exp-tas.com
 DOMAIN,developer.meta.com
 DOMAIN,gateway.ai.cloudflare.com
 DOMAIN,llama.developer.meta.com
-DOMAIN,openrouter.ai
+DOMAIN-SUFFIX,openrouter.ai
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
 DOMAIN,pplx-res.cloudinary.com
 DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
@@ -131,7 +131,6 @@ DOMAIN-SUFFIX,ollama.com
 DOMAIN-SUFFIX,openart.ai
 DOMAIN-SUFFIX,openclaw.ai
 DOMAIN-SUFFIX,opencode.ai
-DOMAIN-SUFFIX,openrouter.ai
 DOMAIN-SUFFIX,otter.ai
 DOMAIN-SUFFIX,perplexity.ai
 DOMAIN-SUFFIX,perplexity.com

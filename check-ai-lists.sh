@@ -148,6 +148,33 @@ then echo "✓ 品牌表纯度达标（无聚合源污染）"
 else echo "✗ 品牌表被别家 AI 污染（见上）"; fail=1
 fi
 
+# ── 6b) 断言：同表内不得有「同值不同类型」的冗余 ──────────
+# DOMAIN-SUFFIX,x 完全覆盖 DOMAIN,x —— 后者是死规则。第 5 项断言按 (类型,值) 归一化，
+# 恰好放过这种冗余（同值、不同类型），这里单独守住。
+# 生成器的 sort|awk 已按值去重（DOMAIN-SUFFIX 优先），此断言防止它日后回归。
+if python3 - <<'PY'
+import sys
+from collections import defaultdict
+T=['AI-CN','AI-OpenAI','AI-Claude','AI-Gemini','AI-Copilot','AI-Jetbrains','AI-Overseas-Others']
+bad=0
+for t in T:
+    byval=defaultdict(set)
+    try: fh=open(t+'.list')
+    except FileNotFoundError: continue
+    for ln in fh:
+        ln=ln.strip()
+        if not (ln.startswith('DOMAIN,') or ln.startswith('DOMAIN-SUFFIX,')): continue
+        k,v=ln.split(',',1)[0], ln.split(',',1)[1]
+        byval[v].add(k)
+    for v,ks in byval.items():
+        if len(ks)>1:
+            print(f'  {t}: {v} 同时有 {sorted(ks)}（后者被前者覆盖）'); bad+=1
+sys.exit(1 if bad else 0)
+PY
+then echo "✓ 同表内无 DOMAIN/DOMAIN-SUFFIX 冗余"
+else echo "✗ 同表内存在冗余规则（见上）"; fail=1
+fi
+
 # ── 7) 断言：不得出现「整个云平台」的泛顶级域 ──────────────
 # 一条 DOMAIN-SUFFIX,aliyun.com 会把阿里云**全部**非 AI 产品（ECS/OSS/RDS…）拉直连。
 # 2026-10-12 审计把这类收窄到 AI 专属子域（dashscope/qianfan/ark/hunyuan…）。

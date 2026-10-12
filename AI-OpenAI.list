@@ -1,10 +1,10 @@
 # NAME: AI-OpenAI
-# GEN:  2026-10-12 10:35:41
+# GEN:  2026-10-12 11:05:41
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-OpenAI.list
 
 DOMAIN,cdn.openaimerge.com
-DOMAIN,openaiapi-site.azureedge.net
+DOMAIN-SUFFIX,openaiapi-site.azureedge.net
 DOMAIN,openaiassets.blob.core.windows.net
 DOMAIN,openaicomproductionae4b.blob.core.windows.net
 DOMAIN,production-openaicom-storage.azureedge.net
@@ -27,7 +27,6 @@ DOMAIN-SUFFIX,oaistatsig.com
 DOMAIN-SUFFIX,oaiusercontent.com
 DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net
-DOMAIN-SUFFIX,openaiapi-site.azureedge.net
 DOMAIN-SUFFIX,setup.auth.openai.com
 DOMAIN-SUFFIX,sora.com
 DOMAIN-SUFFIX,tcr9i.chat.openai.com

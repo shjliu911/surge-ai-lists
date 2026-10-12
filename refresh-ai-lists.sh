@@ -236,7 +236,14 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
       printf '# 含本机手动补充：%s\n' "$manual"
     fi
     printf '\n'
-    sort -u "$raw"
+    # 按「值」去重：同一域名的 DOMAIN,x 与 DOMAIN-SUFFIX,x 是冗余（后者覆盖前者），
+    # 只保留 DOMAIN-SUFFIX。key 必须**只用值**（不含类型），否则两者 key 不同、去不掉。
+    # 其它类型（IP-CIDR/PROCESS-NAME/…）取值不会与域名撞车，按值去重同样安全。
+    sort -u "$raw" | awk -F, '
+      { key = $2; sub(/[ \t]+$/, "", key)
+        if (key in seen) { if ($1=="DOMAIN-SUFFIX") lines[key]=$0 }
+        else { seen[key]=1; lines[key]=$0; order[++n]=key } }
+      END { for (i=1;i<=n;i++) print lines[order[i]] }'
   } > "$opt"
   rm -f "$raw"
 

@@ -23,3 +23,6 @@
 !.github/workflows/
 !.github/workflows/generate.yml
 !check-ai-lists.sh
+!check-novel.sh
+!check-liveness.sh
+!check-brand-isolation.sh

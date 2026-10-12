@@ -42,8 +42,24 @@ jobs:
           CI_STRICT: "1"
         run: ./refresh-ai-lists.sh
 
-      - name: 校验产物（格式 / 关键国内 AI 域名 / SaaS 泄漏）
+      - name: 校验产物（格式 / 关键国内 AI 域名 / SaaS 泄漏 / 隔离 / 去重 / 纯度）
         run: ./check-ai-lists.sh
+
+      - name: 增量语义审查（新增域名命中 sso./login./telemetry. 等模式即失败）
+        run: |
+          chmod +x check-novel.sh
+          # 与本次 checkout 的 HEAD 比 —— CI 里 HEAD 就是 main 的上一次状态
+          ./check-novel.sh HEAD
+
+      - name: 存活性闸门（新增域名必须能解析）
+        run: |
+          chmod +x check-liveness.sh
+          ./check-liveness.sh HEAD
+
+      - name: 品牌串表检查（提交前 —— 别家域名不得进本品牌表）
+        run: |
+          chmod +x check-brand-isolation.sh
+          ./check-brand-isolation.sh
 
       - name: 提交并推送
         run: |
@@ -70,3 +86,17 @@ jobs:
             echo "::error::push 重试 3 次仍失败，新规则未推送"
             exit 1
           fi
+
+      # 推送后再查一遍 —— 校验的是**远端真正落地的内容**，而不是工作区。
+      # 用户要求「跑完提交后再检查品牌串表」：提交前那道闸门是拦截，
+      # 这道是确认（rebase 重试、并发推送等情况下，落地内容可能与本地不同）。
+      - name: 提交后再查（拉回远端内容重验，确认落地无串表）
+        run: |
+          chmod +x check-brand-isolation.sh
+          git fetch -q origin main
+          # 用远端 main 的内容重建工作区文件再验（不改 HEAD，只取文件）
+          git checkout -q origin/main -- 'AI-*.list' 2>/dev/null || true
+          echo "── 校验远端 main 的实际内容 ──"
+          git log -1 --format='  commit: %h  %s' origin/main
+          ./check-brand-isolation.sh
+          ./check-ai-lists.sh | tail -4

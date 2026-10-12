@@ -1,25 +1,23 @@
 # NAME: AI-CN
-# GEN:  2026-10-12 10:52:35
+# GEN:  2026-10-12 11:05:36
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-CN.list
 
 DOMAIN,api.hunyuan.cloud.tencent.com
 DOMAIN,api.minimax.io
 DOMAIN,api.minimaxi.com
-DOMAIN,ark.cn-beijing.volces.com
-DOMAIN,bailian.console.aliyun.com
-DOMAIN,dashscope.aliyuncs.com
-DOMAIN,ernie.baidu.com
-DOMAIN,hunyuan.tencentcloudapi.com
-DOMAIN,qianfan.baidubce.com
+DOMAIN-SUFFIX,ark.cn-beijing.volces.com
+DOMAIN-SUFFIX,bailian.console.aliyun.com
+DOMAIN-SUFFIX,dashscope.aliyuncs.com
+DOMAIN-SUFFIX,ernie.baidu.com
+DOMAIN-SUFFIX,hunyuan.tencentcloudapi.com
+DOMAIN-SUFFIX,qianfan.baidubce.com
 DOMAIN,qodercn-jb.oss-cn-hangzhou.aliyuncs.com
-DOMAIN,yiyan.baidu.com
+DOMAIN-SUFFIX,yiyan.baidu.com
 DOMAIN-SUFFIX,01.ai
 DOMAIN-SUFFIX,4paradigm.com
-DOMAIN-SUFFIX,ark.cn-beijing.volces.com
 DOMAIN-SUFFIX,baichuan-ai.com
 DOMAIN-SUFFIX,baichuan.com
-DOMAIN-SUFFIX,bailian.console.aliyun.com
 DOMAIN-SUFFIX,bigmodel.cn
 DOMAIN-SUFFIX,capcut.cn
 DOMAIN-SUFFIX,chatglm.cn
@@ -33,16 +31,13 @@ DOMAIN-SUFFIX,cozedeploy.com
 DOMAIN-SUFFIX,cozefn.cn
 DOMAIN-SUFFIX,cozeide.cn
 DOMAIN-SUFFIX,cozesdk.com
-DOMAIN-SUFFIX,dashscope.aliyuncs.com
 DOMAIN-SUFFIX,deepseek.ai
 DOMAIN-SUFFIX,deepseek.cn
 DOMAIN-SUFFIX,deepseek.com
 DOMAIN-SUFFIX,doubao.com
-DOMAIN-SUFFIX,ernie.baidu.com
 DOMAIN-SUFFIX,hailuo.com
 DOMAIN-SUFFIX,hailuoai.com
 DOMAIN-SUFFIX,hunyuan.tencent.com
-DOMAIN-SUFFIX,hunyuan.tencentcloudapi.com
 DOMAIN-SUFFIX,jimeng.jianying.com
 DOMAIN-SUFFIX,kimi.com
 DOMAIN-SUFFIX,kimi.moonshot.cn
@@ -65,7 +60,6 @@ DOMAIN-SUFFIX,openbmb.cn
 DOMAIN-SUFFIX,platform.moonshot.cn
 DOMAIN-SUFFIX,ppio.cn
 DOMAIN-SUFFIX,ppio.com
-DOMAIN-SUFFIX,qianfan.baidubce.com
 DOMAIN-SUFFIX,qianwen.aliyun.com
 DOMAIN-SUFFIX,qianwen.com
 DOMAIN-SUFFIX,qoder.cn
@@ -93,7 +87,6 @@ DOMAIN-SUFFIX,xiaoaiassist.com
 DOMAIN-SUFFIX,xiaomimimo.com
 DOMAIN-SUFFIX,xinghuo.xfyun.cn
 DOMAIN-SUFFIX,xingyeai.com
-DOMAIN-SUFFIX,yiyan.baidu.com
 DOMAIN-SUFFIX,yoma.cn
 DOMAIN-SUFFIX,yuanbao.tencent.com
 DOMAIN-SUFFIX,yuanqi.tencent.com
