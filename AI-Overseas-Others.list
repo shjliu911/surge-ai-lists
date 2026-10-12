@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 11:55:15
+# GEN:  2026-10-12 07:21:04
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -28,6 +28,8 @@ DOMAIN,llama.developer.meta.com
 DOMAIN-SUFFIX,openrouter.ai
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
 DOMAIN,pplx-res.cloudinary.com
+DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
+DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
 DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
 DOMAIN-SUFFIX,ai.azure.com
 DOMAIN-SUFFIX,ai.cloudflare.com
@@ -143,8 +145,6 @@ DOMAIN-SUFFIX,poe.com
 DOMAIN-SUFFIX,poecdn.net
 DOMAIN-SUFFIX,pool.ntp.org
 DOMAIN-SUFFIX,pplx.ai
-DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
-DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
 DOMAIN-SUFFIX,qoder.com
 DOMAIN-SUFFIX,recraft.ai
 DOMAIN-SUFFIX,remove.bg
@@ -168,6 +168,7 @@ DOMAIN-SUFFIX,tabnine.com
 DOMAIN-SUFFIX,together.ai
 DOMAIN-SUFFIX,together.xyz
 DOMAIN-SUFFIX,trae.ai
+DOMAIN-SUFFIX,traeapi.us
 DOMAIN-SUFFIX,tron-sg.bytelemon.com
 DOMAIN-SUFFIX,udify.app
 DOMAIN-SUFFIX,udio.com
