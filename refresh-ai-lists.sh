@@ -229,6 +229,9 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
   fi
 
   # 组装：注释头 + 去重排序后的规则行
+  # 注意：**不透传**手写补充表的注释。产物按字母排序，补充表里的分节标题
+  #（如 `# ===== 绘图/图像生成 =====`）一旦透传就会与规则脱节、变成误导性注释。
+  # 「为什么加这条」留在补充表本身（生成的表头有 `# 含本机手动补充：<文件>` 指路）。
   opt=$(mktemp)
   { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段\n' \
       "$name" "$(date '+%Y-%m-%d %H:%M:%S')"

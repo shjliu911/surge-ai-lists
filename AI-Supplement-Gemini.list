@@ -36,9 +36,17 @@ DOMAIN,antigravity-pa.googleapis.com
 DOMAIN,antigravity.googleapis.com
 DOMAIN-SUFFIX,jetski-webchannel.googleapis.com
 DOMAIN,jetski-webchannel-pa.googleapis.com
+# 自动更新落在 Google Cloud Run，主机名是 antigravity-<组件>-auto-updater-<项目号>.us-central1.run.app。
+# 不能整条收 run.app（那是 Cloud Run 通用域，会把海量非 AI 服务一起拉走），只收这两条实测主机名。
+DOMAIN,antigravity-cli-auto-updater-974169037036.us-central1.run.app
+DOMAIN,antigravity-hub-auto-updater-974169037036.us-central1.run.app
 PROCESS-NAME,Antigravity
 PROCESS-NAME,Antigravity.exe
 PROCESS-NAME,antigravity
+# App Bundle Mode（Surge Mac 6.0.0+）：值以 / 开头并以 / 结尾 → 按可执行文件**路径前缀**匹配。
+# Antigravity 的真正联网子进程名为 language_server / Antigravity Helper，用上面的
+# PROCESS-NAME,Antigravity（仅匹配文件名）**抓不到**；这条按 bundle 前缀覆盖其全部子进程。
+PROCESS-NAME,/Applications/Antigravity.app/
 
 # --- Gemini 后端 PA 域名 ---
 DOMAIN,alkalicore-pa.clients6.google.com

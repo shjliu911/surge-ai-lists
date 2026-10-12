@@ -1,5 +1,5 @@
 # NAME: AI-Gemini
-# GEN:  2026-10-12 11:05:47
+# GEN:  2026-10-12 11:52:17
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-Gemini.list
 
@@ -7,6 +7,8 @@ DOMAIN-SUFFIX,ai.google.dev
 DOMAIN-SUFFIX,aisandbox-pa.googleapis.com
 DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN,alkalicore-pa.clients6.google.com
+DOMAIN,antigravity-cli-auto-updater-974169037036.us-central1.run.app
+DOMAIN,antigravity-hub-auto-updater-974169037036.us-central1.run.app
 DOMAIN,antigravity-pa.googleapis.com
 DOMAIN-SUFFIX,antigravity-unleash.goog
 DOMAIN-SUFFIX,antigravity.google
@@ -58,6 +60,7 @@ DOMAIN-SUFFIX,opal.google.com
 DOMAIN-SUFFIX,opal.withgoogle.com
 DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
 DOMAIN-SUFFIX,stitch.withgoogle.com
+PROCESS-NAME,/Applications/Antigravity.app/
 PROCESS-NAME,Antigravity
 PROCESS-NAME,Antigravity.exe
 PROCESS-NAME,antigravity

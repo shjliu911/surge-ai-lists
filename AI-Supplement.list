@@ -61,3 +61,8 @@ DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,character.ai
 DOMAIN-SUFFIX,pi.ai
 DOMAIN-SUFFIX,hume.ai
+
+# ============ Nous Research ============
+# 上游源只收了 hermes-agent.nousresearch.com 一条，同源的 portal.nousresearch.com
+# 会漏到 FINAL（2026-10-12 实测）。Nous Research 是 AI 公司，整域收干净。
+DOMAIN-SUFFIX,nousresearch.com

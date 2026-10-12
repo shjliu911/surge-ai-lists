@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 11:07:26
+# GEN:  2026-10-12 11:52:33
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -126,6 +126,7 @@ DOMAIN-SUFFIX,midjourney.com
 DOMAIN-SUFFIX,mistral.ai
 DOMAIN-SUFFIX,muse.ai
 DOMAIN-SUFFIX,nnthink.com
+DOMAIN-SUFFIX,nousresearch.com
 DOMAIN-SUFFIX,novita.ai
 DOMAIN-SUFFIX,ollama.com
 DOMAIN-SUFFIX,openart.ai
