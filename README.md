@@ -78,8 +78,13 @@ Surge **会自动热重载本机 list，无需手动 reload**。
 |---|---|
 | 标签 | `com.user.surge-ai-lists` |
 | 脚本 | `~/Library/LaunchAgents/com.user.surge-ai-lists.plist` |
+| 跑什么 | **`~/surge-ai-lists/sync.sh`**（刷新 + 部署 + 有变化才提交推送）|
 | 频率 | 每天 09:17、21:17 |
 | 日志 | `~/Library/Logs/surge-ai-lists.log` |
+
+**全自动**：任务跑的就是 `sync.sh`，所以 GitHub 仓库每天自动跟生效副本同步，无需人工。
+上游没变更时脚本什么都不做（幂等），不会产生噪声提交。
+手动触发一次：`launchctl kickstart -p gui/$(id -u)/com.user.surge-ai-lists`
 
 ## 敏感点（改脚本前先看）
 
