@@ -1,6 +1,6 @@
 # NAME: AI-Copilot
-# GEN:  2026-10-12 09:07:09
-# NOTE: 合并 bm7 + VPSDance 两源；已剔除 IP-ASN 与通用 KEYWORD/域名
+# GEN:  2026-10-12 09:23:18
+# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
 
 DOMAIN,ai.google.dev
 DOMAIN,aistudio.google.com

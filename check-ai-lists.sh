@@ -57,7 +57,7 @@ def is_cn(d):
     p=d.split('.')
     return any('.'.join(p[i:]) in cn for i in range(len(p)-1))
 bad=[]
-for f in ['AI-OpenAI.list','AI-Claude.list','AI-Gemini.list','AI-Copilot.list','AI-Jetbrains.list','AI-Misc.list']:
+for f in ['AI-OpenAI.list','AI-Claude.list','AI-Gemini.list','AI-Copilot.list','AI-Jetbrains.list','AI-Overseas-Others.list']:
     try: lines=open(f)
     except FileNotFoundError: continue
     for ln in lines:

@@ -120,7 +120,7 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
 
   # 组装：注释头 + 去重排序后的规则行
   opt=$(mktemp)
-  { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 合并 bm7 + VPSDance 两源；已剔除 IP-ASN 与通用 KEYWORD/域名\n' \
+  { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS\n' \
       "$name" "$(date '+%Y-%m-%d %H:%M:%S')"
     if [ "$manual" != "-" ] && [ -f "$manual" ]; then
       printf '# 含本机手动补充：%s\n' "$manual"
@@ -184,7 +184,7 @@ gen AI-Jetbrains.list "AI-Jetbrains"   "-" \
     "$BM7/Jetbrains/Jetbrains.list" "$VPS/jetbrains-ai.list" "$ACL4/JetBrains.list"
 
 # ── ③ 其余海外 AI 全部归一表 ───────────────────────────────
-gen AI-Misc.list      "AI-Misc"        "AI-Supplement.list" \
+gen AI-Overseas-Others.list "AI-Overseas-Others"        "AI-Supplement.list" \
     "$VPS/x-ai.list" "$VPS/meta-ai.list" "$VPS/cursor.list" "$VPS/windsurf.list" \
     "$VPS/opencode.list" "$VPS/cline.list" "$VPS/zed.list" "$VPS/model.list" "$VPS/media.list" \
     "$VPS/global.list" "$VPS/coding.list" "$VPS/all.list" \
