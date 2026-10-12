@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 07:21:04
+# GEN:  2026-10-12 21:45:02
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -24,12 +24,15 @@ DOMAIN,cp4.cloudflare.com
 DOMAIN,default.exp-tas.com
 DOMAIN,developer.meta.com
 DOMAIN,gateway.ai.cloudflare.com
+DOMAIN,inference.codeium.com
 DOMAIN,llama.developer.meta.com
 DOMAIN-SUFFIX,openrouter.ai
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
 DOMAIN,pplx-res.cloudinary.com
 DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
 DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
+DOMAIN,server.codeium.com
+DOMAIN,server.self-serve.windsurf.com
 DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
 DOMAIN-SUFFIX,ai.azure.com
 DOMAIN-SUFFIX,ai.cloudflare.com
