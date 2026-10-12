@@ -18,3 +18,7 @@
 !refresh-ai-lists.sh
 !com.user.surge-ai-lists.plist
 !sync.sh
+# GitHub Actions 工作流（嵌套路径需逐层放行父目录）
+!.github/
+!.github/workflows/
+!.github/workflows/generate.yml

@@ -1,0 +1,55 @@
+name: Generate AI rules
+
+# 在上游（blackmatrix7 / VPSDance）更新后重新生成 6 张 AI 表并提交。
+# 完全跑在 GitHub 服务器上，与本机（launchd）无关。
+on:
+  schedule:
+    # 09:17 北京时间 = 01:17 UTC；21:17 北京 = 13:17 UTC（与原先 launchd 节奏一致）
+    - cron: "17 1 * * *"
+    - cron: "17 13 * * *"
+  workflow_dispatch:          # 手动补跑
+  push:
+    paths:                    # 改了生成器/手写表就重建
+      - "refresh-ai-lists.sh"
+      - "AI-*.list"
+      - ".github/workflows/generate.yml"
+
+permissions:
+  contents: write             # 允许 bot 提交
+
+concurrency:
+  group: generate-ai-rules    # 避免定时与手动同时跑
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanity — 敏感文件不得入库
+        run: |
+          if git ls-files | grep -qE '\.conf$|\.bak|lll\.conf'; then
+            echo "::error::仓库跟踪了敏感文件（lll.conf/.bak/.conf），中止"
+            git ls-files | grep -E '\.conf$|\.bak|lll\.conf'
+            exit 1
+          fi
+
+      - name: 生成（严格模式：源失败/缩水即失败）
+        env:
+          CI_STRICT: "1"
+        run: ./refresh-ai-lists.sh
+
+      - name: 提交并推送
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 只提交规则表，避免把其它杂项带进来
+          git add 'AI-*.list'
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+          else
+            SUMMARY=$(git diff --cached --numstat -- '*.list' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+            git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
+            git push
+          fi

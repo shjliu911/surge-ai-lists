@@ -9,9 +9,17 @@
 # 过滤规则：剔除所有 IP-ASN（宽泛托管商网段）+ 通用关键词；
 #           保留 IP-CIDR（是服务商自有、较精确的网段）。
 #
-# 用法：./refresh-ai-lists.sh       （Surge 会自动重载本机 list，无需手动 reload）
+# 用法：
+#   ./refresh-ai-lists.sh              本地/launchd：源失败或缩水 → 告警但保留旧文件，退出码 0
+#   CI_STRICT=1 ./refresh-ai-lists.sh  CI：源失败或缩水 → 直接失败退出码 2，阻止提交
+#
+# 退出码：0=成功（或本地模式下的宽容跳过） 2=严格模式下检出问题（源失败 / 缩水）
 set -u
 cd "$(dirname "$0")" || exit 1
+
+# 严格模式：CI 里开着；某张表出问题就让整个任务失败，绝不提交可疑内容。
+STRICT="${CI_STRICT:-0}"
+problem=0   # 累计问题表数；严格模式下用于最终退出码
 
 BM7="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Surge"
 VPS="https://raw.githubusercontent.com/VPSDance/ai-proxy-rules/main/rules/surge"
@@ -57,12 +65,12 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
   # 否则一次网络抖动就会让列表缩水，把 AI 域名从代理里踢出去。
   if [ "$fail" -gt 0 ]; then
     printf 'SKIP %-28s %d 个源失败 → 保留旧文件，不覆盖\n' "$out" "$fail" >&2
-    rm -f "$raw"; return 1
+    rm -f "$raw"; problem=$((problem + 1)); return 1
   fi
 
   if [ ! -s "$raw" ]; then
     printf 'FAIL %-28s 所有源为空 → 保留旧文件\n' "$out" >&2
-    rm -f "$raw"; return 1
+    rm -f "$raw"; problem=$((problem + 1)); return 1
   fi
 
   # 组装：注释头 + 去重排序后的规则行
@@ -85,14 +93,18 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
     rm -f "$opt"
     printf '%s   %-28s %s 行（无变化）\n' '--' "$out" "$(grep -cvE '^#|^$' "$out")"
   else
-    # 缩水告警：新内容若比旧版少于 70%，大概率是上游异常而非正常收敛。
-    # 不拦截（上游确实会删规则），但响亮告警，提醒人工确认后再 push。
+    # 缩水检测：新内容若比旧版少于 70%，大概率是上游异常而非正常收敛。
+    # 本地模式：告警但写入（人工确认后再 commit）；CI 严格模式：直接不写 + 计为问题。
     if [ -f "$out" ]; then
       oldn=$(grep -cvE '^#|^$' "$out"); newn=$(grep -cvE '^#|^$' "$opt")
       if [ "$oldn" -gt 10 ] && [ "$newn" -lt $((oldn * 7 / 10)) ]; then
-        pct=$(( (oldn - newn) * 100 / oldn ))   # 纯 shell 算术，不依赖 bc（launchd 环境没有 bc）
+        pct=$(( (oldn - newn) * 100 / oldn ))   # 纯 shell 算术，不依赖 bc
         printf '\n\033[31m!!! 缩水告警 %s: %s 行 → %s 行（少 %s%%）\033[0m\n' \
           "$out" "$oldn" "$newn" "$pct" >&2
+        if [ "$STRICT" = 1 ]; then
+          printf '    [CI 严格模式] 拒绝写入缩水内容 → 保留旧文件，任务将失败\n\n' >&2
+          rm -f "$opt"; problem=$((problem + 1)); return 1
+        fi
         printf '    请确认是上游正常收敛后，再 git push（本函数已写入该缩水版）\n\n' >&2
       fi
     fi
@@ -116,3 +128,10 @@ gen AI-Misc.list      "AI-Misc"        "AI-Supplement.list"        "$VPS/x-ai.li
                                                                    "$BM7/Civitai/Civitai.list"
 
 echo "完成。Surge 会自动重载本机 list（无需手动 reload）。"
+
+# 严格模式下：只要有任何一张表出问题，就以退出码 2 失败，阻止 CI 的提交步骤。
+if [ "$STRICT" = 1 ] && [ "$problem" -gt 0 ]; then
+  printf '\n\033[31m严格模式：%d 张表有问题，退出码 2（不提交）\033[0m\n' "$problem" >&2
+  exit 2
+fi
+exit 0
