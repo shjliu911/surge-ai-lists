@@ -10,10 +10,11 @@
 #           保留 IP-CIDR（是服务商自有、较精确的网段）。
 #
 # 用法：
-#   ./refresh-ai-lists.sh              本地/launchd：源失败或缩水 → 告警但保留旧文件，退出码 0
-#   CI_STRICT=1 ./refresh-ai-lists.sh  CI：源失败或缩水 → 直接失败退出码 2，阻止提交
+#   ./refresh-ai-lists.sh              本地手动：源失败或缩水 → 告警但保留旧文件，退出码 0
+#   CI_STRICT=1 ./refresh-ai-lists.sh  GitHub Actions：源失败或缩水 → 失败退出码 2，阻止提交
 #
 # 退出码：0=成功（或本地模式下的宽容跳过） 2=严格模式下检出问题（源失败 / 缩水）
+# 自动运行：GitHub Actions（.github/workflows/generate.yml），本机无需任何定时任务。
 set -u
 cd "$(dirname "$0")" || exit 1
 

@@ -59,8 +59,8 @@ Surge **会自动热重载本机 list，无需手动 reload**。
 
 | 场景 | 怎么做 |
 |---|---|
-| **上游规则更新**（黑名单收敛/新增域名） | launchd 每天 09:17 / 21:17 自动刷新生效；想立刻入库就 `./sync.sh` |
-| **自己要加/删域名**（上游没收录的服务） | 编辑 `AI-Supplement*.list`（走代理）或 `AI-CN.list`（直连）→ `./sync.sh --no-pull` |
+| **上游规则更新**（黑名单收敛/新增域名） | **GitHub Actions 自动**（北京 09:17/21:17）；想立刻跑就 `gh workflow run generate.yml` |
+| **自己要加/删域名**（上游没收录的服务） | 编辑 `AI-Supplement*.list`（走代理）或 `AI-CN.list`（直连）→ 推送即触发 CI 重建（或本地 `./sync.sh --no-pull`）|
 
 ### 两道防「缩水」保护（重要）
 
@@ -88,20 +88,22 @@ RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Misc
 - `sync.sh` 推完会**主动让 Surge 重拉**（`surge-cli external-resource update <key>`），无需等 Surge 自己的周期。
 - 想让 Surge 手动立刻重拉全部：`surge-cli external-resource update <key>`（key 用 `surge-cli external-resource list --raw` 查）。
 
-## launchd
+## 自动化：GitHub Actions（已取代本机 launchd）
+
+生成完全跑在 **GitHub 服务器**上，与本机无关。
 
 | 项 | 值 |
 |---|---|
-| 标签 | `com.user.surge-ai-lists` |
-| 脚本 | `~/Library/LaunchAgents/com.user.surge-ai-lists.plist` |
-| 跑什么 | **`~/surge-ai-lists/sync.sh`**（刷新 + 部署 + 有变化才提交推送）|
-| 频率 | 每天 09:17、21:17 |
-| 日志 | `~/Library/Logs/surge-ai-lists.log` |
+| 工作流 | `.github/workflows/generate.yml` |
+| 触发 | 定时 `01:17` / `13:17` UTC（= 北京 09:17 / 21:17）+ 改生成器/手写表 + 手动 |
+| 跑什么 | `CI_STRICT=1 ./refresh-ai-lists.sh` → 有变化则提交 `chore: refresh AI rules` |
+| 严格模式 | 源失败或缩水 → **退出码 2，整个任务失败，绝不提交** |
+| 手动触发 | `gh workflow run generate.yml --repo shjliu911/surge-ai-lists` |
 
-**全自动**：任务跑的就是 `sync.sh`，所以 GitHub 仓库每天自动跟生效副本同步，无需人工。
-上游没变更时脚本什么都不做（幂等），不会产生噪声提交。
-手动触发一次：`launchctl kickstart -p gui/$(id -u)/com.user.surge-ai-lists`
+**本机 launchd 已于 2026-10-12 移除**（原来每天 09:17/21:17 跑一次）。
+现在即使 Mac 关机，规则照样每天更新。
 
+`sync.sh` 仍在，但只用于**本机手动**场景（改了手写表想立刻推、或想本地预览）。
 ## 敏感点（改脚本前先看）
 
 - `filter()` **全剔 `IP-ASN`**，但**保留 `IP-CIDR`**——那是服务商自有精确网段（如 Anthropic `160.79.104.0/21`）。
