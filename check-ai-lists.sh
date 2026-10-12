@@ -44,4 +44,31 @@ else
   echo "✓ 无通用 SaaS 泄漏"
 fi
 
+# ── 4) 断言：海外表里不得出现被国内集合覆盖的域名（结构性隔离）──
+if python3 - <<'PY'
+import sys
+cn=set()
+for ln in open('AI-CN.list'):
+    t=ln.strip()
+    if t.startswith(('DOMAIN,','DOMAIN-SUFFIX,')):
+        cn.add(t.split(',',1)[1].split(',')[0].strip().lower())
+def is_cn(d):
+    if d in cn: return True
+    p=d.split('.')
+    return any('.'.join(p[i:]) in cn for i in range(len(p)-1))
+bad=[]
+for f in ['AI-OpenAI.list','AI-Claude.list','AI-Gemini.list','AI-Copilot.list','AI-Jetbrains.list','AI-Misc.list']:
+    try: lines=open(f)
+    except FileNotFoundError: continue
+    for ln in lines:
+        t=ln.strip()
+        if t.startswith(('DOMAIN,','DOMAIN-SUFFIX,')) and is_cn(t.split(',',1)[1]):
+            bad.append(f+': '+t)
+if bad:
+    print("\n".join(bad[:10])); sys.exit(1)
+PY
+then echo "✓ 海外表无国内域名混入（结构性隔离生效）"
+else echo "✗ 海外表混入了国内域名（见上）"; fail=1
+fi
+
 exit $fail
