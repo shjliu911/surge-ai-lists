@@ -21,11 +21,29 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 | `AI-Supplement-Gemini.list` | **人工** | 折进 AI-Gemini |
 | `AI-Supplement.list` | **人工** | 折进 AI-Misc |
 | `AI-CN.list` | **人工** | DIRECT（国内 AI） |
-| `refresh-ai-lists.sh` | 引擎 | 生成上面 6 张主表 |
+| `refresh-ai-lists.sh` | 引擎 | 生成 7 张主表 |
+| `check-ai-lists.sh` | 引擎 | CI 校验：格式 / 关键国内 AI 域名 / SaaS 泄漏 |
 
 **生成 vs 人工**：`AI-Supplement*.list` 和 `AI-CN.list` 是**手写**的，脚本永不覆盖；
 `refresh-ai-lists.sh` 把两源（blackmatrix7 + VPSDance）拉下来，剔除宽泛规则后，
 再把对应的手写补充表折进去，写出 6 张主表。
+
+## 上游源（多源合并，查缺补漏）
+
+单一上游一定有遗漏，所以**取并集**。当前合并 6 个源：
+
+| 源 | 提供什么 |
+|---|---|
+| **blackmatrix7/ios_rule_script** | 海外分服务细表（OpenAI/Claude/Gemini/Copilot/Jetbrains/Civitai…）|
+| **VPSDance/ai-proxy-rules** | `cn`（中国 AI 聚合）+ `global`/`coding`/`all` + 各 provider（x-ai/cursor/windsurf…）|
+| **SukkaW/Surge** | `Source/non_ip/ai.conf` 人工精选 |
+| **dler-io/Rules** | `AI Suite.list`（247 条，含 Azure OpenAI IP）|
+| **ACL4SSR/ACL4SSR** | `AI.list`/`OpenAi.list`/`Claude.list`/`Gemini.list`/`JetBrains.list` |
+| **Rabbit-Spec/Surge** | `AIGC.list`（129 条）|
+
+**国内 AI 单独一层**：`AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写）。
+在 `lll.conf` 里 **AI-CN 排在所有海外 AI 之前**——因为海外表多源合并后难免混入国内域名
+（如 `bigmodel.cn`/`siliconflow.cn`），先判 DIRECT 兜住，避免被误走代理。
 
 ## 为什么用本地文件、不直接 `RULE-SET` 远程 URL
 
