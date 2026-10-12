@@ -1,0 +1,74 @@
+#!/bin/bash
+# 一条命令完成 AI 规则集的全流程：刷新 → 部署到 Surge → 提交推送。
+#
+#   ./sync.sh            刷新(拉上游) → 部署 → 有变化才提交+推送
+#   ./sync.sh --no-pull  跳过拉上游，只把当前仓库内容部署+提交（改了手写表后用）
+#   ./sync.sh --dry-run  只显示会做什么，不动任何文件
+#
+# 设计要点：
+#   - 仓库是「留痕副本」，Surge 读的是 Profiles 下的「生效副本」。本脚本负责把两者对齐。
+#   - 生成表每次刷新的 GEN 时间戳都会变 → 用 `git status --porcelain` 判断「内容是否真变」，
+#     只有真变才提交，避免每天顶一条无意义 commit。
+set -u
+
+REPO="$(cd "$(dirname "$0")" && pwd)"
+PROFILES="$HOME/Library/Application Support/Surge/Profiles"
+DRY=0; NOPULL=0
+for a in "$@"; do case "$a" in
+  --dry-run) DRY=1;;
+  --no-pull) NOPULL=1;;
+  *) echo "未知参数: $a"; exit 2;;
+esac; done
+
+cd "$REPO" || exit 1
+say() { printf '\033[36m▸\033[0m %s\n' "$*"; }
+run() { if [ "$DRY" = 1 ]; then echo "    [dry-run] $*"; else eval "$@"; fi; }
+
+[ -d "$PROFILES" ] || { echo "找不到 Surge Profiles 目录: $PROFILES"; exit 1; }
+
+# ── 1. 刷新（拉上游，重写 6 张生成表）────────────────────────
+if [ "$NOPULL" = 1 ]; then
+  say "跳过上游刷新（--no-pull）"
+else
+  say "刷新生成表（blackmatrix7 + VPSDance → 6 张 AI-*.list）"
+  run '"$REPO/refresh-ai-lists.sh"'
+fi
+
+# ── 2. 部署到 Surge（仓库 → Profiles）─────────────────────
+say "部署到 Surge Profiles"
+for f in AI-*.list refresh-ai-lists.sh; do
+  [ -e "$f" ] || continue
+  if ! cmp -s "$f" "$PROFILES/$f"; then
+    run "cp \"$f\" \"$PROFILES/$f\""
+    echo "    ↑ $f"
+  fi
+done
+[ "$DRY" = 1 ] || chmod +x "$PROFILES/refresh-ai-lists.sh" 2>/dev/null
+
+# ── 3. 安全检查：绝不提交敏感文件 ─────────────────────────
+if git ls-files | grep -qE '\.conf$|\.bak|lll\.conf'; then
+  echo "!!! 中止：仓库跟踪了敏感文件"; git ls-files | grep -E '\.conf$|\.bak|lll\.conf'; exit 1
+fi
+
+# ── 4. 有实质变化才提交 + 推送 ────────────────────────────
+if [ -z "$(git status --porcelain)" ]; then
+  say "内容无变化，无需提交"
+  exit 0
+fi
+
+say "检测到变化："
+if [ "$DRY" = 1 ]; then git --no-pager diff --stat; else git --no-pager diff --stat; fi
+
+# 生成变更摘要（新增/删除的规则条数）
+SUMMARY=$(git --no-pager diff --numstat -- '*.list' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+MSG="refresh: $(date +%F)  (${SUMMARY:-无行变})"
+
+run "git add -A"
+run "git commit -q -m \"$MSG\""
+if [ "$DRY" = 1 ]; then
+  echo "    [dry-run] git push"
+else
+  say "推送到 GitHub"
+  git push -q origin main && echo "    ✓ 已推送"
+fi
+say "完成：$MSG"
