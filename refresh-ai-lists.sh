@@ -49,8 +49,17 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
   } > "$tmp"
   if [ -s "$tmp" ]; then
     { grep -E '^#' "$tmp"; printf '\n'; grep -vE '^#' "$tmp" | sort -u; } > "$out.tmp"
-    mv "$out.tmp" "$out"; rm -f "$tmp"
-    printf 'OK   %-28s %s 行\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+    # 只在「规则内容」真变时重写该文件：
+    # 头部注释里的 # GEN 时间戳每次都不同，若因此重写，会导致每天产生一条空提交。
+    # 比较时剔掉注释头（只看规则行），无变化就保留旧文件（连 GEN 时间戳也不动）。
+    if [ -f "$out" ] && \
+       diff -q <(grep -vE '^#' "$out") <(grep -vE '^#' "$out.tmp") >/dev/null 2>&1; then
+      rm -f "$out.tmp" "$tmp"
+      printf '--   %-28s %s 行（无变化）\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+    else
+      mv "$out.tmp" "$out"; rm -f "$tmp"
+      printf 'OK   %-28s %s 行\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+    fi
   else echo "FAIL(all sources) $out"; rm -f "$tmp"; fi
 }
 
