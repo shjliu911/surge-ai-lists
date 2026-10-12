@@ -90,8 +90,9 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
     if [ -f "$out" ]; then
       oldn=$(grep -cvE '^#|^$' "$out"); newn=$(grep -cvE '^#|^$' "$opt")
       if [ "$oldn" -gt 10 ] && [ "$newn" -lt $((oldn * 7 / 10)) ]; then
-        printf '\n\033[31m!!! 缩水告警 %s: %s 行 → %s 行（少 %.0f%%）\033[0m\n' \
-          "$out" "$oldn" "$newn" "$(echo "($oldn-$newn)*100/$oldn" | bc -l 2>/dev/null || echo 0)" >&2
+        pct=$(( (oldn - newn) * 100 / oldn ))   # 纯 shell 算术，不依赖 bc（launchd 环境没有 bc）
+        printf '\n\033[31m!!! 缩水告警 %s: %s 行 → %s 行（少 %s%%）\033[0m\n' \
+          "$out" "$oldn" "$newn" "$pct" >&2
         printf '    请确认是上游正常收敛后，再 git push（本函数已写入该缩水版）\n\n' >&2
       fi
     fi
