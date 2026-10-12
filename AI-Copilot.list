@@ -1,5 +1,5 @@
 # NAME: AI-Copilot
-# GEN:  2026-10-12 10:14:38
+# GEN:  2026-10-12 10:23:27
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
 
 DOMAIN,api.githubcopilot.com
@@ -30,5 +30,3 @@ DOMAIN-SUFFIX,copilot.com
 DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,edgeservices.bing.com
 DOMAIN-SUFFIX,githubcopilot.com
-IP-CIDR,24.199.123.28/32,no-resolve
-IP-CIDR,64.23.132.171/32,no-resolve

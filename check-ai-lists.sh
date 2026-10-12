@@ -71,27 +71,33 @@ then echo "✓ 海外表无国内域名混入（结构性隔离生效）"
 else echo "✗ 海外表混入了国内域名（见上）"; fail=1
 fi
 
-# ── 5) 断言：每个域名只归属一张表（跨表唯一）──────────────
-# 品牌表之间有合法重叠（Copilot 按上游设计含 openai.com），但同一域名进两张表
-# 意味着后者被前者遮蔽 → 死规则。生成器已按「先建者优先」去重，这里守住它。
+# ── 5) 断言：每条规则只归属一张表（跨表唯一，覆盖**所有规则类型**）──
+# 注意：只查 DOMAIN 是不够的 —— 曾经就此漏掉 15 条非域名重复
+# （PROCESS-NAME,claude / IP-CIDR,160.79.104.0/21 / Gemini 的 URL-REGEX 等）。
+# 这里把每种类型都归一化（大小写、空格）后比对，与生成器的 drop_covered 口径一致。
 if python3 - <<'PY'
 import sys
-from collections import Counter
+from collections import defaultdict
 T=['AI-CN','AI-OpenAI','AI-Claude','AI-Gemini','AI-Copilot','AI-Jetbrains','AI-Overseas-Others']
-c=Counter(); owner={}
+owner=defaultdict(set)
 for t in T:
     try: fh=open(t+'.list')
     except FileNotFoundError: continue
     for ln in fh:
         ln=ln.strip()
-        if not ln.startswith(('DOMAIN,','DOMAIN-SUFFIX,')): continue
-        d=ln.split(',',1)[1].split(',')[0].strip().lower()
-        if d in owner and owner[d]!=t: c[d]+=1; print(f'  {d} 同时在 {owner[d]} 与 {t}')
-        else: owner.setdefault(d,t)
-sys.exit(1 if c else 0)
+        if not ln or ln.startswith('#'): continue
+        p=ln.split(',')
+        if len(p)<2: continue
+        k=p[0].strip().upper()
+        v=p[1].strip().lower()
+        owner[(k,v)].add(t)
+dups=[(k,v,ts) for (k,v),ts in owner.items() if len(ts)>1]
+for k,v,ts in sorted(dups)[:15]:
+    print(f'  {k},{v}  同时在 {sorted(ts)}')
+sys.exit(1 if dups else 0)
 PY
-then echo "✓ 跨表无重复域名（归属唯一）"
-else echo "✗ 同一域名出现在多张表（见上）"; fail=1
+then echo "✓ 跨表无重复规则（归属唯一，含非域名类型）"
+else echo "✗ 同一规则出现在多张表（见上）"; fail=1
 fi
 
 # ── 6) 断言：品牌表纯度（聚合源不得把别家 AI 灌进品牌表）────

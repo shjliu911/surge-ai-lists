@@ -1,5 +1,5 @@
 # NAME: AI-Gemini
-# GEN:  2026-10-12 10:14:36
+# GEN:  2026-10-12 10:24:24
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
 # 含本机手动补充：AI-Supplement-Gemini.list
 
@@ -75,3 +75,4 @@ DOMAIN-SUFFIX,stitch.withgoogle.com
 PROCESS-NAME,Antigravity
 PROCESS-NAME,Antigravity.exe
 PROCESS-NAME,antigravity
+URL-REGEX,https://www\.google\.com/.*continue=https://gemini\.google\.com.+

@@ -57,34 +57,58 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与宽泛 KEYWORD�
   | grep -vE '^[[:space:]]*$'
 }
 
-drop_covered() { # $1=待过滤文件  $2..=排除源文件 → stdout（剔除被排除集覆盖的 DOMAIN/DOMAIN-SUFFIX）
+drop_covered() { # $1=待过滤文件  $2..=排除源文件 → stdout（剔除已被排除集覆盖的规则）
   # 结构性隔离：靠数据集而非"规则顺序"保证归属唯一。
+  # 去重覆盖**所有规则类型**，不只域名 —— 非域名规则也要归一化后比对：
+  #   · DOMAIN/DOMAIN-SUFFIX：后缀包含关系（a.b.com 被 b.com 覆盖）
+  #   · IP-CIDR/IP-CIDR6：      整串归一化（大小写不敏感：2607:6BC0::/32 == 2607:6bc0::/32）
+  #   · PROCESS-NAME/PATH、USER-AGENT、URL-REGEX、GEOIP 等：去空格后小写比对
   # 数据用文件参数传（不能用 stdin——heredoc 已占用，这个坑踩过两次）
   python3 - "$@" <<'PY'
-import sys
-target = sys.argv[1]
-suf=set(); exact=set()
-for f in sys.argv[2:]:
-    try: fh = open(f)
-    except FileNotFoundError: continue
-    for ln in fh:
-        t=ln.strip()
-        if not t or t.startswith('#'): continue
-        if t.startswith('DOMAIN-SUFFIX,'): suf.add(t.split(',',1)[1].split(',')[0].strip().lower())
-        elif t.startswith('DOMAIN,'):      exact.add(t.split(',',1)[1].split(',')[0].strip().lower())
-def cov(d):
+import sys, re
+
+def read_excluded(files):
+    suf=set(); exact=set(); other=set()
+    for f in files:
+        try: fh = open(f)
+        except FileNotFoundError: continue
+        for ln in fh:
+            t=ln.strip()
+            if not t or t.startswith('#'): continue
+            parts=t.split(',')
+            k=parts[0].strip().upper()
+            if len(parts) < 2: continue
+            v=parts[1].strip()
+            if k=='DOMAIN-SUFFIX':   suf.add(v.lower())
+            elif k=='DOMAIN':        exact.add(v.lower())
+            else:                    other.add((k, v.lower()))
+    return suf, exact, other
+
+SUF, EXACT, OTHER = read_excluded(sys.argv[2:])
+
+def dom_cov(d):
     d=d.lower().split(',')[0].strip()
-    if d in exact or d in suf: return True
+    if d in EXACT or d in SUF: return True
     p=d.split('.')
-    return any('.'.join(p[i:]) in suf for i in range(len(p)-1))
-for ln in open(target):
+    return any('.'.join(p[i:]) in SUF for i in range(len(p)-1))
+
+for ln in open(sys.argv[1]):
     t=ln.strip()
-    if t and not t.startswith('#'):
-        k=t.split(',',1)[0]
-        # DOMAIN-KEYWORD 若本身是某个已归属域名的写法（如
-        # DOMAIN-KEYWORD,alkalimakersuite-pa.clients6.google.com），也算重复。
-        # 裸关键词（openai 等）对不上任何域名后缀 → 保留。
-        if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD') and cov(t.split(',',1)[1]): continue
+    if not t or t.startswith('#'):
+        sys.stdout.write(ln if ln.endswith('\n') else ln+'\n'); continue
+    parts=t.split(',')
+    k=parts[0].strip().upper()
+    v=parts[1].strip() if len(parts)>1 else ''
+    # DOMAIN-KEYWORD 若本身写成某个已归属域名（如 DOMAIN-KEYWORD,x.google.com）也算重复；
+    # 裸关键词（openai）对不上任何后缀 → 保留。
+    if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD') and dom_cov(v):
+        continue
+    if k not in ('DOMAIN','DOMAIN-SUFFIX'):
+        if (k, v.lower()) in OTHER:
+            continue
+        # IP-CIDR 的 no-resolve 后缀不参与比对（129.146.3.78/32 与 .../32,no-resolve 视为同一条）
+        if k in ('IP-CIDR','IP-CIDR6','IP6-CIDR') and (k, v.lower()) in OTHER:
+            continue
     sys.stdout.write(ln if ln.endswith('\n') else ln+'\n')
 PY
 }
@@ -111,8 +135,8 @@ for ln in open(sys.argv[2]):
         continue                                  # 聚合源的注释无意义，不并入品牌表
     k = t.split(',', 1)[0]
     val = t.split(',', 1)[1].split(',')[0].strip() if ',' in t else ''
-    # 域名类与进程/UA 类可按键名匹配；IP 类无归属信号 → 留给 Others
-    if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','PROCESS-NAME','PROCESS-PATH','USER-AGENT') and rx.search(val):
+    # 域名类、进程/UA 类、URL-REGEX 都能从取值里看出品牌；IP/GEOIP 无品牌信号 → 留给 Others
+    if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','PROCESS-NAME','PROCESS-PATH','USER-AGENT','URL-REGEX') and rx.search(val):
         sys.stdout.write(ln if ln.endswith('\n') else ln+'\n')
 PY
 }
