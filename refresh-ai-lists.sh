@@ -6,8 +6,11 @@
 #   DOMAIN-KEYWORD（sift / datadog / sentry），会按 ASN/关键字命中大量非 AI 站点，
 #   把它们一起拉进 AI 策略组。Surge 无法对远程 list 做过滤，只能在本地预先生成。
 #
-# 过滤规则：剔除所有 IP-ASN（宽泛托管商网段）+ 通用关键词；
-#           保留 IP-CIDR（是服务商自有、较精确的网段）。
+# 过滤规则：剔除上游源里的 IP-ASN（14061 DigitalOcean / 20473 Vultr 这类宽泛托管商网段）
+#           + 通用关键词；保留 IP-CIDR（服务商自有、较精确）。
+#   例外：手写补充表（AI-Supplement*.list）**绕过 filter()**，是人工精选的。
+#         其中两条 IP-ASN 是厂商自有网段（399358 Anthropic PBC / 401518 OpenAI OpCo），
+#         与上面要剔的通用托管商不同，故有意保留。check-ai-lists.sh 断言「只允许这两位」。
 #
 # 用法：
 #   ./refresh-ai-lists.sh              本地手动：源失败或缩水 → 告警但保留旧文件，退出码 0
@@ -182,7 +185,7 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
 
   # 组装：注释头 + 去重排序后的规则行
   opt=$(mktemp)
-  { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS\n' \
+  { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段\n' \
       "$name" "$(date '+%Y-%m-%d %H:%M:%S')"
     if [ "$manual" != "-" ] && [ -f "$manual" ]; then
       printf '# 含本机手动补充：%s\n' "$manual"
@@ -192,11 +195,14 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
   } > "$opt"
   rm -f "$raw"
 
-  # 只在「规则内容」真变时重写该文件：
-  # 头部注释里的 # GEN 时间戳每次都不同，若因此重写，会导致每天产生一条空提交。
-  # 比较时剔掉注释行（只看规则行），无变化就保留旧文件（连 GEN 时间戳也不动）。
+  # 只在「真变化」时重写该文件。
+  # 比较时**只**剔掉 `# GEN:` 那一行（每次生成时间都不同，否则每天一条空提交）；
+  # 其余注释（# NAME / # NOTE / # 含本机手动补充）**参与比较** ——
+  # 曾经的写法是剔掉全部注释行，结果改了 NOTE/表头说明却永远不生效
+  # （只在规则恰好也变了的那天才顺带写出去，很难发现）。别改回 `grep -vE '^#'`。
+  norm() { grep -vE '^# GEN:' "$1"; }
   if [ -f "$out" ] && \
-     diff -q <(grep -vE '^#' "$out") <(grep -vE '^#' "$opt") >/dev/null 2>&1; then
+     diff -q <(norm "$out") <(norm "$opt") >/dev/null 2>&1; then
     rm -f "$opt"
     printf '%s   %-28s %s 行（无变化）\n' '--' "$out" "$(grep -cvE '^#|^$' "$out")"
   else

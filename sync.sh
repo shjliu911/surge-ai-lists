@@ -26,11 +26,11 @@ run() { if [ "$DRY" = 1 ]; then echo "    [dry-run] $*"; else eval "$@"; fi; }
 
 [ -d "$PROFILES" ] || { echo "找不到 Surge Profiles 目录: $PROFILES"; exit 1; }
 
-# ── 1. 刷新（拉上游，重写 6 张生成表）────────────────────────
+# ── 1. 刷新（拉上游，重写 7 张生成表）────────────────────────
 if [ "$NOPULL" = 1 ]; then
   say "跳过上游刷新（--no-pull）"
 else
-  say "刷新生成表（blackmatrix7 + VPSDance → 6 张 AI-*.list）"
+  say "刷新生成表（blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec → 7 张 AI-*.list）"
   run '"$REPO/refresh-ai-lists.sh"'
 fi
 

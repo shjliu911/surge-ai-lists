@@ -58,8 +58,15 @@ jobs:
           git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
           # 竞态兜底：checkout 期间若有人手动 push，远端会领先。
           # 重试：先 rebase 到最新 main（规则表不会被手动改动，冲突概率极低），再 push。
+          # 注意：循环用尽仍失败必须显式 exit 1 —— 否则步骤会"静默成功"，
+          # CI 显示绿色但新表根本没推上去（曾有此缺陷）。
+          ok=0
           for i in 1 2 3; do
-            if git push; then break; fi
+            if git push; then ok=1; break; fi
             echo "push 被拒，尝试 rebase 后重试 (#$i)…"
             git pull --rebase --autostash origin main || { echo "::error::rebase 冲突，需人工处理"; exit 1; }
           done
+          if [ "$ok" != 1 ]; then
+            echo "::error::push 重试 3 次仍失败，新规则未推送"
+            exit 1
+          fi

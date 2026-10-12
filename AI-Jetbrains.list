@@ -1,6 +1,6 @@
 # NAME: AI-Jetbrains
-# GEN:  2026-10-12 10:14:40
-# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
+# GEN:  2026-10-12 10:35:51
+# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 
 DOMAIN,account.jetbrains.com
 DOMAIN,api.app.prod.grazie.aws.intellij.net

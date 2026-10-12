@@ -44,6 +44,19 @@ else
   echo "✓ 无通用 SaaS 泄漏"
 fi
 
+# ── 3b) 断言：IP-ASN 只允许厂商自有网段 ──────────────────
+# 上游源里的 IP-ASN（DigitalOcean 14061 / Vultr 20473 等）是宽泛托管商网段，已被
+# filter() 剔除；只有手写补充表能绕过 filter()，其中**只应**出现厂商自有 ASN：
+#   399358 = Anthropic, PBC     401518 = OpenAI OpCo, LLC
+# 若这里冒出别的 ASN，说明有人手工加了通用托管商 → 会误代理一大片非 AI 主机。
+BAD_ASN=$(grep -rh '^IP-ASN,' AI-*.list | grep -vE '^IP-ASN,(399358|401518),' || true)
+if [ -n "$BAD_ASN" ]; then
+  echo "✗ 出现非厂商自有的 IP-ASN（应为空）："; echo "$BAD_ASN"; fail=1
+else
+  n=$(grep -rh '^IP-ASN,' AI-*.list | sort -u | wc -l | tr -d ' ')
+  echo "✓ IP-ASN 仅厂商自有（${n:-0} 条：Anthropic 399358 / OpenAI 401518）"
+fi
+
 # ── 4) 断言：海外表里不得出现被国内集合覆盖的域名（结构性隔离）──
 if python3 - <<'PY'
 import sys

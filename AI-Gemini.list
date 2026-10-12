@@ -1,6 +1,6 @@
 # NAME: AI-Gemini
-# GEN:  2026-10-12 10:24:24
-# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
+# GEN:  2026-10-12 10:35:47
+# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-Gemini.list
 
 DOMAIN,ai.google.dev

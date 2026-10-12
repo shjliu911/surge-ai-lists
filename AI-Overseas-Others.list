@@ -1,6 +1,6 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 10:24:37
-# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔 IP-ASN/宽泛KEYWORD/通用SaaS
+# GEN:  2026-10-12 10:36:01
+# NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
 DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe

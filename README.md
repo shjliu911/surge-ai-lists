@@ -26,7 +26,7 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 
 **生成 vs 人工**：`AI-Supplement*.list` 和 `AI-CN.list` 是**手写**的，脚本永不覆盖；
 `refresh-ai-lists.sh` 把两源（blackmatrix7 + VPSDance）拉下来，剔除宽泛规则后，
-再把对应的手写补充表折进去，写出 6 张主表。
+再把对应的手写补充表折进去，写出 7 张主表。
 
 ## 上游源（多源合并，查缺补漏）
 
@@ -85,7 +85,7 @@ Surge **无法对远程 list 做预过滤**（`RULE-SET` 只接受 URL 或本地
 cd ~/surge-ai-lists && ./sync.sh
 ```
 
-`sync.sh` 把全流程串起来：**拉上游刷新 6 张生成表 → 部署到 Surge Profiles → 有实质变化才提交+推送**。
+`sync.sh` 把全流程串起来：**拉上游刷新 7 张生成表 → 部署到 Surge Profiles → 有实质变化才提交+推送**。
 
 | 命令 | 用途 |
 |---|---|
