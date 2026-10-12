@@ -1,6 +1,7 @@
 # Surge AI 规则集（个人维护）
 
-把 Surge 配置里 **AI 分流相关的本地规则集**纳入版本管理，方便随时回滚、跨机同步、留痕。
+Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>`** 直接引用这些文件——
+仓库既是版本管理，也是**运行时数据源**。改这里 → 推送 → Surge 重拉即生效。
 
 > ⚠️ **本仓库永不包含 `lll.conf`**。它里面有机场订阅 token 与 MITM 的 CA 私钥口令，
 > 靠 `.gitignore` 的**白名单**（`*` + `!`）排除掉——只有下面列出的文件会被跟踪。
@@ -71,6 +72,21 @@ Surge **会自动热重载本机 list，无需手动 reload**。
 
 排查：`~/Library/Logs/surge-ai-lists.log` 里出现 `SKIP ... 源失败` 就是第 1 道闸拦下的，
 通常是 raw.githubusercontent.com 抽风，下次自动刷新自愈。
+
+## Surge 如何引用（运行方式）
+
+`lll.conf` 的 AI 段不再是本地文件，而是远程 URL：
+
+```
+RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list,"🧠 ChatGPT"
+RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Misc.list,"🤖 AI 服务"
+...
+```
+
+因此：
+- **仓库必须保持 public** —— Surge 拉 `raw.githubusercontent.com` 是**匿名**的，私有仓库会 404。
+- `sync.sh` 推完会**主动让 Surge 重拉**（`surge-cli external-resource update <key>`），无需等 Surge 自己的周期。
+- 想让 Surge 手动立刻重拉全部：`surge-cli external-resource update <key>`（key 用 `surge-cli external-resource list --raw` 查）。
 
 ## launchd
 
