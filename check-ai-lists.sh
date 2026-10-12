@@ -19,10 +19,13 @@ done
 
 # ── 2) 断言：AI-CN.list 必须覆盖关键国内 AI 域名 ─────────
 # 这些是用户日常在用的；缺任何一个都说明上游源出问题、或过滤误伤。
+# 注意：这里只列**AI 产品/服务**的域名，不列云平台的泛顶级域
+#（aliyun.com / volcengine.com / tencentcloudapi.com / baidubce.com 已于 2026-10-12
+#  按审计收窄——它们会把整个云平台的非 AI 流量拉直连）。对应的 AI 子域才是必查项。
 KEY_CN="deepseek.com moonshot.cn zhipuai.cn bigmodel.cn chatglm.cn \
 dashscope.aliyuncs.com tongyi.aliyun.com qwen.ai \
 yiyan.baidu.com ernie.baidu.com qianfan.baidubce.com \
-doubao.com volcengine.com coze.cn \
+doubao.com ark.cn-beijing.volces.com coze.cn \
 hunyuan.tencent.com yuanbao.tencent.com \
 siliconflow.cn modelscope.cn minimaxi.com hailuoai.com \
 stepfun.com sensenova.cn xfyun.cn"
@@ -143,6 +146,26 @@ sys.exit(1 if bad else 0)
 PY
 then echo "✓ 品牌表纯度达标（无聚合源污染）"
 else echo "✗ 品牌表被别家 AI 污染（见上）"; fail=1
+fi
+
+# ── 7) 断言：不得出现「整个云平台」的泛顶级域 ──────────────
+# 一条 DOMAIN-SUFFIX,aliyun.com 会把阿里云**全部**非 AI 产品（ECS/OSS/RDS…）拉直连。
+# 2026-10-12 审计把这类收窄到 AI 专属子域（dashscope/qianfan/ark/hunyuan…）。
+# 这条断言防止它们日后被上游源或人工重新引入。
+CLOUD_BROAD=$(grep -rhE '^DOMAIN-SUFFIX,(aliyun|volcengine|volces|tencentcloudapi|baidubce|amazonaws|googleapis|azure)\.(com|cn|net)$' AI-*.list || true)
+if [ -n "$CLOUD_BROAD" ]; then
+  echo "✗ 出现会导致大面积误代的「整个云平台」泛顶级域："; echo "$CLOUD_BROAD"; fail=1
+else
+  echo "✓ 无「整个云平台」泛顶级域（已收窄至 AI 子域）"
+fi
+
+# ── 8) 断言：不得混入明确的非 AI 账号/系统域 ───────────────
+# 这些在审计中被查实为「与 AI 无关」（iPhone 收款 / 微软账号 / Apple 定位 / 邮件追踪…）。
+NONAI=$(grep -rhE '^DOMAIN[^,]*,(login\.live\.com|humb\.apple\.com|gspe1-ssl\.ls\.apple\.com|ct\.sendgrid\.net|origin-tracker\.githubusercontent\.com)$' AI-*.list || true)
+if [ -n "$NONAI" ]; then
+  echo "✗ 混入非 AI 的账号/系统域："; echo "$NONAI"; fail=1
+else
+  echo "✓ 无非 AI 账号/系统域混入"
 fi
 
 exit $fail

@@ -3,6 +3,17 @@
 # USE:  RULE-SET,AI-CN.list,DIRECT   （本文件由 refresh-ai-lists.sh 折进 AI-CN.list）
 # NOTE: 手动维护。国内 AI 一律 DIRECT —— 避免 ChinaMax 遗漏时被误走代理。
 #       来源：VPSDance cn.list 的补集 + 各厂商官网实查。
+#
+# 2026-10-12 审计修订（按 DNS 解析 + whois 实证）：
+#   · 收窄「整个云平台」顶级域 → 只留 AI 专属子域。原来 aliyun.com / volcengine.com /
+#     tencentcloudapi.com / baidubce.com / volces.com 会把该平台**所有**非 AI 流量拉直连。
+#     这些平台的 AI 子域（dashscope / qianfan / ark / hunyuan 等）已在 VPSDance 源里单独收录，
+#     故收窄**不丢覆盖面**（见 refresh-ai-lists.sh 的 drop_covered 断言）。
+#   · 删除 DNS 查无此域的：tcwqqdy.guru / trae.guru / mchost.guru / mcbaas.work /
+#     mcprev.cn / deepseeksvc.com（NXDOMAIN 或 no-A，规则永不命中）。
+#   · 删除误收：pai.com（解析到 Webflow 建站平台，非阿里 PAI）、
+#     doudou.com（解析到 Zenlayer 境外 CDN，非豆包）、minimax.com（解析到 AWS 邮件转发域）。
+#   · capcut.cn（剪映）保留：字节系、含 AI 能力、国内直连无副作用。
 
 # ============ 大模型 / 对话 ============
 DOMAIN-SUFFIX,deepseek.cn
@@ -14,7 +25,6 @@ DOMAIN-SUFFIX,z.ai
 DOMAIN-SUFFIX,open.bigmodel.cn
 DOMAIN-SUFFIX,baichuan-ai.com
 DOMAIN-SUFFIX,baichuan.com
-DOMAIN-SUFFIX,minimax.com
 DOMAIN-SUFFIX,minimaxi.com
 DOMAIN-SUFFIX,hailuoai.com
 DOMAIN-SUFFIX,hailuo.com
@@ -34,15 +44,26 @@ DOMAIN-SUFFIX,zhuiyi.com
 DOMAIN-SUFFIX,01.ai
 DOMAIN-SUFFIX,msai.cn
 
-# ============ 平台 / 推理 / 云 API ============
-DOMAIN-SUFFIX,volcengine.com
-DOMAIN-SUFFIX,volces.com
-DOMAIN-SUFFIX,aliyun.com
-DOMAIN-SUFFIX,baidubce.com
-DOMAIN-SUFFIX,tencentcloudapi.com
-DOMAIN-SUFFIX,modelscope.com
-DOMAIN-SUFFIX,ppio.com
-DOMAIN-SUFFIX,ppio.cn
+# ============ 平台 / 推理 / 云 API（收窄至 AI 子域，不用整个云平台域）============
+# 火山引擎方舟
+DOMAIN-SUFFIX,ark.cn-beijing.volces.com
+DOMAIN-SUFFIX,maas-api.ml-platform-cn-beijing.volces.com
+# 阿里云百炼 / 通义
+DOMAIN-SUFFIX,bailian.console.aliyun.com
+DOMAIN-SUFFIX,dashscope.aliyuncs.com
+DOMAIN-SUFFIX,qianwen.aliyun.com
+DOMAIN-SUFFIX,tongyi.aliyun.com
+# 腾讯混元
+DOMAIN-SUFFIX,hunyuan.tencentcloudapi.com
+DOMAIN-SUFFIX,hunyuan.tencent.com
+# 百度千帆 / 文心
+DOMAIN-SUFFIX,qianfan.baidubce.com
+DOMAIN-SUFFIX,yiyan.baidu.com
+DOMAIN-SUFFIX,ernie.baidu.com
+# 模型社区 / 推理云（这些是 AI 专属品牌域，不是通用云平台）
+DOMAIN-SUFFIX,modelscope.cn
+DOMAIN-SUFFIX,siliconflow.cn
+DOMAIN-SUFFIX,siliconflow.com
 
 # ============ 编码助手 / 开发 ============
 DOMAIN-SUFFIX,codegeex.cn
@@ -55,5 +76,4 @@ DOMAIN-SUFFIX,capcut.cn
 DOMAIN-SUFFIX,vidu.com
 DOMAIN-SUFFIX,vidu.studio
 DOMAIN-SUFFIX,shengshu.com
-DOMAIN-SUFFIX,pai.com
 DOMAIN-SUFFIX,klingai.cn

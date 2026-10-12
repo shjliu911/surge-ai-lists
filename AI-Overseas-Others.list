@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 10:36:01
+# GEN:  2026-10-12 10:55:59
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -14,56 +14,33 @@ DOMAIN,api.cloudflare.com
 DOMAIN,api.github.com
 DOMAIN,api.groq.com
 DOMAIN,api.together.xyz
-DOMAIN,appcatalyst.pa.googleapis.com
-DOMAIN,apple-relay.apple.com
-DOMAIN,apple-relay.cloudflare.com
-DOMAIN,apple-relay.fastly-edge.com
-DOMAIN,apple-relay.mask.apple-dns.net
 DOMAIN,auth.grok.com
 DOMAIN,auth.grokipedia.com
 DOMAIN,auth.grokusercontent.com
 DOMAIN,auth.x.ai
-DOMAIN,aws-language-servers.us-east-1.amazonaws.com
-DOMAIN,aws-toolkit-language-servers.amazonaws.com
-DOMAIN,client-telemetry.us-east-1.amazonaws.com
 DOMAIN,codewhisperer.us-east-1.amazonaws.com
-DOMAIN,cognito-identity.us-east-1.amazonaws.com
 DOMAIN,console.groq.com
 DOMAIN,cp4.cloudflare.com
 DOMAIN,default.exp-tas.com
 DOMAIN,developer.meta.com
 DOMAIN,gateway.ai.cloudflare.com
-DOMAIN,gspe1-ssl.ls.apple.com
-DOMAIN,humb.apple.com
-DOMAIN,idetoolkits-hostedfiles.amazonaws.com
-DOMAIN,idetoolkits.amazonwebservices.com
 DOMAIN,llama.developer.meta.com
-DOMAIN,login.live.com
 DOMAIN,openrouter.ai
-DOMAIN,origin-tracker.githubusercontent.com
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
 DOMAIN,pplx-res.cloudinary.com
-DOMAIN,q-developer-integration.us-east-1.api.aws
-DOMAIN,waa-pa.clients6.google.com
 DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
 DOMAIN-SUFFIX,ai.azure.com
 DOMAIN-SUFFIX,ai.cloudflare.com
 DOMAIN-SUFFIX,aixcoder.com
 DOMAIN-SUFFIX,ampcode.com
 DOMAIN-SUFFIX,ampworkers.com
-DOMAIN-SUFFIX,api.revenuecat.com
 DOMAIN-SUFFIX,assemblyai.com
-DOMAIN-SUFFIX,atmeta.com
-DOMAIN-SUFFIX,augment.com
 DOMAIN-SUFFIX,augmentcode.com
 DOMAIN-SUFFIX,aws.dev
-DOMAIN-SUFFIX,awsapps.com
-DOMAIN-SUFFIX,awsstatic.com
 DOMAIN-SUFFIX,bfl.ai
 DOMAIN-SUFFIX,blackbox.ai
 DOMAIN-SUFFIX,bolt.new
 DOMAIN-SUFFIX,bytegate-sg.byteintlapi.com
-DOMAIN-SUFFIX,byteoversea.com
 DOMAIN-SUFFIX,cerebras.ai
 DOMAIN-SUFFIX,character.ai
 DOMAIN-SUFFIX,chorus.sh
@@ -72,7 +49,6 @@ DOMAIN-SUFFIX,cici.com
 DOMAIN-SUFFIX,ciciai.com
 DOMAIN-SUFFIX,ciciaicdn.com
 DOMAIN-SUFFIX,civitai.com
-DOMAIN-SUFFIX,clients6.google.com
 DOMAIN-SUFFIX,cline.bot
 DOMAIN-SUFFIX,clipdrop.co
 DOMAIN-SUFFIX,codeium.com
@@ -84,11 +60,9 @@ DOMAIN-SUFFIX,cohere.com
 DOMAIN-SUFFIX,comfy.org
 DOMAIN-SUFFIX,comfyregistry.org
 DOMAIN-SUFFIX,commandcode.ai
-DOMAIN-SUFFIX,console.aws.a2z.com
 DOMAIN-SUFFIX,continue.dev
 DOMAIN-SUFFIX,coze.com
 DOMAIN-SUFFIX,crewai.com
-DOMAIN-SUFFIX,ct.sendgrid.net
 DOMAIN-SUFFIX,cursor-cdn.com
 DOMAIN-SUFFIX,cursor.com
 DOMAIN-SUFFIX,cursor.sh
@@ -107,8 +81,6 @@ DOMAIN-SUFFIX,eigent.ai
 DOMAIN-SUFFIX,elevenlabs.com
 DOMAIN-SUFFIX,elevenlabs.io
 DOMAIN-SUFFIX,factory.ai
-DOMAIN-SUFFIX,featureassets.org
-DOMAIN-SUFFIX,firebaseinstallations.googleapis.com
 DOMAIN-SUFFIX,firefly.adobe.com
 DOMAIN-SUFFIX,firefly.adobe.io
 DOMAIN-SUFFIX,fireworks.ai
@@ -139,7 +111,6 @@ DOMAIN-SUFFIX,krea.ai
 DOMAIN-SUFFIX,langchain.com
 DOMAIN-SUFFIX,leonardo.ai
 DOMAIN-SUFFIX,lf3-static.bytednsdoc.com
-DOMAIN-SUFFIX,llama.com
 DOMAIN-SUFFIX,llamameta.net
 DOMAIN-SUFFIX,lmarena.ai
 DOMAIN-SUFFIX,lmstudio.ai
@@ -173,7 +144,6 @@ DOMAIN-SUFFIX,poe.com
 DOMAIN-SUFFIX,poecdn.net
 DOMAIN-SUFFIX,pool.ntp.org
 DOMAIN-SUFFIX,pplx.ai
-DOMAIN-SUFFIX,prodregistryv2.org
 DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
 DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
 DOMAIN-SUFFIX,qoder.com
@@ -190,7 +160,6 @@ DOMAIN-SUFFIX,runway.com
 DOMAIN-SUFFIX,runwayml.com
 DOMAIN-SUFFIX,sf16-short-sg.bytedapm.com
 DOMAIN-SUFFIX,sourcegraph.com
-DOMAIN-SUFFIX,sso.amazonaws.com
 DOMAIN-SUFFIX,stability.ai
 DOMAIN-SUFFIX,starling.zijieapi.com
 DOMAIN-SUFFIX,suno.ai

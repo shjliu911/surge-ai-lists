@@ -41,6 +41,46 @@ BAD_KW="sift|datadog|sentry|colab|openai|claude|anthropic|alkalimakersuite-pa|ch
 # 需要剔除的通用第三方域名（上游从 AI 登录页的 SDK 引用误收，会误抓一堆非 AI 站点）
 BAD_DOMAIN="algolia.net|auth0.com|stripe.com|sentry.io|intercom.io|intercomcdn.com|segment.io|launchdarkly.com|featuregates.org|identrust.com|observeit.net|statsig.com|statsigapi.net|datadoghq.com|cloudflareinsights.com|growthbook.io|challenges.cloudflare.com|cloudflare.net|azurefd.net|imgix.net|workos.com|workoscdn.com|usefathom.com|arkoselabs.com|browser-intake-datadoghq.com"
 
+# 通用云计算/开发平台的基础设施域（不是 AI 服务，会误代理大面积非 AI 流量）。
+# 来源：VPSDance 的泛聚合表 all/global/coding 里夹带了整块 AWS 开发工具链。
+#   sso.amazonaws.com       —— AWS **通用单点登录**，任何用 AWS SSO 的企业登录都会被代理
+#   awsstatic.com/awsapps.com/console.aws.a2z.com —— AWS CDN / 应用门户 / 控制台，极宽
+#   *-language-servers.amazonaws.com / aws-toolkit-* —— 通用语言服务器
+#   cognito-identity / client-telemetry —— 通用身份服务 / 遥测
+# 注意：Amazon Q / CodeWhisperer / Adobe Firefly **是** AI 服务（域名不出现在下面的模式里），会保留。
+BAD_INFRA="sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|language-servers\.amazonaws\.com|q-developer-integration"
+
+# 国内表（AI-CN）的剔除名单 —— 上游 VPSDance cn.list 自带的脏数据（2026-10-12 实证）。
+# 剔的是「整个云平台」顶级域：一条 aliyun.com 会把阿里云**全部**非 AI 产品拉直连。
+# 这些平台的 AI 子域（dashscope/qianfan/ark/hunyuan…）在源里已单独收录 → 收窄不丢覆盖面。
+BAD_CN="aliyun\.com|volcengine\.com|volces\.com|tencentcloudapi\.com|baidubce\.com"
+
+# DNS 查无此域（NXDOMAIN/no-A）或误收的域名 —— 规则永不命中，或指向无关站点。
+#   tcwqqdy.guru/mchost.guru/mcbaas.work/mcprev.cn : DNS 无解析（上游疑似灌入的幻觉域名）
+#   trae.guru        : Trae 官方是 trae.ai/trae.cn/trae.com.cn，此域无解析
+#   deepseeksvc.com  : DeepSeek 官方无此域，DNS 无解析
+#   doudou.com       : 解析到 Zenlayer 境外 CDN，非「豆包」(doubao.com)
+#   pai.com          : 解析到 Webflow 建站平台，非阿里 PAI
+#   minimax.com      : 解析到 AWS 共享邮件转发域，非 MiniMax(minimaxi.com)
+BAD_DEAD="tcwqqdy\.guru|mchost\.guru|mcbaas\.work|mcprev\.cn|trae\.guru|deepseeksvc\.com|doudou\.com|pai\.com|minimax\.com"
+
+# 错收的非 AI 域名（2026-10-12 审计 + DNS/whois 实证）。这些是「看起来像 AI 其实是别的东西」：
+#   login.live.com      —— 微软消费者账号登录（MSA），与 AI 无关
+#   humb.apple.com      —— Apple Tap to Pay（iPhone 收款）
+#   gspe1-ssl.ls.apple.com —— Apple 定位服务
+#   augment.com         —— **撞名**：实为爱尔兰 StayinFront 旗下 AR/3D 公司；
+#                          真正的 AI 编程工具 Augment Code 是 augmentcode.com（已在表内）
+#   origin-tracker.githubusercontent.com —— GitHub 仓库来源追踪（纯遥测）
+#   ct.sendgrid.net     —— SendGrid 邮件点击追踪（跨行业通用）
+# Apple iCloud 私人中继（apple-relay.*）与 AI 无关，也一并剔除。
+# 分两组：子串匹配（域名独特，含即剔）；精确匹配（augment.com 必须只命中本身，
+# 不能误伤 augmentcode.com，故用 (.*\.)?augment\.com + 边界）。
+BAD_MISC_SUBSTR="login\.live\.com|humb\.apple\.com|gspe1-ssl\.ls\.apple\.com|origin-tracker\.githubusercontent\.com|ct\.sendgrid\.net|apple-relay|appcatalyst\.pa\.googleapis\.com|firebaseinstallations\.googleapis\.com|api\.revenuecat\.com|featureassets\.org|prodregistryv2\.org|waa-pa\.clients6\.google\.com"
+# clients6.google.com 是 Google 内部 API 基础设施（Drive/Gmail/账号都走它），
+# 作为 DOMAIN-SUFFIX 过宽 —— 但 Gemini 相关的具体子域（*-pa.clients6.google.com、
+# webchannel-alkalimakersuite-…）必须保留，故按精确后缀剔，不用子串。
+BAD_MISC_EXACT="augment\.com|llama\.com|atmeta\.com|byteoversea\.com|clients6\.google\.com"
+
 fetch() { # $1=url  → stdout；失败重试 3 次（源变多了，得抗上游抖动）
   local i body
   for i in 1 2 3; do
@@ -56,6 +96,11 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与宽泛 KEYWORD�
   | grep -viE "^[[:space:]]*DOMAIN-KEYWORD,($BAD_KW)([[:space:]]|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+[.-])?($BAD_DOMAIN)([[:space:]]|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*datadoghq\.(com|eu)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*(sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|toolkit-language-servers|aws-language-servers|q-developer-integration)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_CN)([[:space:]]|,|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_DEAD)([[:space:]]|,|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*($BAD_MISC_SUBSTR)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_MISC_EXACT)([[:space:]]|,|$)" \
   | sed -E 's/[[:space:]]+$//' \
   | grep -vE '^[[:space:]]*$'
 }
