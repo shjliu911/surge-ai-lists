@@ -21,6 +21,7 @@ cd "$(dirname "$0")" || exit 1
 # 严格模式：CI 里开着；某张表出问题就让整个任务失败，绝不提交可疑内容。
 STRICT="${CI_STRICT:-0}"
 problem=0   # 累计问题表数；严格模式下用于最终退出码
+BUILD=".build"   # 中间产物目录（生成结束即删）
 
 BM7="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Surge"
 VPS="https://raw.githubusercontent.com/VPSDance/ai-proxy-rules/main/rules/surge"
@@ -50,72 +51,109 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与宽泛 KEYWORD�
   grep -vE '^[[:space:]]*(#|$)' \
   | grep -vE '^[[:space:]]*IP-ASN,' \
   | grep -viE "^[[:space:]]*DOMAIN-KEYWORD,($BAD_KW)([[:space:]]|$)" \
-  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+\.)?($BAD_DOMAIN)([[:space:]]|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+[.-])?($BAD_DOMAIN)([[:space:]]|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*datadoghq\.(com|eu)" \
   | sed -E 's/[[:space:]]+$//' \
   | grep -vE '^[[:space:]]*$'
 }
 
-cn_filter() { # $1=CN 规则文件  $2=待过滤规则文件 → stdout（剔除被 CN 集合覆盖的 DOMAIN/DOMAIN-SUFFIX）
-  # 结构性隔离：海外表绝不包含国内域名，靠数据集而非"规则顺序"保证。
-  # 数据用文件参数传（不能用 stdin——heredoc 已占用）
-  python3 - "$1" "$2" <<'PY'
+drop_covered() { # $1=待过滤文件  $2..=排除源文件 → stdout（剔除被排除集覆盖的 DOMAIN/DOMAIN-SUFFIX）
+  # 结构性隔离：靠数据集而非"规则顺序"保证归属唯一。
+  # 数据用文件参数传（不能用 stdin——heredoc 已占用，这个坑踩过两次）
+  python3 - "$@" <<'PY'
 import sys
+target = sys.argv[1]
 suf=set(); exact=set()
-for ln in open(sys.argv[1]):
-    t=ln.strip()
-    if not t or t.startswith('#'): continue
-    if t.startswith('DOMAIN-SUFFIX,'): suf.add(t.split(',',1)[1].split(',')[0].strip().lower())
-    elif t.startswith('DOMAIN,'):      exact.add(t.split(',',1)[1].split(',')[0].strip().lower())
+for f in sys.argv[2:]:
+    try: fh = open(f)
+    except FileNotFoundError: continue
+    for ln in fh:
+        t=ln.strip()
+        if not t or t.startswith('#'): continue
+        if t.startswith('DOMAIN-SUFFIX,'): suf.add(t.split(',',1)[1].split(',')[0].strip().lower())
+        elif t.startswith('DOMAIN,'):      exact.add(t.split(',',1)[1].split(',')[0].strip().lower())
 def cov(d):
     d=d.lower().split(',')[0].strip()
     if d in exact or d in suf: return True
     p=d.split('.')
     return any('.'.join(p[i:]) in suf for i in range(len(p)-1))
-for ln in open(sys.argv[2]):
+for ln in open(target):
     t=ln.strip()
     if t and not t.startswith('#'):
         k=t.split(',',1)[0]
-        if k in ('DOMAIN','DOMAIN-SUFFIX') and cov(t.split(',',1)[1]): continue
+        # DOMAIN-KEYWORD 若本身是某个已归属域名的写法（如
+        # DOMAIN-KEYWORD,alkalimakersuite-pa.clients6.google.com），也算重复。
+        # 裸关键词（openai 等）对不上任何域名后缀 → 保留。
+        if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD') and cov(t.split(',',1)[1]): continue
     sys.stdout.write(ln if ln.endswith('\n') else ln+'\n')
 PY
 }
 
-gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
+brand_pick() { # $1=表名(如 AI-OpenAI)  $2=已 filter 的输入文件 → stdout
+  # 品牌分发：聚合源（SukkaW ai.conf / ACL4SSR AI.list / Rabbit AIGC.list / dler AI Suite.list）
+  # 里"什么 AI 都有"，直接并入任一品牌表都会把别家 AI 一起拖进来（实测 AI-OpenAI 曾被
+  # 污染 64%）。这里只放行匹配本品牌签名的条目，其余留给 AI-Overseas-Others。
+  # 注意：签名只用于**聚合源**；品牌专用源（BM7/VPSDance/ACL4SSR 的 OpenAI.list 等）原样并入，
+  #       因为品牌源里合法地包含"同生态的别家域名"（如 Copilot 需要 openai.com）。
+  python3 - "$1" "$2" <<'PY'
+import sys, re
+SIG = {
+ 'AI-OpenAI':   r'openai|chatgpt|oaistatic|oaiusercontent|sora\.com|(^|\.)ai\.com$|(^|\.)chat\.com$',
+ 'AI-Claude':   r'claude|anthropic|(^|\.)clau\.de$',
+ 'AI-Gemini':   r'gemini|bard|makersuite|notebooklm|deepmind|jules|opal|antigravity|aisandbox|cloudcode|aistudio|generativelanguage|stitch|labstailwind|aicode|robinfrontend|jetski|geller|proactivebackend|generativeai|flow\.google|notebook\.google|gemini\.gstatic|(^|\.)ai\.google|(^|\.)ai\.studio|(^|\.)g\.ai$',
+ 'AI-Copilot':  r'copilot|bing|microsoft|msn',
+ 'AI-Jetbrains':r'jetbrains|intellij|grazie|jedi|junie',
+}
+rx = re.compile(SIG[sys.argv[1]], re.I)
+for ln in open(sys.argv[2]):
+    t = ln.strip()
+    if not t or t.startswith('#'):
+        continue                                  # 聚合源的注释无意义，不并入品牌表
+    k = t.split(',', 1)[0]
+    val = t.split(',', 1)[1].split(',')[0].strip() if ',' in t else ''
+    # 域名类与进程/UA 类可按键名匹配；IP 类无归属信号 → 留给 Others
+    if k in ('DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','PROCESS-NAME','PROCESS-PATH','USER-AGENT') and rx.search(val):
+        sys.stdout.write(ln if ln.endswith('\n') else ln+'\n')
+PY
+}
+
+collect() { # $1=outfile  $2..=urls → 写 outfile（已 filter）；任一源失败返回 1
+  local out="$1"; shift
+  local one fail=0
+  : > "$out"
+  for u in "$@"; do
+    one=$(mktemp)
+    if fetch "$u" > "$one" && [ -s "$one" ]; then
+      filter < "$one" >> "$out"
+    else
+      fail=$((fail + 1))
+      printf '     ! 源抓取失败: %s\n' "$u" >&2
+    fi
+    rm -f "$one"
+  done
+  [ "$fail" -eq 0 ]
+}
+
+gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（已 filter）
+  # 可选环境变量 DEDUP_AGAINST：若设置，最终内容再剔除一遍被它覆盖的域名。
+  # 手写补充表直接并入、绕过品牌分发，可能写进已被品牌表收走的域名（如
+  # AI-Supplement.list 里的 githubcopilot.com）→ 这一步兜住。
   out="$1"; name="$2"; manual="$3"; shift 3
-  raw=$(mktemp); one=$(mktemp); fail=0
+  raw=$(mktemp)
 
   # 手写补充表（本地文件，不会失败）先并入
   if [ "$manual" != "-" ] && [ -f "$manual" ]; then
     grep -vE '^[[:space:]]*(#|$)' "$manual" >> "$raw"
   fi
+  for f in "$@"; do [ -f "$f" ] && cat "$f" >> "$raw"; done
 
-  # 逐个远程源抓取。任一源失败 → 整表放弃（见下方），避免写出缩水的半成品。
-  for u in "$@"; do
-    if fetch "$u" > "$one" && [ -s "$one" ]; then
-      filter < "$one" >> "$raw"
-    else
-      fail=$((fail + 1))
-      printf '     ! 源抓取失败: %s\n' "$u" >&2
-    fi
-  done
-  rm -f "$one"
-
-  # 关键安全闸：只要有源抓失败，就保留旧文件、不覆盖。
-  # 否则一次网络抖动就会让列表缩水，把 AI 域名从代理里踢出去。
-  if [ "$fail" -gt 0 ]; then
-    printf 'SKIP %-28s %d 个源失败 → 保留旧文件，不覆盖\n' "$out" "$fail" >&2
-    rm -f "$raw"; problem=$((problem + 1)); return 1
+  if [ -n "${DEDUP_AGAINST:-}" ] && [ -f "$DEDUP_AGAINST" ]; then
+    drop_covered "$raw" "$DEDUP_AGAINST" > "$raw.d" && mv "$raw.d" "$raw"
   fi
 
   if [ ! -s "$raw" ]; then
-    printf 'FAIL %-28s 所有源为空 → 保留旧文件\n' "$out" >&2
+    printf 'FAIL %-28s 内容为空 → 保留旧文件\n' "$out" >&2
     rm -f "$raw"; problem=$((problem + 1)); return 1
-  fi
-
-  # 结构性隔离：CN_EXCLUDE=1 时，把被国内 AI 集合覆盖的域名从本表剔除。
-  # 必须在 sort -u 之前，且 CN 集合只含国内域名 → 只会剔掉国内域名，不会误伤海外。
-  if [ "${CN_EXCLUDE:-0}" = 1 ] && [ -f AI-CN.list ]; then
-    cn_filter AI-CN.list "$raw" > "$raw.f" && mv "$raw.f" "$raw"
   fi
 
   # 组装：注释头 + 去重排序后的规则行
@@ -158,39 +196,101 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
   fi
 }
 
+B="$BUILD"   # 中间产物目录
+rm -rf "$B"; mkdir -p "$B"
+
 # ── ① 先建国内 AI 集合（DIRECT）─────────────────────────────
 # 它是后面所有海外表的「排除集」：任何被它覆盖的域名，都会从海外表里结构化剔除，
 # 从而彻底消除「海外表混入国内域名 → 被误走代理」的问题（不再依赖规则顺序兜底）。
-gen AI-CN.list        "AI-CN"          "AI-Supplement-CN.list" \
-    "$VPS/cn.list"
+if collect "$B/cn.raw" "$VPS/cn.list"; then
+  gen AI-CN.list "AI-CN" "AI-Supplement-CN.list" "$B/cn.raw"
+else
+  printf 'SKIP %-28s 源失败 → 保留旧文件，不覆盖\n' "AI-CN.list" >&2
+  problem=$((problem + 1))
+fi
 
-# ── ② 海外主流 AI（各自成表）───────────────────────────────
-# CN_EXCLUDE=1：见上方 cp 注释——国内域名不进入任何海外表。
-export CN_EXCLUDE=1
+# ── ② 聚合源只抓一次（品牌表 + Others 都从这里取）────────────
+# 聚合源（SukkaW ai.conf / ACL4SSR AI.list / Rabbit AIGC.list / dler AI Suite.list）
+# 是「什么 AI 都有」的大杂烩。旧版把它们整份并进每张品牌表 → 严重污染：
+# 实测 AI-OpenAI 有 64%、AI-Claude 76%、AI-Gemini 47%、AI-Copilot 68% 的行其实是别家域名。
+# 现在改为：品牌表只取「匹配本品牌签名的」，其余留给 AI-Overseas-Others。
+have_agg=1
+if ! collect "$B/agg.raw" "$SUKKA/ai.conf" "$DLER/AI%20Suite.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"; then
+  have_agg=0; problem=$((problem + 1))
+  printf '!! 聚合源抓取失败 → 品牌表将只剩本品牌源，Others 会缩水\n' >&2
+fi
 
-gen AI-OpenAI.list    "AI-OpenAI"      "AI-Supplement-OpenAI.list" \
-    "$BM7/OpenAI/OpenAI.list" "$VPS/openai.list" "$SUKKA/ai.conf" "$DLER/AI%20Suite.list" "$ACL4/OpenAi.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+# 品牌表：品牌专用源（原样并入）+ 聚合源中匹配本品牌签名的 + 剔除国内域名 + 跨品牌去重
+# 跨品牌去重按「先建者优先」：OpenAI > Claude > Gemini > Copilot > JetBrains。
+# 品牌源之间有合法重叠（Copilot 表按上游设计含 openai.com 等），但同一域名进两张表
+# 意味着后者被前者遮蔽、成为死规则 —— 让每个域名只归属一张表更干净。
+: > "$B/claimed"
+export DEDUP_AGAINST="$B/claimed"   # gen 里对手写补充表也做去重（claimed 逐步增长）
+mkbrand() { # $1=表名(ex AI-OpenAI)  $2=manualfile  $3..=品牌专用 urls
+  local t="$1" manual="$2"; shift 2
+  local m="$B/$t"
+  # 聚合源失败时不要退化成「只剩品牌专用源」—— 那会让品牌表静默缩水（覆盖面丢失）。
+  # 与源失败同一处理：保留旧文件，严格模式下让整个任务失败。
+  if [ "$have_agg" != 1 ]; then
+    printf 'SKIP %-28s 聚合源失败 → 保留旧文件，不覆盖\n' "$t.list" >&2
+    problem=$((problem + 1)); return 1
+  fi
+  if ! collect "$m.brand.raw" "$@"; then
+    printf 'SKIP %-28s 品牌源失败 → 保留旧文件，不覆盖\n' "$t.list" >&2
+    problem=$((problem + 1)); return 1
+  fi
+  cp "$m.brand.raw" "$m.merged"
+  [ "$have_agg" = 1 ] && brand_pick "$t" "$B/agg.raw" >> "$m.merged"
+  # 跨品牌去重（先建的品牌已登记在 claimed 里）
+  drop_covered "$m.merged" "$B/claimed" > "$m.d1" && mv "$m.d1" "$m.merged"
+  # 结构性隔离：国内域名不进任何海外表
+  [ -f AI-CN.list ] && { drop_covered "$m.merged" AI-CN.list > "$m.d2" && mv "$m.d2" "$m.merged"; }
+  gen "$t.list" "$t" "$manual" "$m.merged"
+  cat "$m.merged" >> "$B/claimed"
+}
 
-gen AI-Claude.list    "AI-Claude"      "AI-Supplement-Claude.list" \
-    "$BM7/Claude/Claude.list" "$BM7/Anthropic/Anthropic.list" "$VPS/anthropic.list" "$SUKKA/ai.conf" "$ACL4/Claude.list" "$ACL4/ClaudeAI.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+mkbrand AI-OpenAI   "AI-Supplement-OpenAI.list" \
+    "$BM7/OpenAI/OpenAI.list" "$VPS/openai.list" "$ACL4/OpenAi.list"
 
-gen AI-Gemini.list    "AI-Gemini"      "AI-Supplement-Gemini.list" \
-    "$BM7/Gemini/Gemini.list" "$BM7/BardAI/BardAI.list" "$VPS/google-ai.list" "$SUKKA/ai.conf" "$ACL4/Gemini.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+mkbrand AI-Claude   "AI-Supplement-Claude.list" \
+    "$BM7/Claude/Claude.list" "$BM7/Anthropic/Anthropic.list" "$VPS/anthropic.list" "$ACL4/Claude.list" "$ACL4/ClaudeAI.list"
 
-gen AI-Copilot.list   "AI-Copilot"     "-" \
-    "$BM7/Copilot/Copilot.list" "$VPS/copilot.list" "$ACL4/AI.list"
+mkbrand AI-Gemini   "AI-Supplement-Gemini.list" \
+    "$BM7/Gemini/Gemini.list" "$BM7/BardAI/BardAI.list" "$VPS/google-ai.list" "$ACL4/Gemini.list"
 
-gen AI-Jetbrains.list "AI-Jetbrains"   "-" \
+mkbrand AI-Copilot  "-" \
+    "$BM7/Copilot/Copilot.list" "$VPS/copilot.list"
+
+mkbrand AI-Jetbrains "-" \
     "$BM7/Jetbrains/Jetbrains.list" "$VPS/jetbrains-ai.list" "$ACL4/JetBrains.list"
 
-# ── ③ 其余海外 AI 全部归一表 ───────────────────────────────
-gen AI-Overseas-Others.list "AI-Overseas-Others"        "AI-Supplement.list" \
-    "$VPS/x-ai.list" "$VPS/meta-ai.list" "$VPS/cursor.list" "$VPS/windsurf.list" \
-    "$VPS/opencode.list" "$VPS/cline.list" "$VPS/zed.list" "$VPS/model.list" "$VPS/media.list" \
-    "$VPS/global.list" "$VPS/coding.list" "$VPS/all.list" \
-    "$BM7/aiXcoder/aiXcoder.list" "$BM7/Civitai/Civitai.list" \
-    "$SUKKA/ai.conf" "$DLER/AI%20Suite.list" "$ACL4/AI.list" "$RABBIT/AIGC.list"
+# ── ③ 其余海外 AI：聚合源里「没被任何品牌表收走」的部分 ──────
+# 用补集而非硬编码清单 —— 品牌表收哪个域名是运行时决定的，这里必须跟着它走，
+# 否则要么重复（同一域名进两张表）要么漏（谁都不要）。
+if [ "$have_agg" = 1 ]; then
+  cp "$B/agg.raw" "$B/others.clean"
+  # 先剔除已被品牌表覆盖的（用 claimed 集合，与品牌表口径完全一致）
+  drop_covered "$B/others.clean" "$B/claimed" > "$B/others.c1" && mv "$B/others.c1" "$B/others.clean"
+  # 再剔除国内域名
+  [ -f AI-CN.list ] && { drop_covered "$B/others.clean" AI-CN.list > "$B/others.c2" && mv "$B/others.c2" "$B/others.clean"; }
 
+  # VPSDance 的杂项品牌源（xAI/Meta/Cursor/…）也归这里，但也要过一遍去重
+  collect "$B/others.misc" \
+      "$VPS/x-ai.list" "$VPS/meta-ai.list" "$VPS/cursor.list" "$VPS/windsurf.list" \
+      "$VPS/opencode.list" "$VPS/cline.list" "$VPS/zed.list" "$VPS/model.list" "$VPS/media.list" \
+      "$VPS/global.list" "$VPS/coding.list" "$VPS/all.list" \
+      "$BM7/aiXcoder/aiXcoder.list" "$BM7/Civitai/Civitai.list" || problem=$((problem + 1))
+  # 剔除已被任何品牌表收走的（用 claimed 集合，与品牌表口径完全一致）
+  drop_covered "$B/others.misc" "$B/claimed" > "$B/others.m1" && mv "$B/others.m1" "$B/others.misc"
+  [ -f AI-CN.list ] && { drop_covered "$B/others.misc" AI-CN.list > "$B/others.m2" && mv "$B/others.m2" "$B/others.misc"; }
+
+  gen AI-Overseas-Others.list "AI-Overseas-Others" "AI-Supplement.list" \
+      "$B/others.clean" "$B/others.misc"
+else
+  printf 'SKIP %-28s 聚合源失败 → 保留旧文件，不覆盖\n' "AI-Overseas-Others.list" >&2
+fi
+
+rm -rf "$B"
 echo "完成。Surge 会自动重载本机 list（无需手动 reload）。"
 
 # 严格模式下：只要有任何一张表出问题，就以退出码 2 失败，阻止 CI 的提交步骤。

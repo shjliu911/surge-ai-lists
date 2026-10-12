@@ -71,4 +71,59 @@ then echo "✓ 海外表无国内域名混入（结构性隔离生效）"
 else echo "✗ 海外表混入了国内域名（见上）"; fail=1
 fi
 
+# ── 5) 断言：每个域名只归属一张表（跨表唯一）──────────────
+# 品牌表之间有合法重叠（Copilot 按上游设计含 openai.com），但同一域名进两张表
+# 意味着后者被前者遮蔽 → 死规则。生成器已按「先建者优先」去重，这里守住它。
+if python3 - <<'PY'
+import sys
+from collections import Counter
+T=['AI-CN','AI-OpenAI','AI-Claude','AI-Gemini','AI-Copilot','AI-Jetbrains','AI-Overseas-Others']
+c=Counter(); owner={}
+for t in T:
+    try: fh=open(t+'.list')
+    except FileNotFoundError: continue
+    for ln in fh:
+        ln=ln.strip()
+        if not ln.startswith(('DOMAIN,','DOMAIN-SUFFIX,')): continue
+        d=ln.split(',',1)[1].split(',')[0].strip().lower()
+        if d in owner and owner[d]!=t: c[d]+=1; print(f'  {d} 同时在 {owner[d]} 与 {t}')
+        else: owner.setdefault(d,t)
+sys.exit(1 if c else 0)
+PY
+then echo "✓ 跨表无重复域名（归属唯一）"
+else echo "✗ 同一域名出现在多张表（见上）"; fail=1
+fi
+
+# ── 6) 断言：品牌表纯度（聚合源不得把别家 AI 灌进品牌表）────
+# 这是 2026-10-12 修复的那次事故：四个聚合源（SukkaW ai.conf / ACL4SSR AI.list /
+# Rabbit AIGC.list / dler AI Suite.list）曾被整份并入每张品牌表 →
+# AI-OpenAI 64% / AI-Claude 76% / AI-Gemini 47% / AI-Copilot 68% 的行是别家域名。
+if python3 - <<'PY'
+import sys, re
+SIG={
+ 'AI-OpenAI':  r'openai|chatgpt|oaistatic|oaiusercontent|sora\.com|crixet|livekit|oaistatsig|(^|\.)ai\.com$|(^|\.)chat\.com$',
+ 'AI-Claude':  r'claude|anthropic|(^|\.)clau\.de$|modelcontextprotocol|mcpserver|antspace|lcic|interface\.feedback|chatbotclaude|muthos|sillylittleguy',
+ 'AI-Gemini':  r'gemini|bard|makersuite|notebooklm|deepmind|jules|opal|antigravity|aisandbox|cloudcode|aistudio|generativelanguage|stitch|labstailwind|aicode|robinfrontend|jetski|geller|proactivebackend|generativeai|flow\.google|notebook\.google|gemini\.gstatic|(^|\.)ai\.google|(^|\.)ai\.studio|(^|\.)g\.ai$|apis\.google|clients6|goog$',
+ 'AI-Copilot': r'copilot|bing|microsoft|msn|github|openai|chatgpt|oaistatic|oaiuser|livekit|appcenter|officeapps',
+ 'AI-Jetbrains':r'jetbrains|intellij|grazie|jedi|junie|kotlin|datalore',
+}
+THRESHOLD=0.80   # 品牌域名占比下限（留足余量；实测均 ≥80%）
+bad=0
+for t,rx in SIG.items():
+    try: lines=[l.strip() for l in open(t+'.list') if l.strip() and not l.startswith('#')]
+    except FileNotFoundError: continue
+    dom=[l for l in lines if l.startswith(('DOMAIN,','DOMAIN-SUFFIX,','DOMAIN-KEYWORD'))]
+    if not dom: continue
+    R=re.compile(rx,re.I)
+    ok=sum(1 for l in dom if R.search(l.split(',',1)[1].split(',')[0]))
+    ratio=ok/len(dom)
+    if ratio < THRESHOLD:
+        print(f'  {t}: 本品牌占比 {ratio*100:.0f}%（< {THRESHOLD*100:.0f}%）—— 疑似聚合源污染')
+        bad+=1
+sys.exit(1 if bad else 0)
+PY
+then echo "✓ 品牌表纯度达标（无聚合源污染）"
+else echo "✗ 品牌表被别家 AI 污染（见上）"; fail=1
+fi
+
 exit $fail

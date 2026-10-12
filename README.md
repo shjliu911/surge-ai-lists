@@ -36,15 +36,34 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 |---|---|
 | **blackmatrix7/ios_rule_script** | 海外分服务细表（OpenAI/Claude/Gemini/Copilot/Jetbrains/Civitai…）|
 | **VPSDance/ai-proxy-rules** | `cn`（中国 AI 聚合）+ `global`/`coding`/`all` + 各 provider（x-ai/cursor/windsurf…）|
-| **SukkaW/Surge** | `Source/non_ip/ai.conf` 人工精选 |
-| **dler-io/Rules** | `AI Suite.list`（247 条，含 Azure OpenAI IP）|
-| **ACL4SSR/ACL4SSR** | `AI.list`/`OpenAi.list`/`Claude.list`/`Gemini.list`/`JetBrains.list` |
-| **Rabbit-Spec/Surge** | `AIGC.list`（129 条）|
+| **SukkaW/Surge** | `Source/non_ip/ai.conf` 人工精选 —— **聚合源** |
+| **dler-io/Rules** | `AI Suite.list`（247 条，含 Azure OpenAI IP）—— **聚合源** |
+| **ACL4SSR/ACL4SSR** | `OpenAi`/`Claude`/`Gemini`/`JetBrains.list`（品牌）+ `AI.list`（**聚合**）|
+| **Rabbit-Spec/Surge** | `AIGC.list`（129 条）—— **聚合源** |
 
-**国内 / 海外结构性隔离**（关键设计）：
+### 品牌归属：聚合源不能整份并进品牌表（重要）
+
+上游源分两类，混用会出事：
+
+- **品牌专用源** —— 只含本品牌（`BM7/OpenAI/OpenAI.list` 35 行、`VPS/openai.list` 51 行…）。
+  品牌源里可以合法地含别家域名（Copilot 按上游设计要 `openai.com`），所以**原样并入**。
+- **聚合源** —— 什么 AI 都有（SukkaW `ai.conf`、dler `AI Suite`、ACL4SSR `AI.list`、Rabbit `AIGC`）。
+
+**2026-10-12 修的一次事故**：聚合源曾被整份并进**每一张**品牌表 → 实测
+`AI-OpenAI` 有 **64%**、`AI-Claude` **76%**、`AI-Gemini` **47%**、`AI-Copilot` **68%**
+的行是别家域名（`claude.ai` 躺在 Gemini 表里之类）。
+
+现在改为：**品牌表 = 品牌专用源 + 聚合源中匹配本品牌签名的条目**；
+剩下的聚合条目归 `AI-Overseas-Others`。归属保证：
+1. **每个域名只进一张表**（`$B/claimed` 记录已归属，按 OpenAI>Claude>Gemini>Copilot>JetBrains 先建者优先）；
+2. `AI-Overseas-Others` 取**补集**而非硬编码清单 —— 品牌表收什么它就让出什么，既不重复也不漏；
+3. 手写补充表（`AI-Supplement*.list`）也过同一套去重，防止绕过。
+`check-ai-lists.sh` 在 CI 里断言「跨表无重复」+「品牌纯度 ≥80%」，回归会被拦下。
+
+### 国内 / 海外结构性隔离
+
 - `AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写），全部 DIRECT。
-- 生成**顺序**：先建 `AI-CN.list`，再 `export CN_EXCLUDE=1` 生成 6 张海外表。
-- `cn_filter` 用 `AI-CN` 当**排除集**：任何被国内集合覆盖的域名，从海外表里**结构化剔除**。
+- `drop_covered` 用 `AI-CN` 当**排除集**：任何被国内集合覆盖的域名，从海外表里**结构化剔除**。
   所以 `AI-Overseas-Others` 里不会出现 `bigmodel.cn`/`siliconflow.cn` 之类的国内域名——
   靠**数据集**保证，而不是靠 `lll.conf` 的规则顺序兜底。`check-ai-lists.sh` 在 CI 里断言这条。
 
