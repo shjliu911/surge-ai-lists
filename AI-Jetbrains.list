@@ -1,5 +1,5 @@
 # NAME: AI-Jetbrains
-# GEN:  2026-10-12 10:35:51
+# GEN:  2026-10-12 11:55:01
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 
 DOMAIN,account.jetbrains.com
@@ -9,7 +9,6 @@ DOMAIN,api.jetbrains.cloud
 DOMAIN,oauth.account.jetbrains.com
 DOMAIN-SUFFIX,datalore.io
 DOMAIN-SUFFIX,grazie.ai
-DOMAIN-SUFFIX,grazie.aws.intellij.net
 DOMAIN-SUFFIX,intellij.com
 DOMAIN-SUFFIX,intellij.net
 DOMAIN-SUFFIX,intellij.org

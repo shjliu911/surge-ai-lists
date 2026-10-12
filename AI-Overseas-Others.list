@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 11:52:33
+# GEN:  2026-10-12 11:55:15
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -94,7 +94,6 @@ DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,groq.com
 DOMAIN-SUFFIX,h2o.ai
-DOMAIN-SUFFIX,hermes-agent.nousresearch.com
 DOMAIN-SUFFIX,heygen.com
 DOMAIN-SUFFIX,hf.co
 DOMAIN-SUFFIX,hf.space

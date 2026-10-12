@@ -246,7 +246,24 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
       { key = $2; sub(/[ \t]+$/, "", key)
         if (key in seen) { if ($1=="DOMAIN-SUFFIX") lines[key]=$0 }
         else { seen[key]=1; lines[key]=$0; order[++n]=key } }
-      END { for (i=1;i<=n;i++) print lines[order[i]] }'
+      END { for (i=1;i<=n;i++) print lines[order[i]] }' \
+    | python3 -c '
+import sys
+# 再收一层「后缀冗余」：DOMAIN-SUFFIX 子域被同表的父域覆盖时是死规则
+# （a.b.com 恒被 b.com 命中），删掉。只处理 DOMAIN-SUFFIX（后缀包含关系明确）；
+# DOMAIN 不参与 —— 精确名不被父域"覆盖"（语义不同，且可能被父域规则一起搬走）。
+rows=[]; suf=set()
+for ln in sys.stdin:
+    ln=ln.rstrip("\n"); rows.append(ln)
+    if ln.startswith("DOMAIN-SUFFIX,"): suf.add(ln.split(",",1)[1].strip().lower())
+out=[]
+for ln in rows:
+    if ln.startswith("DOMAIN-SUFFIX,"):
+        d=ln.split(",",1)[1].strip().lower(); p=d.split(".")
+        if any(".".join(p[i:]) in suf for i in range(1,len(p)-1)):
+            continue
+    out.append(ln)
+sys.stdout.write("\n".join(out)+("\n" if out else ""))'
   } > "$opt"
   rm -f "$raw"
 
