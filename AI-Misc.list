@@ -1,8 +1,7 @@
 # NAME: AI-Misc
-# GEN:  2026-10-12 08:15:26
+# GEN:  2026-10-12 08:17:59
 # NOTE: 合并 bm7 + VPSDance 两源；已剔除 IP-ASN 与通用 KEYWORD/域名
 # 含本机手动补充：AI-Supplement.list
-
 
 DOMAIN,ai.developer.meta.com
 DOMAIN,ai.meta.com

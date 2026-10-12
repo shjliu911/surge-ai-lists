@@ -35,32 +35,69 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与通用关键词
 
 gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=urls
   out="$1"; name="$2"; manual="$3"; shift 3
-  tmp=$(mktemp)
+  raw=$(mktemp); one=$(mktemp); fail=0
+
+  # 手写补充表（本地文件，不会失败）先并入
+  if [ "$manual" != "-" ] && [ -f "$manual" ]; then
+    grep -vE '^[[:space:]]*(#|$)' "$manual" >> "$raw"
+  fi
+
+  # 逐个远程源抓取。任一源失败 → 整表放弃（见下方），避免写出缩水的半成品。
+  for u in "$@"; do
+    if fetch "$u" > "$one" && [ -s "$one" ]; then
+      filter < "$one" >> "$raw"
+    else
+      fail=$((fail + 1))
+      printf '     ! 源抓取失败: %s\n' "$u" >&2
+    fi
+  done
+  rm -f "$one"
+
+  # 关键安全闸：只要有源抓失败，就保留旧文件、不覆盖。
+  # 否则一次网络抖动就会让列表缩水，把 AI 域名从代理里踢出去。
+  if [ "$fail" -gt 0 ]; then
+    printf 'SKIP %-28s %d 个源失败 → 保留旧文件，不覆盖\n' "$out" "$fail" >&2
+    rm -f "$raw"; return 1
+  fi
+
+  if [ ! -s "$raw" ]; then
+    printf 'FAIL %-28s 所有源为空 → 保留旧文件\n' "$out" >&2
+    rm -f "$raw"; return 1
+  fi
+
+  # 组装：注释头 + 去重排序后的规则行
+  opt=$(mktemp)
   { printf '# NAME: %s\n# GEN:  %s\n# NOTE: 合并 bm7 + VPSDance 两源；已剔除 IP-ASN 与通用 KEYWORD/域名\n' \
       "$name" "$(date '+%Y-%m-%d %H:%M:%S')"
     if [ "$manual" != "-" ] && [ -f "$manual" ]; then
-      printf '# 含本机手动补充：%s\n\n' "$manual"
-      grep -vE '^[[:space:]]*(#|$)' "$manual"
-      printf '\n'
-    else
-      printf '\n'
+      printf '# 含本机手动补充：%s\n' "$manual"
     fi
-    for u in "$@"; do fetch "$u" | filter; done
-  } > "$tmp"
-  if [ -s "$tmp" ]; then
-    { grep -E '^#' "$tmp"; printf '\n'; grep -vE '^#' "$tmp" | sort -u; } > "$out.tmp"
-    # 只在「规则内容」真变时重写该文件：
-    # 头部注释里的 # GEN 时间戳每次都不同，若因此重写，会导致每天产生一条空提交。
-    # 比较时剔掉注释头（只看规则行），无变化就保留旧文件（连 GEN 时间戳也不动）。
-    if [ -f "$out" ] && \
-       diff -q <(grep -vE '^#' "$out") <(grep -vE '^#' "$out.tmp") >/dev/null 2>&1; then
-      rm -f "$out.tmp" "$tmp"
-      printf '%s   %-28s %s 行（无变化）\n' '--' "$out" "$(grep -cvE '^#|^$' "$out")"
-    else
-      mv "$out.tmp" "$out"; rm -f "$tmp"
-      printf 'OK   %-28s %s 行\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+    printf '\n'
+    sort -u "$raw"
+  } > "$opt"
+  rm -f "$raw"
+
+  # 只在「规则内容」真变时重写该文件：
+  # 头部注释里的 # GEN 时间戳每次都不同，若因此重写，会导致每天产生一条空提交。
+  # 比较时剔掉注释行（只看规则行），无变化就保留旧文件（连 GEN 时间戳也不动）。
+  if [ -f "$out" ] && \
+     diff -q <(grep -vE '^#' "$out") <(grep -vE '^#' "$opt") >/dev/null 2>&1; then
+    rm -f "$opt"
+    printf '%s   %-28s %s 行（无变化）\n' '--' "$out" "$(grep -cvE '^#|^$' "$out")"
+  else
+    # 缩水告警：新内容若比旧版少于 70%，大概率是上游异常而非正常收敛。
+    # 不拦截（上游确实会删规则），但响亮告警，提醒人工确认后再 push。
+    if [ -f "$out" ]; then
+      oldn=$(grep -cvE '^#|^$' "$out"); newn=$(grep -cvE '^#|^$' "$opt")
+      if [ "$oldn" -gt 10 ] && [ "$newn" -lt $((oldn * 7 / 10)) ]; then
+        printf '\n\033[31m!!! 缩水告警 %s: %s 行 → %s 行（少 %.0f%%）\033[0m\n' \
+          "$out" "$oldn" "$newn" "$(echo "($oldn-$newn)*100/$oldn" | bc -l 2>/dev/null || echo 0)" >&2
+        printf '    请确认是上游正常收敛后，再 git push（本函数已写入该缩水版）\n\n' >&2
+      fi
     fi
-  else echo "FAIL(all sources) $out"; rm -f "$tmp"; fi
+    mv "$opt" "$out"
+    printf 'OK   %-28s %s 行\n' "$out" "$(grep -cvE '^#|^$' "$out")"
+  fi
 }
 
 #                                            输出文件              名称            手动补充表                        远程源
