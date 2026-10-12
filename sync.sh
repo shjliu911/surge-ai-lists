@@ -34,8 +34,10 @@ else
   run '"$REPO/refresh-ai-lists.sh"'
 fi
 
-# ── 2. 部署到 Surge（仓库 → Profiles）─────────────────────
-say "部署到 Surge Profiles"
+# ── 2. 同步到 Surge Profiles（本地备份副本，供离线查看/回滚）────────
+# 注意：lll.conf 现在用 RULE-SET,<仓库 URL> 引用，Surge **不再读**这里的 .list。
+# 这一步只是让 Profiles 目录留一份与仓库一致的副本，方便本地比对/手工回滚。
+say "同步本地副本到 Surge Profiles（备份用）"
 for f in AI-*.list refresh-ai-lists.sh; do
   [ -e "$f" ] || continue
   if ! cmp -s "$f" "$PROFILES/$f"; then
@@ -70,5 +72,35 @@ if [ "$DRY" = 1 ]; then
 else
   say "推送到 GitHub"
   git push -q origin main && echo "    ✓ 已推送"
+fi
+
+# ── 5. 让 Surge 立刻重拉远程 list ─────────────────────────
+# lll.conf 现在用 RULE-SET,<仓库 URL> 引用，Surge 有自己的拉取周期。
+# push 之后主动触发一次重拉，新规则即时生效（否则要等 Surge 下次自己拉）。
+CLI="/Applications/Surge.app/Contents/Applications/surge-cli"
+if [ "$DRY" = 1 ]; then
+  echo "    [dry-run] 触发 Surge 重拉 AI list"
+elif [ -x "$CLI" ]; then
+  keys=$("$CLI" external-resource list --raw 2>/dev/null | python3 -c '
+import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    sys.exit(0)
+rows = d.get("defines", d) if isinstance(d, dict) else d
+for r in rows:
+    if isinstance(r, dict) and "shjliu911/surge-ai-lists" in str(r.get("path","")):
+        print(r.get("key",""))
+' 2>/dev/null)
+  if [ -n "$keys" ]; then
+    say "触发 Surge 重拉 AI list"
+    n=0
+    for k in $keys; do
+      "$CLI" external-resource update "$k" >/dev/null 2>&1 && n=$((n+1))
+    done
+    echo "    ✓ 已触发 $n 个远程 list 重拉"
+  else
+    echo "    ! 未能在 Surge 中找到本仓库资源（配置可能还没改成远程 URL）"
+  fi
 fi
 say "完成：$MSG"

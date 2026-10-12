@@ -1,5 +1,5 @@
 # NAME: AI-Misc
-# GEN:  2026-10-12 08:17:59
+# GEN:  2026-10-12 08:37:03
 # NOTE: 合并 bm7 + VPSDance 两源；已剔除 IP-ASN 与通用 KEYWORD/域名
 # 含本机手动补充：AI-Supplement.list
 
@@ -190,6 +190,7 @@ DOMAIN-SUFFIX,stability.ai
 DOMAIN-SUFFIX,stitch.withgoogle.com
 DOMAIN-SUFFIX,suno.ai
 DOMAIN-SUFFIX,suno.com
+DOMAIN-SUFFIX,synctest-probe.example
 DOMAIN-SUFFIX,synthesia.io
 DOMAIN-SUFFIX,tabnine.com
 DOMAIN-SUFFIX,together.ai
