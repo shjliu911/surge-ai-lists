@@ -41,9 +41,15 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 | **ACL4SSR/ACL4SSR** | `AI.list`/`OpenAi.list`/`Claude.list`/`Gemini.list`/`JetBrains.list` |
 | **Rabbit-Spec/Surge** | `AIGC.list`（129 条）|
 
-**国内 AI 单独一层**：`AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写）。
-在 `lll.conf` 里 **AI-CN 排在所有海外 AI 之前**——因为海外表多源合并后难免混入国内域名
-（如 `bigmodel.cn`/`siliconflow.cn`），先判 DIRECT 兜住，避免被误走代理。
+**国内 / 海外结构性隔离**（关键设计）：
+- `AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写），全部 DIRECT。
+- 生成**顺序**：先建 `AI-CN.list`，再 `export CN_EXCLUDE=1` 生成 6 张海外表。
+- `cn_filter` 用 `AI-CN` 当**排除集**：任何被国内集合覆盖的域名，从海外表里**结构化剔除**。
+  所以 `AI-Misc` 里不会出现 `bigmodel.cn`/`siliconflow.cn` 之类的国内域名——
+  靠**数据集**保证，而不是靠 `lll.conf` 的规则顺序兜底。`check-ai-lists.sh` 在 CI 里断言这条。
+
+表结构：`AI-CN`（国内，DIRECT）+ `AI-OpenAI`/`AI-Claude`/`AI-Gemini`（主流海外各自成表）
++ `AI-Copilot`/`AI-Jetbrains`/`AI-Misc`（其余海外归一）。
 
 ## 为什么用本地文件、不直接 `RULE-SET` 远程 URL
 
