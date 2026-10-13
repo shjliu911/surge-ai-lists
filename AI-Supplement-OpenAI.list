@@ -3,6 +3,10 @@
 # USE:  RULE-SET,AI-Supplement-OpenAI.list,🧠 ChatGPT
 # NOTE: 手动维护。源：VPSDance/ai-proxy-rules openai.list，已剔除宽泛项(statsigapi.net)。
 # GEN:  2026-10-11
+# 2026-10-13: 删除全部 PROCESS-NAME（ChatGPT/Codex/codex…）。进程规则会命中该进程的
+#   **全部**连接、不分域名/IP —— codex CLI 连局域网 NAS(192.168.0.125:20128) 也被抓走
+#   送到 ChatGPT 代理节点，节点够不着局域网 → 请求 in=0 失败 → 503。云端 OpenAI 流量
+#   靠上面的 DOMAIN* 规则即可，不需要按进程抓。
 
 DOMAIN-SUFFIX,chat.com
 DOMAIN-SUFFIX,crixet.com
@@ -12,13 +16,6 @@ DOMAIN-SUFFIX,oaistatsig.com
 DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net
 DOMAIN,openaiassets.blob.core.windows.net
 DOMAIN-KEYWORD,chatgpt-async-webps-prod
-
-PROCESS-NAME,ChatGPT
-PROCESS-NAME,ChatGPT.exe
-PROCESS-NAME,Codex
-PROCESS-NAME,Codex.exe
-PROCESS-NAME,chatgpt
-PROCESS-NAME,codex
 
 IP-CIDR,199.47.142.0/23,no-resolve
 IP-CIDR6,2604:f20::/32,no-resolve

@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-12 21:45:02
+# GEN:  2026-10-13 10:45:09
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -20,7 +20,7 @@ DOMAIN,auth.grokusercontent.com
 DOMAIN,auth.x.ai
 DOMAIN,codewhisperer.us-east-1.amazonaws.com
 DOMAIN,console.groq.com
-DOMAIN,cp4.cloudflare.com
+DOMAIN-SUFFIX,cp4.cloudflare.com
 DOMAIN,default.exp-tas.com
 DOMAIN,developer.meta.com
 DOMAIN,gateway.ai.cloudflare.com
@@ -98,6 +98,7 @@ DOMAIN-SUFFIX,grok.x.com
 DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,groq.com
+DOMAIN-SUFFIX,guzzoni.apple.com
 DOMAIN-SUFFIX,h2o.ai
 DOMAIN-SUFFIX,heygen.com
 DOMAIN-SUFFIX,hf.co
@@ -161,6 +162,7 @@ DOMAIN-SUFFIX,replit.dev
 DOMAIN-SUFFIX,runway.com
 DOMAIN-SUFFIX,runwayml.com
 DOMAIN-SUFFIX,sf16-short-sg.bytedapm.com
+DOMAIN-SUFFIX,smoot.apple.com
 DOMAIN-SUFFIX,sourcegraph.com
 DOMAIN-SUFFIX,stability.ai
 DOMAIN-SUFFIX,starling.zijieapi.com
@@ -209,12 +211,3 @@ IP-CIDR,52.143.181.161/32,no-resolve
 IP-CIDR,68.155.152.41/32,no-resolve
 IP-CIDR,72.146.20.246/32,no-resolve
 IP-CIDR,74.248.148.7/32,no-resolve
-PROCESS-NAME,Augment
-PROCESS-NAME,Augment.exe
-PROCESS-NAME,Cursor
-PROCESS-NAME,Cursor.exe
-PROCESS-NAME,Windsurf
-PROCESS-NAME,Windsurf.exe
-PROCESS-NAME,augment
-PROCESS-NAME,cursor
-PROCESS-NAME,windsurf

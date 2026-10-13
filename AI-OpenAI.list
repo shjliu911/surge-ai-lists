@@ -1,5 +1,5 @@
 # NAME: AI-OpenAI
-# GEN:  2026-10-12 11:54:49
+# GEN:  2026-10-13 10:44:49
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-OpenAI.list
 
@@ -28,9 +28,3 @@ IP-CIDR,199.47.142.0/23,no-resolve
 IP-CIDR,24.199.123.28/32,no-resolve
 IP-CIDR,64.23.132.171/32,no-resolve
 IP-CIDR6,2604:f20::/32,no-resolve
-PROCESS-NAME,ChatGPT
-PROCESS-NAME,ChatGPT.exe
-PROCESS-NAME,Codex
-PROCESS-NAME,Codex.exe
-PROCESS-NAME,chatgpt
-PROCESS-NAME,codex

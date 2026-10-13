@@ -60,6 +60,17 @@ else
   echo "✓ IP-ASN 仅厂商自有（${n:-0} 条：Anthropic 399358 / OpenAI 401518）"
 fi
 
+# ── 3c) 断言：禁止任何 PROCESS-NAME / PROCESS-PATH 规则 ────
+# 进程规则命中**该进程的全部连接，不分域名/IP**。实测把 codex CLI 连局域网 NAS
+# （192.168.0.125:20128）的请求也抓走送到 ChatGPT 代理节点，节点够不着局域网 → in=0
+# 失败 → 503（2026-10-13 事故）。filter() 已从上游源剔除、补充表也已移除；此断言兜底。
+BAD_PROC=$(grep -rhE '^[[:space:]]*PROCESS-(NAME|PATH),' AI-*.list || true)
+if [ -n "$BAD_PROC" ]; then
+  echo "✗ 出现被禁的进程规则（应为空）："; echo "$BAD_PROC"; fail=1
+else
+  echo "✓ 无 PROCESS-NAME/PATH 规则（进程规则会劫走局域网/本机流量）"
+fi
+
 # ── 4) 断言：海外表里不得出现被国内集合覆盖的域名（结构性隔离）──
 if python3 - <<'PY'
 import sys

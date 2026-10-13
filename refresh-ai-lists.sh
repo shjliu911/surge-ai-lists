@@ -90,9 +90,10 @@ fetch() { # $1=url  → stdout；失败重试 3 次（源变多了，得抗上�
   return 1
 }
 
-filter() { # stdin → stdout：去注释/空行、剔 IP-ASN 与宽泛 KEYWORD、剔通用第三方域名、规范化
+filter() { # stdin → stdout：去注释/空行、剔 IP-ASN/进程规则与宽泛 KEYWORD、剔通用第三方域名、规范化
   grep -vE '^[[:space:]]*(#|$)' \
   | grep -vE '^[[:space:]]*IP-ASN,' \
+  | grep -viE '^[[:space:]]*PROCESS-(NAME|PATH),' \
   | grep -viE "^[[:space:]]*DOMAIN-KEYWORD,($BAD_KW)([[:space:]]|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+[.-])?($BAD_DOMAIN)([[:space:]]|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*datadoghq\.(com|eu)" \

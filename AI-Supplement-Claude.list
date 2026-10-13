@@ -31,12 +31,9 @@ DOMAIN-SUFFIX,modelcontextprotocol.com
 DOMAIN-SUFFIX,modelcontextprotocol.net
 DOMAIN-SUFFIX,modelcontextprotocol.org
 
-# --- 编程工具进程 ---
-PROCESS-NAME,Claude
-PROCESS-NAME,Claude.exe
-PROCESS-NAME,claude
-PROCESS-NAME,claude.exe
-PROCESS-NAME,cowork-svc.exe
+# 2026-10-13: 删除全部 PROCESS-NAME（Claude/claude/cowork-svc…）。进程规则会命中该进程的
+#   **全部**连接、不分域名/IP，会把 agent 发往局域网/本机的请求也劫走；云端 Anthropic
+#   流量靠上面的 DOMAIN* 规则即可，不需要按进程抓。
 
 # --- Anthropic 自有网段（API 直连需要）---
 IP-CIDR,160.79.104.0/21,no-resolve
