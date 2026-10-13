@@ -15,6 +15,7 @@ on:
       - "check-ai-lists.sh"
       - "to-clash.sh"
       - "check-clash.sh"
+      - "check-loon.sh"
       - "AI-Supplement*.list"
       - ".github/workflows/generate.yml"
 
@@ -78,6 +79,13 @@ jobs:
           chmod +x check-clash.sh
           ./check-clash.sh
 
+      # Loon 与 Surge 规则同构，直接引用现有 AI-*.list（不另生成）。此步守「表里别混入
+      # Loon 不支持的类型（PROCESS-NAME / AND/OR/NOT …）」，否则 Loon 用户会静默漏规则。
+      - name: 校验 Loon 兼容性（表内类型必须都是 Loon 支持的）
+        run: |
+          chmod +x check-loon.sh
+          ./check-loon.sh
+
       - name: 提交并推送
         run: |
           git config user.name  "github-actions[bot]"
@@ -110,7 +118,7 @@ jobs:
       # 这道是确认（rebase 重试、并发推送等情况下，落地内容可能与本地不同）。
       - name: 提交后再查（拉回远端内容重验，确认落地无串表）
         run: |
-          chmod +x check-brand-isolation.sh check-clash.sh
+          chmod +x check-brand-isolation.sh check-clash.sh check-loon.sh
           git fetch -q origin main
           # 用远端 main 的内容重建工作区文件再验（不改 HEAD，只取文件）
           git checkout -q origin/main -- 'AI-*.list' 'clash/' 2>/dev/null || true
@@ -119,3 +127,4 @@ jobs:
           ./check-brand-isolation.sh
           ./check-ai-lists.sh | tail -4
           ./check-clash.sh | tail -2
+          ./check-loon.sh | tail -2

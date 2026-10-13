@@ -26,6 +26,7 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 | `clash/AI-*.yaml` | 脚本生成 | Clash/mihomo rule-provider（由 `to-clash.sh` 从上面各表派生）|
 | `to-clash.sh` | 引擎 | 把 Surge 表转成 Clash rule-provider |
 | `check-clash.sh` | 引擎 | CI 校验：Clash 产物可解析 / 数量对账 / 类型白名单 |
+| `check-loon.sh` | 引擎 | CI 校验：7 张表类型均为 Loon 兼容（Loon 直引用，无副本）|
 
 **生成 vs 人工**：`AI-Supplement*.list` 和 `AI-CN.list` 是**手写**的，脚本永不覆盖；
 `refresh-ai-lists.sh` 把两源（blackmatrix7 + VPSDance）拉下来，剔除宽泛规则后，
@@ -181,6 +182,33 @@ rules:
 匹配域名而非 URL 路径）→ Clash 端**不生成**该条（当前仅 Gemini 表有 1 条，产物头部会注明）。
 域名/IP 类规则（`DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD / IP-CIDR / IP-CIDR6 / IP-ASN`，
 含 `,no-resolve`）两套格式完全一致，逐条对得上。
+
+## Loon 如何引用
+
+**Loon 与 Surge 的规则语法同构，直接用现成的 `AI-*.list`，不需要转换、也没有副本。**
+（实证：blackmatrix7 的 `rule/Loon/<表>.list` 与 `rule/Surge/<表>.list` 字节级一致——
+仅个别表因 Loon 不支持 `PROCESS-NAME` 而少了那几行；Loon 认 `URL-REGEX`，所以**不像 Clash 要丢规则**。）
+
+在 Loon 配置里用 `[Remote Rule]` 段引用（语法：`URL,policy=<策略组>,enabled=true`）：
+
+```ini
+[Remote Rule]
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-CN.list,policy=DIRECT,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list,policy=🧠 ChatGPT,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Claude.list,policy=🎭 Claude,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Gemini.list,policy=💎 Gemini,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Copilot.list,policy=🤖 AI 服务,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Jetbrains.list,policy=🤖 AI 服务,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Overseas-Others.list,policy=🤖 AI 服务,enabled=true
+```
+
+> 策略组名（`🧠 ChatGPT` 等）是**示例**——换成你 Loon 配置里 `[Proxy Group]` 实际定义的组名。
+> `[Remote Rule]` 的规则集**按列表顺序**匹配，所以国内容器（`AI-CN → DIRECT`）要排前面。
+> 想在 `[Rule]` 段手工加也行：`<规则类型>,<值>,<策略>`，同样写法。
+
+**与 Clash 的关键差异**：Loon 支持 `URL-REGEX`（Surge 也有，Clash 没有），所以 **Loon 端零损失**；
+反过来 Loon 不支持 `PROCESS-NAME`——但本仓库的进程规则已全部移除（见 README 变更记录），
+故当前 7 张表**全部类型 Loon 都认**（`check-loon.sh` 在 CI 里守这条）。
 
 ## 自动化：GitHub Actions（已取代本机 launchd）
 
