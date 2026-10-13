@@ -36,9 +36,9 @@ ALLOW=""
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 : > "$tmp/cur"; : > "$tmp/base"
 for t in $TABLES; do
-  [ -f "$t.list" ] || continue
-  awk -F, '/^DOMAIN(-SUFFIX)?,/{gsub(/[ \t]/,"",$2); print tolower($2)}' "$t.list" >> "$tmp/cur"
-  git show "$BASE:$t.list" 2>/dev/null \
+  [ -f "surge/$t.list" ] || continue
+  awk -F, '/^DOMAIN(-SUFFIX)?,/{gsub(/[ \t]/,"",$2); print tolower($2)}' "surge/$t.list" >> "$tmp/cur"
+  git show "$BASE:surge/$t.list" 2>/dev/null \
     | awk -F, '/^DOMAIN(-SUFFIX)?,/{gsub(/[ \t]/,"",$2); print tolower($2)}' >> "$tmp/base"
 done
 sort -u "$tmp/cur" -o "$tmp/cur"; sort -u "$tmp/base" -o "$tmp/base"

@@ -25,6 +25,7 @@ cd "$(dirname "$0")" || exit 1
 STRICT="${CI_STRICT:-0}"
 problem=0   # 累计问题表数；严格模式下用于最终退出码
 BUILD=".build"   # 中间产物目录（生成结束即删）
+OUTDIR="surge"   # Surge 生成表输出目录（与 clash/ 对称，见 README「目录结构」）
 
 BM7="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Surge"
 VPS="https://raw.githubusercontent.com/VPSDance/ai-proxy-rules/main/rules/surge"
@@ -211,7 +212,7 @@ gen() { # $1=outfile  $2=name  $3=manualfile(可空 "-")  $4..=内容文件（�
   # 可选环境变量 DEDUP_AGAINST：若设置，最终内容再剔除一遍被它覆盖的域名。
   # 手写补充表直接并入、绕过品牌分发，可能写进已被品牌表收走的域名（如
   # AI-Supplement.list 里的 githubcopilot.com）→ 这一步兜住。
-  out="$1"; name="$2"; manual="$3"; shift 3
+  out="$OUTDIR/$1"; name="$2"; manual="$3"; shift 3
   raw=$(mktemp)
 
   # 手写补充表（本地文件，不会失败）先并入
@@ -301,6 +302,7 @@ sys.stdout.write("\n".join(out)+("\n" if out else ""))'
 
 B="$BUILD"   # 中间产物目录
 rm -rf "$B"; mkdir -p "$B"
+mkdir -p "$OUTDIR"   # surge/ （生成表输出目录；.gitignore 已放行）
 
 # ── ① 先建国内 AI 集合（DIRECT）─────────────────────────────
 # 它是后面所有海外表的「排除集」：任何被它覆盖的域名，都会从海外表里结构化剔除，
@@ -308,7 +310,7 @@ rm -rf "$B"; mkdir -p "$B"
 if collect "$B/cn.raw" "$VPS/cn.list"; then
   gen AI-CN.list "AI-CN" "AI-Supplement-CN.list" "$B/cn.raw"
 else
-  printf 'SKIP %-28s 源失败 → 保留旧文件，不覆盖\n' "AI-CN.list" >&2
+  printf 'SKIP %-28s 源失败 → 保留旧文件，不覆盖\n' "$OUTDIR/AI-CN.list" >&2
   problem=$((problem + 1))
 fi
 
@@ -347,7 +349,7 @@ mkbrand() { # $1=表名(ex AI-OpenAI)  $2=manualfile  $3..=品牌专用 urls
   # 跨品牌去重（先建的品牌已登记在 claimed 里）
   drop_covered "$m.merged" "$B/claimed" > "$m.d1" && mv "$m.d1" "$m.merged"
   # 结构性隔离：国内域名不进任何海外表
-  [ -f AI-CN.list ] && { drop_covered "$m.merged" AI-CN.list > "$m.d2" && mv "$m.d2" "$m.merged"; }
+  [ -f "$OUTDIR/AI-CN.list" ] && { drop_covered "$m.merged" "$OUTDIR/AI-CN.list" > "$m.d2" && mv "$m.d2" "$m.merged"; }
   gen "$t.list" "$t" "$manual" "$m.merged"
   cat "$m.merged" >> "$B/claimed"
 }
@@ -375,7 +377,7 @@ if [ "$have_agg" = 1 ]; then
   # 先剔除已被品牌表覆盖的（用 claimed 集合，与品牌表口径完全一致）
   drop_covered "$B/others.clean" "$B/claimed" > "$B/others.c1" && mv "$B/others.c1" "$B/others.clean"
   # 再剔除国内域名
-  [ -f AI-CN.list ] && { drop_covered "$B/others.clean" AI-CN.list > "$B/others.c2" && mv "$B/others.c2" "$B/others.clean"; }
+  [ -f "$OUTDIR/AI-CN.list" ] && { drop_covered "$B/others.clean" "$OUTDIR/AI-CN.list" > "$B/others.c2" && mv "$B/others.c2" "$B/others.clean"; }
 
   # VPSDance 的杂项品牌源（xAI/Meta/Cursor/…）也归这里，但也要过一遍去重
   collect "$B/others.misc" \
@@ -385,12 +387,12 @@ if [ "$have_agg" = 1 ]; then
       "$BM7/aiXcoder/aiXcoder.list" "$BM7/Civitai/Civitai.list" || problem=$((problem + 1))
   # 剔除已被任何品牌表收走的（用 claimed 集合，与品牌表口径完全一致）
   drop_covered "$B/others.misc" "$B/claimed" > "$B/others.m1" && mv "$B/others.m1" "$B/others.misc"
-  [ -f AI-CN.list ] && { drop_covered "$B/others.misc" AI-CN.list > "$B/others.m2" && mv "$B/others.m2" "$B/others.misc"; }
+  [ -f "$OUTDIR/AI-CN.list" ] && { drop_covered "$B/others.misc" "$OUTDIR/AI-CN.list" > "$B/others.m2" && mv "$B/others.m2" "$B/others.misc"; }
 
   gen AI-Overseas-Others.list "AI-Overseas-Others" "AI-Supplement.list" \
       "$B/others.clean" "$B/others.misc"
 else
-  printf 'SKIP %-28s 聚合源失败 → 保留旧文件，不覆盖\n' "AI-Overseas-Others.list" >&2
+  printf 'SKIP %-28s 聚合源失败 → 保留旧文件，不覆盖\n' "$OUTDIR/AI-Overseas-Others.list" >&2
 fi
 
 rm -rf "$B"

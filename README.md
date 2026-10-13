@@ -6,31 +6,49 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 > ⚠️ **本仓库永不包含 `lll.conf`**。它里面有机场订阅 token 与 MITM 的 CA 私钥口令，
 > 靠 `.gitignore` 的**白名单**（`*` + `!`）排除掉——只有下面列出的文件会被跟踪。
 
-## 文件一览
+## 目录结构
+
+规则产物按客户端分目录——**同一份数据、三种客户端各自的形态**：
+
+```
+surge/      ← Surge 生成表（refresh-ai-lists.sh 产出，Loon 直引用）
+clash/      ← Clash/mihomo rule-provider（to-clash.sh 从 surge/ 派生）
+*.sh        ← 生成 / 转换 / 校验脚本（引擎）
+AI-Supplement*.list  ← 手写补充表（人工，折进对应生成表）
+```
 
 | 文件 | 维护方式 | 策略组 |
 |---|---|---|
-| `AI-OpenAI.list` | 脚本生成 | 🧠 ChatGPT |
-| `AI-Claude.list` | 脚本生成 | 🎭 Claude |
-| `AI-Gemini.list` | 脚本生成 | 💎 Gemini |
-| `AI-Copilot.list` | 脚本生成 | 🤖 AI 服务 |
-| `AI-Jetbrains.list` | 脚本生成 | 🤖 AI 服务 |
-| `AI-Overseas-Others.list` | 脚本生成 | 🤖 AI 服务 |
+| `surge/AI-OpenAI.list` | 脚本生成 | 🧠 ChatGPT |
+| `surge/AI-Claude.list` | 脚本生成 | 🎭 Claude |
+| `surge/AI-Gemini.list` | 脚本生成 | 💎 Gemini |
+| `surge/AI-Copilot.list` | 脚本生成 | 🤖 AI 服务 |
+| `surge/AI-Jetbrains.list` | 脚本生成 | 🤖 AI 服务 |
+| `surge/AI-Overseas-Others.list` | 脚本生成 | 🤖 AI 服务 |
+| `surge/AI-CN.list` | 脚本生成 | DIRECT（国内 AI） |
+| `clash/AI-*.yaml` | 脚本生成 | Clash/mihomo rule-provider（由 `to-clash.sh` 从 `surge/` 派生）|
 | `AI-Supplement-OpenAI.list` | **人工** | 折进 AI-OpenAI |
 | `AI-Supplement-Claude.list` | **人工** | 折进 AI-Claude |
 | `AI-Supplement-Gemini.list` | **人工** | 折进 AI-Gemini |
 | `AI-Supplement.list` | **人工** | 折进 AI-Overseas-Others |
-| `AI-CN.list` | **人工** | DIRECT（国内 AI） |
-| `refresh-ai-lists.sh` | 引擎 | 生成 7 张主表 |
+| `AI-Supplement-CN.list` | **人工** | 折进 AI-CN |
+| `refresh-ai-lists.sh` | 引擎 | 生成 7 张主表到 `surge/` |
 | `check-ai-lists.sh` | 引擎 | CI 校验：格式 / 关键国内 AI 域名 / SaaS 泄漏 |
-| `clash/AI-*.yaml` | 脚本生成 | Clash/mihomo rule-provider（由 `to-clash.sh` 从上面各表派生）|
-| `to-clash.sh` | 引擎 | 把 Surge 表转成 Clash rule-provider |
+| `to-clash.sh` | 引擎 | 把 `surge/` 表转成 Clash rule-provider（`clash/`）|
 | `check-clash.sh` | 引擎 | CI 校验：Clash 产物可解析 / 数量对账 / 类型白名单 |
-| `check-loon.sh` | 引擎 | CI 校验：7 张表类型均为 Loon 兼容（Loon 直引用，无副本）|
+| `check-loon.sh` | 引擎 | CI 校验：7 张表类型均为 Loon 兼容（Loon 直引用 `surge/`，无副本）|
+| `check-novel.sh` | 引擎 | 增量语义审查（新增域名命中通用基础设施模式即拦）|
+| `check-liveness.sh` | 引擎 | 存活性闸门（新增域名必须能解析）|
+| `check-brand-isolation.sh` | 引擎 | 品牌串表检查（别家定义域不得进本品牌表）|
+| `sync.sh` | 引擎 | 本机一条命令：刷新 → 部署 → 提交推送 |
 
-**生成 vs 人工**：`AI-Supplement*.list` 和 `AI-CN.list` 是**手写**的，脚本永不覆盖；
-`refresh-ai-lists.sh` 把两源（blackmatrix7 + VPSDance）拉下来，剔除宽泛规则后，
-再把对应的手写补充表折进去，写出 7 张主表。
+**为什么分目录**：`surge/` 与 `clash/` 是**同一批数据的两种格式**，同一次 CI 落地
+（`refresh-ai-lists.sh` 写 `surge/`，`to-clash.sh` 随即派生 `clash/`）——目录分开后一眼
+看得出「谁是源、谁是派生」，也避免根目录堆 7 张表 + 7 份 yaml。
+
+**生成 vs 人工**：`AI-Supplement*.list` 是**手写**的（留在根目录，与产物目录分开），脚本永不覆盖；
+`refresh-ai-lists.sh` 把多源拉下来、剔除宽泛规则后，再把对应的手写补充表折进去，
+写出 7 张主表到 `surge/`。
 
 ## 上游源（多源合并，查缺补漏）
 
@@ -66,7 +84,7 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 
 ### 国内 / 海外结构性隔离
 
-- `AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写），全部 DIRECT。
+- `surge/AI-CN.list` = VPSDance `cn.list` + `AI-Supplement-CN.list`（手写），全部 DIRECT。
 - `drop_covered` 用 `AI-CN` 当**排除集**：任何被国内集合覆盖的域名，从海外表里**结构化剔除**。
   所以 `AI-Overseas-Others` 里不会出现 `bigmodel.cn`/`siliconflow.cn` 之类的国内域名——
   靠**数据集**保证，而不是靠 `lll.conf` 的规则顺序兜底。`check-ai-lists.sh` 在 CI 里断言这条。
@@ -107,7 +125,7 @@ Surge **会自动热重载本机 list，无需手动 reload**。
 | 场景 | 怎么做 |
 |---|---|
 | **上游规则更新**（黑名单收敛/新增域名） | **GitHub Actions 自动**（北京 09:17/21:17）；想立刻跑就 `gh workflow run generate.yml` |
-| **自己要加/删域名**（上游没收录的服务） | 编辑 `AI-Supplement*.list`（走代理）或 `AI-CN.list`（直连）→ 推送即触发 CI 重建（或本地 `./sync.sh --no-pull`）|
+| **自己要加/删域名**（上游没收录的服务） | 编辑 `AI-Supplement*.list`（走代理）或 `AI-Supplement-CN.list`（直连）→ 推送即触发 CI 重建（或本地 `./sync.sh --no-pull`）|
 
 ### 两道防「缩水」保护（重要）
 
@@ -125,8 +143,8 @@ Surge **会自动热重载本机 list，无需手动 reload**。
 `lll.conf` 的 AI 段不再是本地文件，而是远程 URL：
 
 ```
-RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list,"🧠 ChatGPT"
-RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Overseas-Others.list,"🤖 AI 服务"
+RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-OpenAI.list,"🧠 ChatGPT"
+RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Overseas-Others.list,"🤖 AI 服务"
 ...
 ```
 
@@ -138,7 +156,7 @@ RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Over
 ## Clash / mihomo 如何引用
 
 同一份数据也派生一份 **mihomo / Clash.Meta** 的 `rule-provider`，放在 `clash/` 下：
-`to-clash.sh` 在每次生成后把 7 张 `AI-*.list` 转成 `clash/AI-*.yaml`（`behavior: classical`
+`to-clash.sh` 在每次生成后把 7 张 `surge/AI-*.list` 转成 `clash/AI-*.yaml`（`behavior: classical`
 格式），**与 Surge 表同一次 CI 落地**——所以「Surge 更新 → Clash 随之更新」，不用各维护一套。
 
 在你的 mihomo 配置里加 `rule-providers`（文件名对应上面 7 张表）：
@@ -185,7 +203,7 @@ rules:
 
 ## Loon 如何引用
 
-**Loon 与 Surge 的规则语法同构，直接用现成的 `AI-*.list`，不需要转换、也没有副本。**
+**Loon 与 Surge 的规则语法同构，直接用现成的 `surge/AI-*.list`，不需要转换、也没有副本。**
 （实证：blackmatrix7 的 `rule/Loon/<表>.list` 与 `rule/Surge/<表>.list` 字节级一致——
 仅个别表因 Loon 不支持 `PROCESS-NAME` 而少了那几行；Loon 认 `URL-REGEX`，所以**不像 Clash 要丢规则**。）
 
@@ -203,18 +221,18 @@ rules:
 
 ```ini
 [Remote Rule]
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-CN.list, policy=DIRECT, tag=AI-CN, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list, policy=🧠 ChatGPT, tag=AI-OpenAI, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Claude.list, policy=🎭 Claude, tag=AI-Claude, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Gemini.list, policy=💎 Gemini, tag=AI-Gemini, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Copilot.list, policy=🤖 AI 服务, tag=AI-Copilot, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Jetbrains.list, policy=🤖 AI 服务, tag=AI-Jetbrains, enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Overseas-Others.list, policy=🤖 AI 服务, tag=AI-Others, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-CN.list, policy=DIRECT, tag=AI-CN, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-OpenAI.list, policy=🧠 ChatGPT, tag=AI-OpenAI, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Claude.list, policy=🎭 Claude, tag=AI-Claude, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Gemini.list, policy=💎 Gemini, tag=AI-Gemini, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Copilot.list, policy=🤖 AI 服务, tag=AI-Copilot, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Jetbrains.list, policy=🤖 AI 服务, tag=AI-Jetbrains, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Overseas-Others.list, policy=🤖 AI 服务, tag=AI-Others, enabled=true
 ```
 
 > 策略组名（`🧠 ChatGPT` 等）是**示例**——换成你 Loon 配置里 `[Proxy Group]` 实际定义的组名。
 > 规则集内的每一行用 Loon 规则语法（`DOMAIN-SUFFIX,x` / `IP-CIDR,x,no-resolve` …），
-> 本仓库的 `AI-*.list` 正是这种格式，直接引即可。
+> 本仓库的 `surge/AI-*.list` 正是这种格式，直接引即可。
 
 **与 Clash 的关键差异**：Loon 支持 `URL-REGEX`（Surge 也有，Clash 没有），所以 **Loon 端零损失**；
 反过来 Loon 不支持 `PROCESS-NAME`——但本仓库的进程规则已全部移除（见 README 变更记录），

@@ -1,8 +1,8 @@
 # NAME: AI-Overseas-Others
-# SRC:  AI-Overseas-Others.list（由 to-clash.sh 自动生成，勿手改）
+# SRC:  surge/AI-Overseas-Others.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
-# USE:  Clash: RULE-SET,ai-others,🤖 AI 服务   (Surge: RULE-SET,AI-Overseas-Others.list,🤖 AI 服务)
-# GEN:  2026-10-13 11:14:29
+# USE:  Clash: RULE-SET,ai-others,🤖 AI 服务   (Surge: RULE-SET,surge/AI-Overseas-Others.list,🤖 AI 服务)
+# GEN:  2026-10-13 11:59:13
 payload:
   - DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
   - DOMAIN,accounts.spacex.ai

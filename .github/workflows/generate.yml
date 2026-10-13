@@ -90,13 +90,14 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # 两套产物一起提交：Surge 表 + Clash provider（同一次 CI 落地，保证二者同源同版本）。
-          git add 'AI-*.list' 'clash/'
+          # 两套产物一起提交：Surge 表（surge/）+ Clash provider（clash/），
+          # 同一次 CI 落地，保证二者同源同版本。
+          git add 'surge/' 'clash/'
           if git diff --cached --quiet; then
             echo "无变化，跳过提交"
             exit 0
           fi
-          SUMMARY=$(git diff --cached --numstat -- '*.list' 'clash/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+          SUMMARY=$(git diff --cached --numstat -- 'surge/' 'clash/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
           git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
           # 竞态兜底：checkout 期间若有人手动 push，远端会领先。
           # 重试：先 rebase 到最新 main（规则表不会被手动改动，冲突概率极低），再 push。
@@ -121,7 +122,7 @@ jobs:
           chmod +x check-brand-isolation.sh check-clash.sh check-loon.sh
           git fetch -q origin main
           # 用远端 main 的内容重建工作区文件再验（不改 HEAD，只取文件）
-          git checkout -q origin/main -- 'AI-*.list' 'clash/' 2>/dev/null || true
+          git checkout -q origin/main -- 'surge/' 'clash/' 2>/dev/null || true
           echo "── 校验远端 main 的实际内容 ──"
           git log -1 --format='  commit: %h  %s' origin/main
           ./check-brand-isolation.sh

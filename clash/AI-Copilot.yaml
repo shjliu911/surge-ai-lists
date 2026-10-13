@@ -1,8 +1,8 @@
 # NAME: AI-Copilot
-# SRC:  AI-Copilot.list（由 to-clash.sh 自动生成，勿手改）
+# SRC:  surge/AI-Copilot.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
-# USE:  Clash: RULE-SET,ai-copilot,🤖 AI 服务   (Surge: RULE-SET,AI-Copilot.list,🤖 AI 服务)
-# GEN:  2026-10-13 11:14:29
+# USE:  Clash: RULE-SET,ai-copilot,🤖 AI 服务   (Surge: RULE-SET,surge/AI-Copilot.list,🤖 AI 服务)
+# GEN:  2026-10-13 11:59:12
 payload:
   - DOMAIN,api.githubcopilot.com
   - DOMAIN,api.msn.com

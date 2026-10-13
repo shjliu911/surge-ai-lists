@@ -44,7 +44,7 @@ fail = 0
 total_p = 0
 for f in files:
     base = os.path.basename(f)
-    src = 'AI-' + base[len('AI-'):-len('.yaml')] + '.list'
+    src = os.path.join('surge', 'AI-' + base[len('AI-'):-len('.yaml')] + '.list')
     # 1) YAML 可解析 + 结构
     try:
         doc = yaml.safe_load(open(f, encoding='utf-8'))

@@ -1,9 +1,9 @@
 #!/bin/bash
-# 把 Surge 格式的 AI-*.list 转成 mihomo / Clash.Meta 的 rule-provider YAML。
+# 把 surge/AI-*.list（Surge 格式）转成 mihomo / Clash.Meta 的 rule-provider YAML。
 #
 # 为什么单独一步、而不是在 refresh-ai-lists.sh 里直接产出：
 #   两套格式的规则集要能**各自独立**校验（Surge 侧 check-ai-lists.sh / Clash 侧
-#   check-clash.sh），转换器保持「纯函数」——只读 AI-*.list、写 clash/*.yaml，不碰网络、
+#   check-clash.sh），转换器保持「纯函数」——只读 surge/AI-*.list、写 clash/*.yaml，不碰网络、
 #   不依赖上游。refresh 生成完 7 张表后调用本脚本，CI 与 sync.sh 都这么串。
 #
 # 规则类型映射（mihomo 官方文档 https://wiki.metacubex.one/config/rules/ 已核对）：
@@ -17,6 +17,7 @@
 set -u
 cd "$(dirname "$0")" || exit 1
 
+SRCDIR="surge"    # Surge 生成表所在目录（由 refresh-ai-lists.sh 产出）
 OUTDIR="clash"
 mkdir -p "$OUTDIR"
 
@@ -46,7 +47,7 @@ provider_name_of() {
 TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others"
 
 for t in $TABLES; do
-  src="$t.list"
+  src="$SRCDIR/$t.list"
   [ -f "$src" ] || { printf 'SKIP %s（源不存在）\n' "$src" >&2; continue; }
   dst="$OUTDIR/$t.yaml"
   opt=$(mktemp)
@@ -63,7 +64,7 @@ for t in $TABLES; do
     printf '# NAME: %s\n' "$t"
     printf '# SRC:  %s（由 to-clash.sh 自动生成，勿手改）\n' "$src"
     printf '# TYPE: mihomo rule-provider / behavior: classical / format: yaml\n'
-    printf '# USE:  Clash: RULE-SET,%s,%s   (Surge: RULE-SET,%s.list,%s)\n' \
+    printf '# USE:  Clash: RULE-SET,%s,%s   (Surge: RULE-SET,surge/%s.list,%s)\n' \
       "$(provider_name_of "$t")" "$(group_of "$t")" "$t" "$(group_of "$t")"
     printf '# GEN:  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')"
     if [ "$dropped" -gt 0 ]; then

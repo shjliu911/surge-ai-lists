@@ -43,7 +43,8 @@ run '"$REPO/to-clash.sh"'
 # 注意：lll.conf 现在用 RULE-SET,<仓库 URL> 引用，Surge **不再读**这里的 .list。
 # 这一步只是让 Profiles 目录留一份与仓库一致的副本，方便本地比对/手工回滚。
 say "同步本地副本到 Surge Profiles（备份用）"
-for f in AI-*.list refresh-ai-lists.sh; do
+run "mkdir -p \"$PROFILES/surge\""
+for f in surge/AI-*.list refresh-ai-lists.sh; do
   [ -e "$f" ] || continue
   if ! cmp -s "$f" "$PROFILES/$f"; then
     run "cp \"$f\" \"$PROFILES/$f\""

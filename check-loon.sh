@@ -23,9 +23,10 @@ fail=0
 LOON_OK='DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|USER-AGENT|URL-REGEX|IP-CIDR|IP-CIDR6|IP-ASN|GEOIP|SRC-PORT|DEST-PORT|PROTOCOL|AND|OR|NOT'
 
 TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others"
+SRCDIR="surge"   # Surge 生成表所在目录（Loon 直接引用这批表，无副本）
 
 for t in $TABLES; do
-  f="$t.list"
+  f="$SRCDIR/$t.list"
   [ -f "$f" ] || { echo "✗ $f 不存在"; fail=1; continue; }
   # 取所有非注释、非空行的规则类型（逗号前那段）
   bad=$(grep -vE '^[[:space:]]*(#|$)' "$f" \
@@ -41,7 +42,7 @@ done
 
 # 反向确认：Loon 支持列表里，URL-REGEX（Surge 独有、Clash 丢弃的那条）Loon 是认的，
 # 所以 Loon 端不像 Clash 要丢规则 —— 这里点名，免得有人「对齐 Clash」把它删了。
-if grep -qE '^[[:space:]]*URL-REGEX,' AI-*.list 2>/dev/null; then
+if grep -qE '^[[:space:]]*URL-REGEX,' "$SRCDIR"/AI-*.list 2>/dev/null; then
   echo "ℹ 含 URL-REGEX（Loon 支持、需配 MITM；Clash 端会丢弃）—— Loon 无损失。"
 fi
 

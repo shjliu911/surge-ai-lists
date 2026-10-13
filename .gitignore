@@ -4,12 +4,10 @@
 *
 !.gitignore
 !README.md
-!AI-OpenAI.list
-!AI-Claude.list
-!AI-Gemini.list
-!AI-Copilot.list
-!AI-Jetbrains.list
-!AI-Overseas-Others.list
+# Surge 生成表（由 refresh-ai-lists.sh 写入 surge/；嵌套路径需逐层放行父目录）
+!surge/
+!surge/AI-*.list
+# 手写补充表（根目录；人工维护，脚本永不覆盖）
 !AI-Supplement-OpenAI.list
 !AI-Supplement-Claude.list
 !AI-Supplement-Gemini.list

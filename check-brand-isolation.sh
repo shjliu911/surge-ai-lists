@@ -33,7 +33,7 @@ ALLOW = [
 tables = ['AI-OpenAI','AI-Claude','AI-Gemini','AI-Copilot','AI-Jetbrains']
 bad = 0
 for t in tables:
-    try: fh = open(t + '.list')
+    try: fh = open('surge/' + t + '.list')
     except FileNotFoundError: continue
     for ln in fh:
         ln = ln.strip()
