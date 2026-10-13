@@ -6,16 +6,21 @@
 # PROCESS-NAME 而少那几行）。所以 Loon **直接引用现有 AI-*.list 即可**，无需转换/副本。
 # 本脚本守的是「以后别往表里加 Loon 不认的类型」——那会让 Loon 用户静默漏规则。
 #
-# Loon 支持的类型（依据：Loon 官方 example.conf 的 [Rule] 类型注释 + Loon 版真实规则集实测）：
-#   DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD / USER-AGENT / URL-REGEX /
-#   IP-CIDR / IP-CIDR6 / IP-ASN / GEOIP
-# 不支持（Surge 有、Loon 没有）：PROCESS-NAME / PROCESS-PATH / AND / OR / NOT / SUB-RULE …
+# Loon 支持的类型（依据：Loon 官方文档 nsloon.app/docs/Rule/* 全部 9 页 + Loon.app 自带
+# example.conf + Loon 版真实规则集实测）：
+#   域名：DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD
+#   HTTP：USER-AGENT / URL-REGEX
+#   IP：IP-CIDR / IP-CIDR6 / IP-ASN / GEOIP
+#   端口：SRC-PORT / DEST-PORT
+#   协议：PROTOCOL
+#   逻辑：AND / OR / NOT
+# 不支持（Surge 有、Loon 没有）：PROCESS-NAME / PROCESS-PATH / SUB-RULE / RULE-SET（在文件里）
 set -u
 cd "$(dirname "$0")" || exit 1
 fail=0
 
-# Loon 支持的规则类型白名单
-LOON_OK='DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|USER-AGENT|URL-REGEX|IP-CIDR|IP-CIDR6|IP-ASN|GEOIP'
+# Loon 支持的规则类型白名单（须列全 —— 漏一个合法类型会把正常规则误判为非法）
+LOON_OK='DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|USER-AGENT|URL-REGEX|IP-CIDR|IP-CIDR6|IP-ASN|GEOIP|SRC-PORT|DEST-PORT|PROTOCOL|AND|OR|NOT'
 
 TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others"
 

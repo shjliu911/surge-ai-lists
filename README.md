@@ -189,22 +189,32 @@ rules:
 （实证：blackmatrix7 的 `rule/Loon/<表>.list` 与 `rule/Surge/<表>.list` 字节级一致——
 仅个别表因 Loon 不支持 `PROCESS-NAME` 而少了那几行；Loon 认 `URL-REGEX`，所以**不像 Clash 要丢规则**。）
 
-在 Loon 配置里用 `[Remote Rule]` 段引用（语法：`URL,policy=<策略组>,enabled=true`）：
+在 Loon 配置里用 `[Remote Rule]` 段引用。语法（据 Loon.app 自带 example.conf 及真实配置实测）：
+
+```
+[Remote Rule]
+<规则集URL>, policy=<策略名>, tag=<别名>, enabled=true
+```
+
+- `policy=` = 你 `[Proxy Group]` 里定义的策略/组名；**可带中文、空格、emoji，无需引号**（逗号分隔，
+  值取到下一个逗号为止——真实配置里 `policy=苹果服务`、`policy=节点选择` 都这么写）。
+- `tag=` = 别名（可选，但惯例都带，便于在 UI 里辨认）。
+- `enabled=true` = 启用。
 
 ```ini
 [Remote Rule]
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-CN.list,policy=DIRECT,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list,policy=🧠 ChatGPT,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Claude.list,policy=🎭 Claude,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Gemini.list,policy=💎 Gemini,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Copilot.list,policy=🤖 AI 服务,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Jetbrains.list,policy=🤖 AI 服务,enabled=true
-https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Overseas-Others.list,policy=🤖 AI 服务,enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-CN.list, policy=DIRECT, tag=AI-CN, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-OpenAI.list, policy=🧠 ChatGPT, tag=AI-OpenAI, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Claude.list, policy=🎭 Claude, tag=AI-Claude, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Gemini.list, policy=💎 Gemini, tag=AI-Gemini, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Copilot.list, policy=🤖 AI 服务, tag=AI-Copilot, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Jetbrains.list, policy=🤖 AI 服务, tag=AI-Jetbrains, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Overseas-Others.list, policy=🤖 AI 服务, tag=AI-Others, enabled=true
 ```
 
 > 策略组名（`🧠 ChatGPT` 等）是**示例**——换成你 Loon 配置里 `[Proxy Group]` 实际定义的组名。
-> `[Remote Rule]` 的规则集**按列表顺序**匹配，所以国内容器（`AI-CN → DIRECT`）要排前面。
-> 想在 `[Rule]` 段手工加也行：`<规则类型>,<值>,<策略>`，同样写法。
+> 规则集内的每一行用 Loon 规则语法（`DOMAIN-SUFFIX,x` / `IP-CIDR,x,no-resolve` …），
+> 本仓库的 `AI-*.list` 正是这种格式，直接引即可。
 
 **与 Clash 的关键差异**：Loon 支持 `URL-REGEX`（Surge 也有，Clash 没有），所以 **Loon 端零损失**；
 反过来 Loon 不支持 `PROCESS-NAME`——但本仓库的进程规则已全部移除（见 README 变更记录），
