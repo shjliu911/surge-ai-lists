@@ -37,6 +37,7 @@ DOMAIN-SUFFIX,deepgram.com
 
 # ============ 模型 / 推理平台 ============
 DOMAIN-SUFFIX,mistral.ai
+DOMAIN-SUFFIX,mistral.com
 DOMAIN-SUFFIX,cohere.ai
 DOMAIN-SUFFIX,cohere.com
 DOMAIN-SUFFIX,together.ai
@@ -50,6 +51,7 @@ DOMAIN-SUFFIX,pplx.ai
 DOMAIN-SUFFIX,githubcopilot.com
 DOMAIN-SUFFIX,githubcopilot.app
 DOMAIN-SUFFIX,windsurf.com
+DOMAIN-SUFFIX,windsurf.ai
 DOMAIN-SUFFIX,codeium.com
 DOMAIN-SUFFIX,tabnine.com
 DOMAIN-SUFFIX,sourcegraph.com
@@ -61,6 +63,9 @@ DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,character.ai
 DOMAIN-SUFFIX,pi.ai
 DOMAIN-SUFFIX,hume.ai
+
+# 2026-10-13: 核对 7 张表后的补充（此前无表收录）
+DOMAIN-SUFFIX,janitorai.com
 
 # ============ Nous Research ============
 # 上游源只收了 hermes-agent.nousresearch.com 一条，同源的 portal.nousresearch.com

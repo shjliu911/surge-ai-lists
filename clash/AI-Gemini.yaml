@@ -2,13 +2,14 @@
 # SRC:  surge/AI-Gemini.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-gemini,💎 Gemini   (Surge: RULE-SET,surge/AI-Gemini.list,💎 Gemini)
-# GEN:  2026-10-13 11:59:12
+# GEN:  2026-10-14 07:18:03
 # NOTE: 已丢弃 1 条 mihomo 不支持的规则类型（URL-REGEX）
 payload:
   - DOMAIN-SUFFIX,ai.google.dev
   - DOMAIN-SUFFIX,aisandbox-pa.googleapis.com
   - DOMAIN-SUFFIX,aistudio.google.com
   - DOMAIN,alkalicore-pa.clients6.google.com
+  - DOMAIN,alkalimakersuite-pa.googleapis.com
   - DOMAIN,antigravity-cli-auto-updater-974169037036.us-central1.run.app
   - DOMAIN,antigravity-hub-auto-updater-974169037036.us-central1.run.app
   - DOMAIN,antigravity-pa.googleapis.com
@@ -32,11 +33,13 @@ payload:
   - DOMAIN-SUFFIX,notebooklm.google.com
   - DOMAIN,notebooklm.googleapis.com
   - DOMAIN-SUFFIX,robinfrontend-pa.googleapis.com
+  - DOMAIN,waa-pa.clients6.google.com
   - DOMAIN,webchannel-alkalimakersuite-pa.clients6.google.com
   - DOMAIN-KEYWORD,alkalimakersuite-pa.clients6.google.com
   - DOMAIN-SUFFIX,ai.studio
   - DOMAIN-SUFFIX,aicode.googleapis.com
   - DOMAIN-SUFFIX,aida.googleapis.com
+  - DOMAIN-SUFFIX,aiplatform.googleapis.com
   - DOMAIN-SUFFIX,antigravity.google.com
   - DOMAIN-SUFFIX,apis.google.com
   - DOMAIN-SUFFIX,deepmind.com
@@ -63,3 +66,4 @@ payload:
   - DOMAIN-SUFFIX,opal.withgoogle.com
   - DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
   - DOMAIN-SUFFIX,stitch.withgoogle.com
+  - DOMAIN-SUFFIX,vertexai.googleapis.com

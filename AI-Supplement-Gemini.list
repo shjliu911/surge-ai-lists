@@ -60,3 +60,11 @@ DOMAIN-SUFFIX,aisandbox-pa.googleapis.com
 DOMAIN-SUFFIX,geller-pa.googleapis.com
 DOMAIN-SUFFIX,labstailwind.pa.googleapis.com
 DOMAIN-SUFFIX,robinfrontend-pa.googleapis.com
+
+# 2026-10-13: 核对 7 张表后的补充 —— 以下 4 条此前无任何表收录
+#   （同族的 *.clients6.google.com / *-pa.* 变体已在表内，但都不覆盖这两条主机名）
+DOMAIN,waa-pa.clients6.google.com
+DOMAIN,alkalimakersuite-pa.googleapis.com
+# Vertex AI 的 API 端点；区域前缀主机名（us-central1-aiplatform.googleapis.com 等）也靠这两条命中
+DOMAIN-SUFFIX,aiplatform.googleapis.com
+DOMAIN-SUFFIX,vertexai.googleapis.com

@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-13 10:45:09
+# GEN:  2026-10-14 07:17:52
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -108,6 +108,7 @@ DOMAIN-SUFFIX,huggingface.com
 DOMAIN-SUFFIX,hume.ai
 DOMAIN-SUFFIX,ideogram.ai
 DOMAIN-SUFFIX,inflection.ai
+DOMAIN-SUFFIX,janitorai.com
 DOMAIN-SUFFIX,jasper.ai
 DOMAIN-SUFFIX,kilo.ai
 DOMAIN-SUFFIX,kilo.codes
@@ -129,6 +130,7 @@ DOMAIN-SUFFIX,meta.ai
 DOMAIN-SUFFIX,metaaivm.com
 DOMAIN-SUFFIX,midjourney.com
 DOMAIN-SUFFIX,mistral.ai
+DOMAIN-SUFFIX,mistral.com
 DOMAIN-SUFFIX,muse.ai
 DOMAIN-SUFFIX,nnthink.com
 DOMAIN-SUFFIX,nousresearch.com
@@ -179,6 +181,7 @@ DOMAIN-SUFFIX,udify.app
 DOMAIN-SUFFIX,udio.com
 DOMAIN-SUFFIX,v0.app
 DOMAIN-SUFFIX,v0.dev
+DOMAIN-SUFFIX,windsurf.ai
 DOMAIN-SUFFIX,windsurf.build
 DOMAIN-SUFFIX,windsurf.com
 DOMAIN-SUFFIX,x.ai
