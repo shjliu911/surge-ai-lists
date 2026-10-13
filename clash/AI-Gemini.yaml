@@ -1,8 +1,8 @@
 # NAME: AI-Gemini
 # SRC:  AI-Gemini.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
-# USE:  RULE-SET,AI-Gemini,💎 Gemini
-# GEN:  2026-10-13 11:02:14
+# USE:  Clash: RULE-SET,ai-gemini,💎 Gemini   (Surge: RULE-SET,AI-Gemini.list,💎 Gemini)
+# GEN:  2026-10-13 11:14:29
 # NOTE: 已丢弃 1 条 mihomo 不支持的规则类型（URL-REGEX）
 payload:
   - DOMAIN-SUFFIX,ai.google.dev

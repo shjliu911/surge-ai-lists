@@ -1,8 +1,8 @@
 # NAME: AI-OpenAI
 # SRC:  AI-OpenAI.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
-# USE:  RULE-SET,AI-OpenAI,🧠 ChatGPT
-# GEN:  2026-10-13 11:02:14
+# USE:  Clash: RULE-SET,ai-openai,🧠 ChatGPT   (Surge: RULE-SET,AI-OpenAI.list,🧠 ChatGPT)
+# GEN:  2026-10-13 11:14:29
 payload:
   - DOMAIN,cdn.openaimerge.com
   - DOMAIN-SUFFIX,openaiapi-site.azureedge.net

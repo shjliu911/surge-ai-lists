@@ -31,6 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # check-clash.sh 需要 python3 的 yaml 模块。ubuntu-latest 预装 pyyaml，
+      # 但 ubuntu-26 迁移在即、不保证 —— 显式装上，把隐式假设变成确定依赖。
+      - name: 确保 pyyaml（Clash 校验依赖）
+        run: python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml
+
       - name: Sanity — 敏感文件不得入库
         run: |
           if git ls-files | grep -qE '\.conf$|\.bak|lll\.conf'; then

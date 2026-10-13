@@ -1,6 +1,8 @@
 #!/bin/bash
 # 校验 to-clash.sh 的产物：clash/*.yaml 必须是合法、非空、且与源表逐条对得上的 rule-provider。
 #
+# 依赖：python3 的 yaml 模块（本机 macOS：`pip3 install pyyaml`；CI 已显式安装）。
+#
 # 守的三件事（对应历史踩过的坑）：
 #   1) 格式：可被 YAML 解析、含非空 payload 列表 —— 否则 mihomo 拉下来直接报错。
 #   2) 数量对账：payload 条数 == 源表规则数 − 被丢弃的 URL-REGEX 条数。
@@ -19,15 +21,18 @@ except ImportError:
     print("✗ 缺少 python3 yaml 模块（pip install pyyaml / apt install python3-yaml）")
     sys.exit(1)
 
-# mihomo classical provider 支持的规则类型（2026-10 官方文档核对）。
-# URL-REGEX 不在其中 —— Surge 独有，转换器会丢弃并计数。
+# mihomo classical provider 支持的规则类型（2026-10 官方文档 + rules/parser.go 核对）。
+# 必须与 mihomo 的 ParseRule switch 口径一致 —— 漏一个会让**合法**类型被误判为非法，
+# 所以宁可列全。URL-REGEX 不在其中（Surge 独有），转换器会丢弃并计数。
 SUPPORTED = {
     'DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'DOMAIN-WILDCARD', 'DOMAIN-REGEX',
-    'IP-CIDR', 'IP-CIDR6', 'IP-SUFFIX', 'IP-ASN', 'GEOIP',
+    'GEOSITE', 'IP-CIDR', 'IP-CIDR6', 'IP-SUFFIX', 'IP-ASN', 'GEOIP',
     'SRC-GEOIP', 'SRC-IP-ASN', 'SRC-IP-CIDR', 'SRC-IP-SUFFIX',
-    'DST-PORT', 'SRC-PORT', 'IN-PORT', 'IN-TYPE', 'IN-USER', 'IN-NAME',
+    'DST-PORT', 'SRC-PORT', 'IN-PORT', 'IN-TYPE', 'IN-USER', 'IN-NAME', 'REMATCH-NAME',
     'PROCESS-NAME', 'PROCESS-PATH', 'PROCESS-NAME-REGEX', 'PROCESS-PATH-REGEX',
-    'UID', 'NETWORK', 'DSCP', 'RULE-SET', 'GEOSITE', 'MATCH',
+    'PROCESS-NAME-WILDCARD', 'PROCESS-PATH-WILDCARD',
+    'UID', 'NETWORK', 'DSCP', 'RULE-SET', 'SUB-RULE',
+    'AND', 'OR', 'NOT', 'MATCH',
 }
 
 files = sorted(glob.glob('clash/AI-*.yaml'))

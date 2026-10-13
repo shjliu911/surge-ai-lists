@@ -34,6 +34,15 @@ group_of() {
   esac
 }
 
+# 表 → rule-provider 名（Clash 侧 `rule-providers` 的 key，也是 rules 里 `RULE-SET,<名>` 用的名）。
+# 必须与 README「Clash / mihomo 如何引用」一致；AI-Overseas-Others 特意缩成 ai-others（简短好记）。
+provider_name_of() {
+  case "$1" in
+    AI-Overseas-Others) echo "ai-others" ;;
+    *)                  echo "$1" | tr 'A-Z' 'a-z' ;;
+  esac
+}
+
 TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others"
 
 for t in $TABLES; do
@@ -54,7 +63,8 @@ for t in $TABLES; do
     printf '# NAME: %s\n' "$t"
     printf '# SRC:  %s（由 to-clash.sh 自动生成，勿手改）\n' "$src"
     printf '# TYPE: mihomo rule-provider / behavior: classical / format: yaml\n'
-    printf '# USE:  RULE-SET,%s,%s\n' "$t" "$(group_of "$t")"
+    printf '# USE:  Clash: RULE-SET,%s,%s   (Surge: RULE-SET,%s.list,%s)\n' \
+      "$(provider_name_of "$t")" "$(group_of "$t")" "$t" "$(group_of "$t")"
     printf '# GEN:  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')"
     if [ "$dropped" -gt 0 ]; then
       printf '# NOTE: 已丢弃 %s 条 mihomo 不支持的规则类型（URL-REGEX）\n' "$dropped"
