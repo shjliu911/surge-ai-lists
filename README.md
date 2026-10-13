@@ -23,6 +23,9 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 | `AI-CN.list` | **人工** | DIRECT（国内 AI） |
 | `refresh-ai-lists.sh` | 引擎 | 生成 7 张主表 |
 | `check-ai-lists.sh` | 引擎 | CI 校验：格式 / 关键国内 AI 域名 / SaaS 泄漏 |
+| `clash/AI-*.yaml` | 脚本生成 | Clash/mihomo rule-provider（由 `to-clash.sh` 从上面各表派生）|
+| `to-clash.sh` | 引擎 | 把 Surge 表转成 Clash rule-provider |
+| `check-clash.sh` | 引擎 | CI 校验：Clash 产物可解析 / 数量对账 / 类型白名单 |
 
 **生成 vs 人工**：`AI-Supplement*.list` 和 `AI-CN.list` 是**手写**的，脚本永不覆盖；
 `refresh-ai-lists.sh` 把两源（blackmatrix7 + VPSDance）拉下来，剔除宽泛规则后，
@@ -130,6 +133,54 @@ RULE-SET,https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/AI-Over
 - **仓库必须保持 public** —— Surge 拉 `raw.githubusercontent.com` 是**匿名**的，私有仓库会 404。
 - `sync.sh` 推完会**主动让 Surge 重拉**（`surge-cli external-resource update <key>`），无需等 Surge 自己的周期。
 - 想让 Surge 手动立刻重拉全部：`surge-cli external-resource update <key>`（key 用 `surge-cli external-resource list --raw` 查）。
+
+## Clash / mihomo 如何引用
+
+同一份数据也派生一份 **mihomo / Clash.Meta** 的 `rule-provider`，放在 `clash/` 下：
+`to-clash.sh` 在每次生成后把 7 张 `AI-*.list` 转成 `clash/AI-*.yaml`（`behavior: classical`
+格式），**与 Surge 表同一次 CI 落地**——所以「Surge 更新 → Clash 随之更新」，不用各维护一套。
+
+在你的 mihomo 配置里加 `rule-providers`（文件名对应上面 7 张表）：
+
+```yaml
+rule-providers:
+  ai-cn:        {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-CN.yaml"}
+  ai-openai:    {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-OpenAI.yaml"}
+  ai-claude:    {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Claude.yaml"}
+  ai-gemini:    {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Gemini.yaml"}
+  ai-copilot:   {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Copilot.yaml"}
+  ai-jetbrains: {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Jetbrains.yaml"}
+  ai-others:    {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Overseas-Others.yaml"}
+```
+
+再在 `rules:` 里引用（**顺序同 Surge**：国内直连在前，其余走各代理组）：
+
+```yaml
+rules:
+  - RULE-SET,ai-cn,DIRECT
+  - RULE-SET,ai-openai,🧠 ChatGPT
+  - RULE-SET,ai-claude,🎭 Claude
+  - RULE-SET,ai-gemini,💎 Gemini
+  - RULE-SET,ai-copilot,🤖 AI 服务
+  - RULE-SET,ai-jetbrains,🤖 AI 服务
+  - RULE-SET,ai-others,🤖 AI 服务
+  # ……你自己的兜底规则（MATCH/GEOIP 等）
+```
+
+> 代理组名（`🧠 ChatGPT` 等）是**示例**——换成你 mihomo 配置里实际定义的 `proxy-groups` 名。
+> 每个 `clash/AI-*.yaml` 头部也写了 `# USE:` 建议组，可对照。
+
+**与 Surge 的差异**：`URL-REGEX` 是 Surge 独有，mihomo 没有等价类型（它只有 `DOMAIN-REGEX`，
+匹配域名而非 URL 路径）→ Clash 端**不生成**该条（当前仅 Gemini 表有 1 条，产物头部会注明）。
+域名/IP 类规则（`DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD / IP-CIDR / IP-CIDR6 / IP-ASN`，
+含 `,no-resolve`）两套格式完全一致，逐条对得上。
 
 ## 自动化：GitHub Actions（已取代本机 launchd）
 

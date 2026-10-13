@@ -34,6 +34,11 @@ else
   run '"$REPO/refresh-ai-lists.sh"'
 fi
 
+# ── 1b. 由 Surge 表派生 Clash/mihomo rule-provider ─────────────
+# 与 Surge 表同源、同一次生成，保证两套格式内容一致（「Surge 更新 → Clash 随之更新」）。
+say "转换 Clash/mihomo rule-provider（clash/*.yaml）"
+run '"$REPO/to-clash.sh"'
+
 # ── 2. 同步到 Surge Profiles（本地备份副本，供离线查看/回滚）────────
 # 注意：lll.conf 现在用 RULE-SET,<仓库 URL> 引用，Surge **不再读**这里的 .list。
 # 这一步只是让 Profiles 目录留一份与仓库一致的副本，方便本地比对/手工回滚。
@@ -45,6 +50,17 @@ for f in AI-*.list refresh-ai-lists.sh; do
     echo "    ↑ $f"
   fi
 done
+# Clash 产物也留一份副本到 Profiles/clash/（便于离线查看；Clash 端不读这里，只作备份）
+if [ -d clash ]; then
+  run "mkdir -p \"$PROFILES/clash\""
+  for f in clash/*.yaml; do
+    [ -e "$f" ] || continue
+    if ! cmp -s "$f" "$PROFILES/$f"; then
+      run "cp \"$f\" \"$PROFILES/$f\""
+      echo "    ↑ $f"
+    fi
+  done
+fi
 [ "$DRY" = 1 ] || chmod +x "$PROFILES/refresh-ai-lists.sh" 2>/dev/null
 
 # ── 3. 安全检查：绝不提交敏感文件 ─────────────────────────
@@ -62,7 +78,7 @@ say "检测到变化："
 if [ "$DRY" = 1 ]; then git --no-pager diff --stat; else git --no-pager diff --stat; fi
 
 # 生成变更摘要（新增/删除的规则条数）
-SUMMARY=$(git --no-pager diff --numstat -- '*.list' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+SUMMARY=$(git --no-pager diff --numstat -- '*.list' 'clash/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
 MSG="refresh: $(date +%F)  (${SUMMARY:-无行变})"
 
 run "git add -A"

@@ -1,0 +1,41 @@
+# NAME: AI-Claude
+# SRC:  AI-Claude.list（由 to-clash.sh 自动生成，勿手改）
+# TYPE: mihomo rule-provider / behavior: classical / format: yaml
+# USE:  RULE-SET,AI-Claude,🎭 Claude
+# GEN:  2026-10-13 11:02:14
+payload:
+  - DOMAIN,anthropic-com.ghost.io
+  - DOMAIN,anthropic.auth0.com
+  - DOMAIN,anthropic.com.cdn.cloudflare.net
+  - DOMAIN,servd-anthropic-website.b-cdn.net
+  - DOMAIN,storage.googleapis.com
+  - DOMAIN-SUFFIX,anthropic.com
+  - DOMAIN-SUFFIX,anthropic.com.cn
+  - DOMAIN-SUFFIX,anthropic.team
+  - DOMAIN-SUFFIX,antspace.dev
+  - DOMAIN-SUFFIX,chatbotclaude.com
+  - DOMAIN-SUFFIX,clau.de
+  - DOMAIN-SUFFIX,claude.ai
+  - DOMAIN-SUFFIX,claude.app
+  - DOMAIN-SUFFIX,claude.com
+  - DOMAIN-SUFFIX,claude.dev
+  - DOMAIN-SUFFIX,claude.new
+  - DOMAIN-SUFFIX,claude.site
+  - DOMAIN-SUFFIX,claudemcpclient.com
+  - DOMAIN-SUFFIX,claudemcpcontent.com
+  - DOMAIN-SUFFIX,claudepages.dev
+  - DOMAIN-SUFFIX,claudestudio.com
+  - DOMAIN-SUFFIX,claudeusercontent.com
+  - DOMAIN-SUFFIX,interface.feedback
+  - DOMAIN-SUFFIX,lcicat.org
+  - DOMAIN-SUFFIX,lcicollections.org
+  - DOMAIN-SUFFIX,mcpservertest.online
+  - DOMAIN-SUFFIX,modelcontextprotocol.com
+  - DOMAIN-SUFFIX,modelcontextprotocol.io
+  - DOMAIN-SUFFIX,modelcontextprotocol.net
+  - DOMAIN-SUFFIX,modelcontextprotocol.org
+  - DOMAIN-SUFFIX,muthos.com
+  - DOMAIN-SUFFIX,sillylittleguy.org
+  - IP-ASN,399358,no-resolve
+  - IP-CIDR,160.79.104.0/21,no-resolve
+  - IP-CIDR6,2607:6bc0::/32,no-resolve

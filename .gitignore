@@ -26,3 +26,8 @@
 !check-novel.sh
 !check-liveness.sh
 !check-brand-isolation.sh
+!check-clash.sh
+!to-clash.sh
+# Clash/mihomo 产物（由 to-clash.sh 生成；嵌套路径需逐层放行父目录）
+!clash/
+!clash/*.yaml

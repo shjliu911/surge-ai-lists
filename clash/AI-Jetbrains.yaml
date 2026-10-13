@@ -1,0 +1,25 @@
+# NAME: AI-Jetbrains
+# SRC:  AI-Jetbrains.list（由 to-clash.sh 自动生成，勿手改）
+# TYPE: mihomo rule-provider / behavior: classical / format: yaml
+# USE:  RULE-SET,AI-Jetbrains,🤖 AI 服务
+# GEN:  2026-10-13 11:02:14
+payload:
+  - DOMAIN,account.jetbrains.com
+  - DOMAIN,api.app.prod.grazie.aws.intellij.net
+  - DOMAIN,api.jetbrains.ai
+  - DOMAIN,api.jetbrains.cloud
+  - DOMAIN,oauth.account.jetbrains.com
+  - DOMAIN-SUFFIX,datalore.io
+  - DOMAIN-SUFFIX,grazie.ai
+  - DOMAIN-SUFFIX,intellij.com
+  - DOMAIN-SUFFIX,intellij.net
+  - DOMAIN-SUFFIX,intellij.org
+  - DOMAIN-SUFFIX,jetbrains.ai
+  - DOMAIN-SUFFIX,jetbrains.com
+  - DOMAIN-SUFFIX,jetbrains.io
+  - DOMAIN-SUFFIX,jetbrains.net
+  - DOMAIN-SUFFIX,jetbrains.org
+  - DOMAIN-SUFFIX,jetbrains.space
+  - DOMAIN-SUFFIX,jetbrains.team
+  - DOMAIN-SUFFIX,kotlinconf.com
+  - DOMAIN-SUFFIX,kotlinlang.org
