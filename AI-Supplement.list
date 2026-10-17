@@ -58,6 +58,8 @@ DOMAIN-SUFFIX,sourcegraph.com
 DOMAIN-SUFFIX,blackbox.ai
 
 # ============ xAI / 其他对话类 ============
+# xai.com 是 xAI 官网备用域（与 x.ai 同站，HK 解析），2026-10-17 三轮审计补
+DOMAIN-SUFFIX,xai.com
 DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,character.ai
