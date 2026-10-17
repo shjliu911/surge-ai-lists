@@ -36,6 +36,13 @@
 #       xiaoaiassist.com yoma.cn zhuiyi.com）虽无 A 记录，但**域名有效、NS 活跃**，
 #     与 2026-10-12 删掉的那批（NS 也在但同样无解析）特征相同 —— 判据不足以判定「死」，
 #     且删除无收益（.cn 的有 cn 泛匹配兜底、.com/.net 的多被 ChinaMax 单独收录）。故保留。
+#
+# 2026-10-17 二轮扫描（全上游源域名 + 60 品牌词表，DoH/ASN/标题三重核验）：
+#   · 上游源残留 12 条国内信号域名，8 条系有意排除（死域黑名单/国际版在海外表），无遗漏。
+#   · 60 品牌词表扫出 5 条真实遗漏（下方 4 条 + wanzhi.com），补录；其余命中的子域
+#     （aistudio.baidu.com ai.dingtalk.com ima.qq.com 等）已有父域兜底，不重复收。
+#   · 核验剔除：jiqie.com（表情包制作站，非 AI）、docer.com（WPS 模板商城，非 AI）、
+#     hiagent.cn / healthgpt.cn / agent.cn / agents.cn（解析在阿里云 SG，身份不明，宁缺勿滥）。
 
 # ============ 大模型 / 对话 ============
 DOMAIN-SUFFIX,deepseek.cn
@@ -134,6 +141,12 @@ DOMAIN-SUFFIX,datagrand.com
 DOMAIN-SUFFIX,mininglamp.com
 DOMAIN-SUFFIX,fuxi.netease.com
 DOMAIN-SUFFIX,paddlepaddle.org.cn
+# —— 二轮扫描补遗（2026-10-17）：wanzhi.com 无任何列表覆盖、纯靠 GEOIP,CN 兜底，
+#    是全部国内 AI 域里唯一一个；其余 4 条已被 ChinaMax 单独收录，一并显式归属。
+DOMAIN-SUFFIX,wanzhi.com
+DOMAIN-SUFFIX,xiaoyi.com
+DOMAIN-SUFFIX,liulishuo.com
+DOMAIN-SUFFIX,yuanfudao.com
 
 # ============ 生成式 / 多模态 ============
 DOMAIN-SUFFIX,jimeng.jianying.com

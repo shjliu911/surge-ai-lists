@@ -1,5 +1,5 @@
 # NAME: AI-CN
-# GEN:  2026-10-17 09:35:59
+# GEN:  2026-10-17 10:00:26
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-CN.list
 
@@ -60,6 +60,7 @@ DOMAIN-SUFFIX,langboat.com
 DOMAIN-SUFFIX,liblib.art
 DOMAIN-SUFFIX,lingma.aliyun.com
 DOMAIN-SUFFIX,lingyiwanwu.com
+DOMAIN-SUFFIX,liulishuo.com
 DOMAIN-SUFFIX,maas-api.ml-platform-cn-beijing.volces.com
 DOMAIN-SUFFIX,marscode.cn
 DOMAIN-SUFFIX,marscode.com.cn
@@ -109,6 +110,7 @@ DOMAIN-SUFFIX,unisound.com
 DOMAIN-SUFFIX,vidu.com
 DOMAIN-SUFFIX,vidu.studio
 DOMAIN-SUFFIX,wanx.aliyun.com
+DOMAIN-SUFFIX,wanzhi.com
 DOMAIN-SUFFIX,wenxiaoyan.com
 DOMAIN-SUFFIX,wenxin.baidu.com
 DOMAIN-SUFFIX,workbuddy.cn
@@ -116,9 +118,11 @@ DOMAIN-SUFFIX,xfyun.cn
 DOMAIN-SUFFIX,xfyun.com
 DOMAIN-SUFFIX,xiaoaiassist.com
 DOMAIN-SUFFIX,xiaomimimo.com
+DOMAIN-SUFFIX,xiaoyi.com
 DOMAIN-SUFFIX,xingyeai.com
 DOMAIN-SUFFIX,yoma.cn
 DOMAIN-SUFFIX,yuanbao.tencent.com
+DOMAIN-SUFFIX,yuanfudao.com
 DOMAIN-SUFFIX,yuanqi.tencent.com
 DOMAIN-SUFFIX,z.ai
 DOMAIN-SUFFIX,zhipu.cn

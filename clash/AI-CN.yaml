@@ -2,7 +2,7 @@
 # SRC:  surge/AI-CN.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-cn,DIRECT   (Surge: RULE-SET,surge/AI-CN.list,DIRECT)
-# GEN:  2026-10-17 09:36:51
+# GEN:  2026-10-17 10:01:08
 payload:
   - DOMAIN,api.hunyuan.cloud.tencent.com
   - DOMAIN,api.minimax.io
@@ -61,6 +61,7 @@ payload:
   - DOMAIN-SUFFIX,liblib.art
   - DOMAIN-SUFFIX,lingma.aliyun.com
   - DOMAIN-SUFFIX,lingyiwanwu.com
+  - DOMAIN-SUFFIX,liulishuo.com
   - DOMAIN-SUFFIX,maas-api.ml-platform-cn-beijing.volces.com
   - DOMAIN-SUFFIX,marscode.cn
   - DOMAIN-SUFFIX,marscode.com.cn
@@ -110,6 +111,7 @@ payload:
   - DOMAIN-SUFFIX,vidu.com
   - DOMAIN-SUFFIX,vidu.studio
   - DOMAIN-SUFFIX,wanx.aliyun.com
+  - DOMAIN-SUFFIX,wanzhi.com
   - DOMAIN-SUFFIX,wenxiaoyan.com
   - DOMAIN-SUFFIX,wenxin.baidu.com
   - DOMAIN-SUFFIX,workbuddy.cn
@@ -117,9 +119,11 @@ payload:
   - DOMAIN-SUFFIX,xfyun.com
   - DOMAIN-SUFFIX,xiaoaiassist.com
   - DOMAIN-SUFFIX,xiaomimimo.com
+  - DOMAIN-SUFFIX,xiaoyi.com
   - DOMAIN-SUFFIX,xingyeai.com
   - DOMAIN-SUFFIX,yoma.cn
   - DOMAIN-SUFFIX,yuanbao.tencent.com
+  - DOMAIN-SUFFIX,yuanfudao.com
   - DOMAIN-SUFFIX,yuanqi.tencent.com
   - DOMAIN-SUFFIX,z.ai
   - DOMAIN-SUFFIX,zhipu.cn
