@@ -30,7 +30,12 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 2 —— 默认浅克隆(depth=1)里没有 HEAD~1，「计算增量闸门基线」的
+      # git rev-parse HEAD~1 会静默失败并兜底回 HEAD，push 路径的增量闸门又空转
+      #（2026-10-17 第一版修复就这样被 CI 日志当场抓住）。depth=2 够比 HEAD~1。
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
 
       # check-clash.sh 需要 python3 的 yaml 模块。ubuntu-latest 预装 pyyaml，
       # 但 ubuntu-26 迁移在即、不保证 —— 显式装上，把隐式假设变成确定依赖。
