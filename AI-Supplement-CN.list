@@ -45,25 +45,25 @@
 #     hiagent.cn / healthgpt.cn / agent.cn / agents.cn（解析在阿里云 SG，身份不明，宁缺勿滥）。
 
 # ============ 大模型 / 对话 ============
+# 2026-10-17 三轮：厂商**国际版**域名全部移出国内表（→ AI-Supplement.list 走代理）：
+#   z.ai qwen.ai qwenlm.ai 01.ai deepseek.ai stepfun.ai sensenova.com hailuo.com
+#   （moonshot.ai qwenlm.ai modelscope.com siliconflow.com api.minimax.io zhipucn.com
+#     来自 VPSDance 源，在 refresh-ai-lists.sh 的 BAD_CN_INTL 剔除）。与用户
+#   「国际版走代理、国内版直连」策略一致（lll.conf 手动钉 codebuddy.ai→🇸🇬 同理）。
 DOMAIN-SUFFIX,deepseek.cn
-DOMAIN-SUFFIX,deepseek.ai
 DOMAIN-SUFFIX,kimi.moonshot.cn
 DOMAIN-SUFFIX,platform.moonshot.cn
 DOMAIN-SUFFIX,zhipuai.com
 DOMAIN-SUFFIX,zhipu.cn
 DOMAIN-SUFFIX,chatglm.com
-DOMAIN-SUFFIX,z.ai
 DOMAIN-SUFFIX,open.bigmodel.cn
 DOMAIN-SUFFIX,baichuan-ai.com
 DOMAIN-SUFFIX,baichuan.com
 DOMAIN-SUFFIX,minimaxi.com
 DOMAIN-SUFFIX,minimaxi.cn
 DOMAIN-SUFFIX,hailuoai.com
-DOMAIN-SUFFIX,hailuo.com
 DOMAIN-SUFFIX,stepfun.cn
-DOMAIN-SUFFIX,stepfun.ai
 DOMAIN-SUFFIX,sensenova.cn
-DOMAIN-SUFFIX,sensenova.com
 DOMAIN-SUFFIX,sensetime.com
 DOMAIN-SUFFIX,xfyun.cn
 DOMAIN-SUFFIX,xfyun.com
@@ -75,7 +75,6 @@ DOMAIN-SUFFIX,openbmb.cn
 DOMAIN-SUFFIX,langboat.com
 DOMAIN-SUFFIX,4paradigm.com
 DOMAIN-SUFFIX,zhuiyi.com
-DOMAIN-SUFFIX,01.ai
 DOMAIN-SUFFIX,msai.cn
 DOMAIN-SUFFIX,lingyiwanwu.com
 DOMAIN-SUFFIX,wenxiaoyan.com
@@ -110,7 +109,6 @@ DOMAIN-SUFFIX,workbuddy.cn
 # 模型社区 / 推理云（这些是 AI 专属品牌域，不是通用云平台）
 DOMAIN-SUFFIX,modelscope.cn
 DOMAIN-SUFFIX,siliconflow.cn
-DOMAIN-SUFFIX,siliconflow.com
 
 # ============ 编码助手 / 开发 ============
 DOMAIN-SUFFIX,codegeex.cn

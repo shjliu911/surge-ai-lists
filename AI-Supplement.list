@@ -71,3 +71,57 @@ DOMAIN-SUFFIX,janitorai.com
 # 上游源只收了 hermes-agent.nousresearch.com 一条，同源的 portal.nousresearch.com
 # 会漏到 FINAL（2026-10-12 实测）。Nous Research 是 AI 公司，整域收干净。
 DOMAIN-SUFFIX,nousresearch.com
+
+# ============ 国内厂商国际版（2026-10-17 三轮审计移入）============
+# 原在 AI-CN（国内表）被钉 DIRECT，但解析在境外（SG/HK/US/CA，ASN=阿里云国际/
+# Cloudflare/Amazon 等），直连慢且易风控。策略：国际版走代理、国内版直连 ——
+# 与 lll.conf 手动钉 codebuddy.ai→🇸🇬 同理。国内版仍留在 AI-Supplement-CN.list。
+DOMAIN-SUFFIX,z.ai
+DOMAIN-SUFFIX,qwen.ai
+DOMAIN-SUFFIX,qwenlm.ai
+DOMAIN-SUFFIX,qwen.com
+DOMAIN-SUFFIX,moonshot.ai
+DOMAIN-SUFFIX,01.ai
+DOMAIN-SUFFIX,deepseek.ai
+DOMAIN-SUFFIX,stepfun.ai
+DOMAIN-SUFFIX,sensenova.com
+DOMAIN-SUFFIX,minimax.io
+DOMAIN-SUFFIX,modelscope.com
+DOMAIN-SUFFIX,siliconflow.com
+DOMAIN-SUFFIX,zhipucn.com
+DOMAIN-SUFFIX,hailuo.com
+DOMAIN-SUFFIX,skywork.com
+DOMAIN-SUFFIX,metaso.com
+DOMAIN-SUFFIX,seaart.ai
+DOMAIN-SUFFIX,tusiart.com
+DOMAIN-SUFFIX,yi.ai
+DOMAIN-SUFFIX,sensechat.com
+DOMAIN-SUFFIX,codebuddy.com
+DOMAIN-SUFFIX,workbuddy.com
+DOMAIN-SUFFIX,trae.ai
+DOMAIN-SUFFIX,marscode.com
+
+# ============ 推理 / 算力平台（2026-10-17 三轮审计补）============
+DOMAIN-SUFFIX,sambanova.ai
+DOMAIN-SUFFIX,anyscale.com
+DOMAIN-SUFFIX,modal.com
+DOMAIN-SUFFIX,runpod.io
+DOMAIN-SUFFIX,vast.ai
+DOMAIN-SUFFIX,lambda.ai
+DOMAIN-SUFFIX,lambdalabs.com
+DOMAIN-SUFFIX,cerebras.net
+DOMAIN-SUFFIX,portkey.ai
+
+# ============ 对话 / 搜索 / Agent（2026-10-17 三轮审计补）============
+DOMAIN-SUFFIX,lmsys.org
+DOMAIN-SUFFIX,glean.com
+DOMAIN-SUFFIX,andisearch.com
+DOMAIN-SUFFIX,devv.ai
+DOMAIN-SUFFIX,chatbase.co
+DOMAIN-SUFFIX,roocode.com
+DOMAIN-SUFFIX,aider.chat
+# Arc 浏览器（The Browser Company，内置 AI 助手）—— 只收 arc.net 本域与主站，
+# 不收泛 .net；company 域 thebrowser.com 顺手收
+DOMAIN,arc.net
+DOMAIN-SUFFIX,arc.net
+DOMAIN-SUFFIX,thebrowser.com

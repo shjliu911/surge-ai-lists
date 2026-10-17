@@ -2,10 +2,9 @@
 # SRC:  surge/AI-CN.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-cn,DIRECT   (Surge: RULE-SET,surge/AI-CN.list,DIRECT)
-# GEN:  2026-10-17 10:01:08
+# GEN:  2026-10-17 10:16:27
 payload:
   - DOMAIN,api.hunyuan.cloud.tencent.com
-  - DOMAIN,api.minimax.io
   - DOMAIN,api.minimaxi.com
   - DOMAIN-SUFFIX,ark.cn-beijing.volces.com
   - DOMAIN-SUFFIX,bailian.console.aliyun.com
@@ -15,7 +14,6 @@ payload:
   - DOMAIN-SUFFIX,qianfan.baidubce.com
   - DOMAIN,qodercn-jb.oss-cn-hangzhou.aliyuncs.com
   - DOMAIN-SUFFIX,yiyan.baidu.com
-  - DOMAIN-SUFFIX,01.ai
   - DOMAIN-SUFFIX,4paradigm.com
   - DOMAIN-SUFFIX,ai.360.cn
   - DOMAIN-SUFFIX,ai.360.com
@@ -42,14 +40,12 @@ payload:
   - DOMAIN-SUFFIX,cozeide.cn
   - DOMAIN-SUFFIX,cozesdk.com
   - DOMAIN-SUFFIX,datagrand.com
-  - DOMAIN-SUFFIX,deepseek.ai
   - DOMAIN-SUFFIX,deepseek.cn
   - DOMAIN-SUFFIX,deepseek.com
   - DOMAIN-SUFFIX,doubao.com
   - DOMAIN-SUFFIX,dp.tech
   - DOMAIN-SUFFIX,dui.ai
   - DOMAIN-SUFFIX,fuxi.netease.com
-  - DOMAIN-SUFFIX,hailuo.com
   - DOMAIN-SUFFIX,hailuoai.com
   - DOMAIN-SUFFIX,hunyuan.tencent.com
   - DOMAIN-SUFFIX,iflytek.com
@@ -75,8 +71,6 @@ payload:
   - DOMAIN-SUFFIX,mobvoi.com
   - DOMAIN-SUFFIX,modelbest.cn
   - DOMAIN-SUFFIX,modelscope.cn
-  - DOMAIN-SUFFIX,modelscope.com
-  - DOMAIN-SUFFIX,moonshot.ai
   - DOMAIN-SUFFIX,moonshot.cn
   - DOMAIN-SUFFIX,msai.cn
   - DOMAIN-SUFFIX,n.cn
@@ -90,15 +84,10 @@ payload:
   - DOMAIN-SUFFIX,qoder.com.cn
   - DOMAIN-SUFFIX,quark.cn
   - DOMAIN-SUFFIX,quark.sm.cn
-  - DOMAIN-SUFFIX,qwen.ai
-  - DOMAIN-SUFFIX,qwenlm.ai
   - DOMAIN-SUFFIX,sensenova.cn
-  - DOMAIN-SUFFIX,sensenova.com
   - DOMAIN-SUFFIX,sensetime.com
   - DOMAIN-SUFFIX,shengshu.com
   - DOMAIN-SUFFIX,siliconflow.cn
-  - DOMAIN-SUFFIX,siliconflow.com
-  - DOMAIN-SUFFIX,stepfun.ai
   - DOMAIN-SUFFIX,stepfun.cn
   - DOMAIN-SUFFIX,stepfun.com
   - DOMAIN-SUFFIX,tiangong.cn
@@ -125,9 +114,7 @@ payload:
   - DOMAIN-SUFFIX,yuanbao.tencent.com
   - DOMAIN-SUFFIX,yuanfudao.com
   - DOMAIN-SUFFIX,yuanqi.tencent.com
-  - DOMAIN-SUFFIX,z.ai
   - DOMAIN-SUFFIX,zhipu.cn
   - DOMAIN-SUFFIX,zhipuai.cn
   - DOMAIN-SUFFIX,zhipuai.com
-  - DOMAIN-SUFFIX,zhipucn.com
   - DOMAIN-SUFFIX,zhuiyi.com

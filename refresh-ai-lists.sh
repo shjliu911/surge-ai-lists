@@ -64,6 +64,11 @@ BAD_GOOGLE_INFRA="content-autofill\.googleapis\.com|csp\.withgoogle\.com|encrypt
 # 这些平台的 AI 子域（dashscope/qianfan/ark/hunyuan…）在源里已单独收录 → 收窄不丢覆盖面。
 BAD_CN="aliyun\.com|volcengine\.com|volces\.com|tencentcloudapi\.com|baidubce\.com"
 
+# 国内厂商的**国际版**域名 —— VPSDance cn.list 把它们当"国内"收，但解析在境外，
+# 打成 DIRECT 会让用户直连海外 CDN（慢且易被风控）。2026-10-17 三轮审计移出，
+# 与 AI-Supplement.list（海外补充表）里同名条目对应，策略=国际版走代理。
+BAD_CN_INTL="z\.ai|qwen\.ai|qwenlm\.ai|moonshot\.ai|api\.minimax\.io|minimax\.io|modelscope\.com|siliconflow\.com|zhipucn\.com|stepfun\.ai"
+
 # DNS 查无此域（NXDOMAIN/no-A）或误收的域名 —— 规则永不命中，或指向无关站点。
 #   tcwqqdy.guru/mchost.guru/mcbaas.work/mcprev.cn : DNS 无解析（上游疑似灌入的幻觉域名）
 #   trae.guru        : Trae 官方是 trae.ai/trae.cn/trae.com.cn，此域无解析
@@ -108,6 +113,7 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN/进程规则与宽
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*datadoghq\.(com|eu)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*(sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|toolkit-language-servers|aws-language-servers|q-developer-integration)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_CN)([[:space:]]|,|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_CN_INTL)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_DEAD)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_GOOGLE_INFRA)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*($BAD_MISC_SUBSTR)" \

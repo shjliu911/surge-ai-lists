@@ -22,8 +22,9 @@ done
 # 注意：这里只列**AI 产品/服务**的域名，不列云平台的泛顶级域
 #（aliyun.com / volcengine.com / tencentcloudapi.com / baidubce.com 已于 2026-10-12
 #  按审计收窄——它们会把整个云平台的非 AI 流量拉直连）。对应的 AI 子域才是必查项。
+# （qwen.ai 已于 2026-10-17 移出国内表——它是阿里国际版域，解析在境外，走代理）
 KEY_CN="deepseek.com moonshot.cn zhipuai.cn bigmodel.cn chatglm.cn \
-dashscope.aliyuncs.com tongyi.aliyun.com qwen.ai \
+dashscope.aliyuncs.com tongyi.aliyun.com chatglm.com \
 yiyan.baidu.com ernie.baidu.com qianfan.baidubce.com \
 doubao.com ark.cn-beijing.volces.com coze.cn \
 hunyuan.tencent.com yuanbao.tencent.com \
