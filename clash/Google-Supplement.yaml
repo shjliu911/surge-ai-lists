@@ -1,0 +1,12 @@
+# NAME: Google-Supplement
+# SRC:  Google-Supplement.list（由 to-clash.sh 自动生成，勿手改）
+# TYPE: mihomo rule-provider / behavior: classical / format: yaml
+# USE:  Clash: RULE-SET,google-supplement,🐱哈基米   (Surge: RULE-SET,surge/Google-Supplement.list,🐱哈基米)
+# GEN:  2026-10-17 10:54:41
+payload:
+  - DOMAIN-SUFFIX,docs.new
+  - DOMAIN-SUFFIX,sheets.new
+  - DOMAIN-SUFFIX,whats.new
+  - DOMAIN-SUFFIX,tenor.com
+  - DOMAIN-SUFFIX,fitbit.com
+  - DOMAIN-SUFFIX,idx.dev

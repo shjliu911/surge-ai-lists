@@ -14,6 +14,8 @@
 !AI-Supplement.list
 !AI-CN.list
 !AI-Supplement-CN.list
+# Google 补充表（手写，四路上游核对后补的 .new/tenor/fitbit/idx.dev）
+!Google-Supplement.list
 !refresh-ai-lists.sh
 !sync.sh
 # GitHub Actions 工作流（嵌套路径需逐层放行父目录）

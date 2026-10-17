@@ -32,6 +32,8 @@ AI-Supplement*.list  ← 手写补充表（人工，折进对应生成表）
 | `AI-Supplement-Gemini.list` | **人工** | 折进 AI-Gemini |
 | `AI-Supplement.list` | **人工** | 折进 AI-Overseas-Others |
 | `AI-Supplement-CN.list` | **人工** | 折进 AI-CN |
+| `Google-Supplement.list` | **人工** | 独立引用（Google 代理组；bm7 Google.list 缺口：.new 短链 / tenor / fitbit / idx.dev）|
+| `clash/Google-Supplement.yaml` | 脚本生成 | 同上，Clash/mihomo rule-provider |
 | `refresh-ai-lists.sh` | 引擎 | 生成 7 张主表到 `surge/` |
 | `check-ai-lists.sh` | 引擎 | CI 校验：格式 / 关键国内 AI 域名 / SaaS 泄漏 |
 | `to-clash.sh` | 引擎 | 把 `surge/` 表转成 Clash rule-provider（`clash/`）|
@@ -177,6 +179,8 @@ rule-providers:
                  url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Jetbrains.yaml"}
   ai-others:    {type: http, behavior: classical, format: yaml, interval: 86400,
                  url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/AI-Overseas-Others.yaml"}
+  google-supplement: {type: http, behavior: classical, format: yaml, interval: 86400,
+                 url: "https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/clash/Google-Supplement.yaml"}
 ```
 
 再在 `rules:` 里引用（**顺序同 Surge**：国内直连在前，其余走各代理组）：
@@ -190,6 +194,7 @@ rules:
   - RULE-SET,ai-copilot,🤖 AI 服务
   - RULE-SET,ai-jetbrains,🤖 AI 服务
   - RULE-SET,ai-others,🤖 AI 服务
+  - RULE-SET,google-supplement,🐱哈基米   # 或你的 Google 代理组
   # ……你自己的兜底规则（MATCH/GEOIP 等）
 ```
 

@@ -17,6 +17,7 @@ on:
       - "check-clash.sh"
       - "check-loon.sh"
       - "AI-Supplement*.list"
+      - "Google-Supplement.list"
       - ".github/workflows/generate.yml"
 
 permissions:

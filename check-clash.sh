@@ -35,7 +35,7 @@ SUPPORTED = {
     'AND', 'OR', 'NOT', 'MATCH',
 }
 
-files = sorted(glob.glob('clash/AI-*.yaml'))
+files = sorted(glob.glob('clash/AI-*.yaml') + glob.glob('clash/Google-*.yaml'))
 if not files:
     print("✗ 没有找到 clash/*.yaml（to-clash.sh 是否跑过？）")
     sys.exit(1)
@@ -44,7 +44,11 @@ fail = 0
 total_p = 0
 for f in files:
     base = os.path.basename(f)
-    src = os.path.join('surge', 'AI-' + base[len('AI-'):-len('.yaml')] + '.list')
+    # Google-Supplement 源表在根目录（手写表），AI-* 在 surge/（生成表）
+    if base.startswith('Google-'):
+        src = base[:-len('.yaml')] + '.list'
+    else:
+        src = os.path.join('surge', 'AI-' + base[len('AI-'):-len('.yaml')] + '.list')
     # 1) YAML 可解析 + 结构
     try:
         doc = yaml.safe_load(open(f, encoding='utf-8'))

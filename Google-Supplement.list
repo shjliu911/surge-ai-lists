@@ -1,0 +1,20 @@
+# NAME: Google-Supplement
+# DESC: blackmatrix7 Google.list 未覆盖的 Google 官方域（2026-10-17 四路上游核对：bm7 / v2fly / SukkaW / MetaCubeX）
+# USE:  RULE-SET,Google-Supplement.list,🐱哈基米（或你的 Google 代理组）
+# NOTE: 手动维护；格式同 Surge 外部规则集。必须放在 Google.list 之前或之后均可
+#       （与 Google.list 无重叠），但必须在 ChinaMax/Global 兜底之前。
+
+# --- .new 快捷建文档域（Google 官方短链，216.239.x，实测解析）---
+# docs.new → docs.google.com；sheets.new → sheets.google.com；whats.new → Google+
+# 上游 bm7/v2fly 均未收录；bm7 的 DOMAIN-KEYWORD,google 匹配不到纯 .new 域。
+DOMAIN-SUFFIX,docs.new
+DOMAIN-SUFFIX,sheets.new
+DOMAIN-SUFFIX,whats.new
+
+# --- Google 旗下独立品牌域（策略选择：跟随 Google 走代理）---
+# tenor.com：GIF 键盘 / Android 输入法图源
+DOMAIN-SUFFIX,tenor.com
+# fitbit.com：可穿戴设备账号同步
+DOMAIN-SUFFIX,fitbit.com
+# idx.dev：Project IDX / Firebase Studio 在线 IDE
+DOMAIN-SUFFIX,idx.dev

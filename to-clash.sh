@@ -31,6 +31,8 @@ group_of() {
     AI-Claude)          echo "🎭 Claude" ;;
     AI-Gemini)          echo "💎 Gemini" ;;
     AI-Copilot|AI-Jetbrains|AI-Overseas-Others) echo "🤖 AI 服务" ;;
+    # Google-Supplement：手写补充表，根目录直读（不进 surge/），策略同 Google 代理组
+    Google-Supplement)  echo "🐱哈基米" ;;
     *)                  echo "" ;;
   esac
 }
@@ -44,10 +46,14 @@ provider_name_of() {
   esac
 }
 
-TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others"
+TABLES="AI-CN AI-OpenAI AI-Claude AI-Gemini AI-Copilot AI-Jetbrains AI-Overseas-Others Google-Supplement"
 
 for t in $TABLES; do
-  src="$SRCDIR/$t.list"
+  # Google-Supplement 是根目录手写表（非 refresh 产物），其余在 surge/
+  case "$t" in
+    Google-Supplement) src="$t.list" ;;
+    *)                 src="$SRCDIR/$t.list" ;;
+  esac
   [ -f "$src" ] || { printf 'SKIP %s（源不存在）\n' "$src" >&2; continue; }
   dst="$OUTDIR/$t.yaml"
   opt=$(mktemp)
