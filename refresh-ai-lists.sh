@@ -51,6 +51,14 @@ BAD_DOMAIN="algolia.net|auth0.com|stripe.com|sentry.io|intercom.io|intercomcdn.c
 # 注意：Amazon Q / CodeWhisperer / Adobe Firefly **是** AI 服务（域名不出现在下面的模式里），会保留。
 BAD_INFRA="sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|language-servers\.amazonaws\.com|q-developer-integration"
 
+# Google 通用基础设施 —— **不是 AI 服务**，却在 2026-10-16 被 dler-io 的 AI Suite.list 整块灌入。
+# 症状：AI-Overseas-Others 一夜多出 19 行 Google 基础域，于是 Play 商店、Google 字体、地图
+# 图片 CDN 全被拉进「海外 AI」策略组 → 这些站被当 AI 流量走代理/被单独切换，行为错误。
+# check-novel.sh 的 `^(cdn|static|assets|img|images|fonts|media)\.` 模式只拦下了 fonts.*，
+# 其余（play./ssl./maps./lh3./ogs.…）长得像正常域名而漏过 —— 所以在源头按**精确清单**剔。
+# 保留边界：Gemini/AI Studio/Gemini 的 gstatic 静态资源仍由品牌表按签名单独收。
+BAD_GOOGLE_INFRA="content-autofill\.googleapis\.com|csp\.withgoogle\.com|encrypted-tbn[0-9]*\.gstatic\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|jnn-pa\.googleapis\.com|lh3\.google\.com|lh3\.googleusercontent\.com|lh5\.googleusercontent\.com|maps\.googleapis\.com|maps\.gstatic\.com|ogs\.google\.com|optimizationguide-pa\.googleapis\.com|play\.google\.com|ssl\.gstatic\.com|streetviewpixels-pa\.googleapis\.com"
+
 # 国内表（AI-CN）的剔除名单 —— 上游 VPSDance cn.list 自带的脏数据（2026-10-12 实证）。
 # 剔的是「整个云平台」顶级域：一条 aliyun.com 会把阿里云**全部**非 AI 产品拉直连。
 # 这些平台的 AI 子域（dashscope/qianfan/ark/hunyuan…）在源里已单独收录 → 收窄不丢覆盖面。
@@ -101,6 +109,7 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN/进程规则与宽
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*(sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|toolkit-language-servers|aws-language-servers|q-developer-integration)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_CN)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_DEAD)([[:space:]]|,|$)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_GOOGLE_INFRA)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*($BAD_MISC_SUBSTR)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_MISC_EXACT)([[:space:]]|,|$)" \
   | sed -E 's/[[:space:]]+$//' \
