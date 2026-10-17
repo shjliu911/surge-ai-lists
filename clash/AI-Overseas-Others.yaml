@@ -2,7 +2,7 @@
 # SRC:  surge/AI-Overseas-Others.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-others,🤖 AI 服务   (Surge: RULE-SET,surge/AI-Overseas-Others.list,🤖 AI 服务)
-# GEN:  2026-10-14 07:18:03
+# GEN:  2026-10-17 09:36:51
 payload:
   - DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
   - DOMAIN,accounts.spacex.ai
@@ -21,19 +21,38 @@ payload:
   - DOMAIN,auth.x.ai
   - DOMAIN,codewhisperer.us-east-1.amazonaws.com
   - DOMAIN,console.groq.com
+  - DOMAIN,content-autofill.googleapis.com
   - DOMAIN-SUFFIX,cp4.cloudflare.com
+  - DOMAIN,csp.withgoogle.com
   - DOMAIN,default.exp-tas.com
   - DOMAIN,developer.meta.com
+  - DOMAIN,encrypted-tbn0.gstatic.com
+  - DOMAIN,encrypted-tbn1.gstatic.com
+  - DOMAIN,encrypted-tbn2.gstatic.com
+  - DOMAIN,encrypted-tbn3.gstatic.com
+  - DOMAIN,fonts.googleapis.com
+  - DOMAIN,fonts.gstatic.com
   - DOMAIN,gateway.ai.cloudflare.com
   - DOMAIN,inference.codeium.com
+  - DOMAIN,jnn-pa.googleapis.com
+  - DOMAIN,lh3.google.com
+  - DOMAIN,lh3.googleusercontent.com
+  - DOMAIN,lh5.googleusercontent.com
   - DOMAIN,llama.developer.meta.com
+  - DOMAIN,maps.googleapis.com
+  - DOMAIN,maps.gstatic.com
+  - DOMAIN,ogs.google.com
   - DOMAIN-SUFFIX,openrouter.ai
+  - DOMAIN,optimizationguide-pa.googleapis.com
+  - DOMAIN,play.google.com
   - DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
   - DOMAIN,pplx-res.cloudinary.com
   - DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
   - DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
   - DOMAIN,server.codeium.com
   - DOMAIN,server.self-serve.windsurf.com
+  - DOMAIN,ssl.gstatic.com
+  - DOMAIN,streetviewpixels-pa.googleapis.com
   - DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
   - DOMAIN-SUFFIX,ai.azure.com
   - DOMAIN-SUFFIX,ai.cloudflare.com

@@ -14,6 +14,28 @@
 #   · 删除误收：pai.com（解析到 Webflow 建站平台，非阿里 PAI）、
 #     doudou.com（解析到 Zenlayer 境外 CDN，非豆包）、minimax.com（解析到 AWS 邮件转发域）。
 #   · capcut.cn（剪映）保留：字节系、含 AI 能力、国内直连无副作用。
+#
+# 2026-10-17 查缺补漏审计（DNS-over-HTTPS + ip-api ASN + 首页标题三重实证）：
+#   · 补录 35 条**解析到大陆 IP、确属国内 AI 产品**的域名。它们此前**已被 ChinaMax 兜底**
+#     （.cn 泛匹配 / 大厂父域 / GEOIP,CN）→ 行为**零变化**，补录只为「归属显式化」：
+#     Surge 日志显示 AI-CN.list 而非 ChinaMax_All.list，且上游若删掉 cn 泛匹配也不会失守。
+#   · 实证剔除的候选（名字像 AI、实为**撞名**或非 AI，**不要**加）：
+#       yitu.cn         → 易图网（SU 模型站），非「依图科技」（yitutech.com）
+#       yitu.com        → 易涂（趣味填色 App）
+#       huoshan.com     → 「火山网」，非字节「火山引擎」（volcengine.com）
+#       hailuo.cn       → 温州海螺集团有限公司，非 MiniMax 海螺 AI
+#       yuanqi.com      → 企业官网模板站，非腾讯「元器」（真实：yuanqi.tencent.com）
+#       tiangong.com    → IONOS 邮箱停机页，非昆仑万维天工
+#       cloud.tencent.com → 腾讯云**通用**控制台（本文件既定原则：只收 AI 专属子域）
+#       kuaishou.com / youdao.com / hikvision.com / dahuatech.com → 短视频/教育/安防硬件
+#       shenlanai.com / shangtangai.com → 解析在 CN 但站点身份存疑，宁缺勿滥
+#   · **不删**：曾有报告称「17 条死域」，实为只查 apex A 记录所致 —— 其中 8 条
+#     （baichuan.com zhipuai.com cozefn.cn cozesdk.com marscode.com.cn miaibox.com
+#       xiaomimimo.com xingyeai.com）**子域仍活跃**，DOMAIN-SUFFIX 照常生效。剩余 9 条
+#     （cozeapp.net cozebaas.cn cozebuild.com cozedeploy.com cozeide.cn deepseek.cn
+#       xiaoaiassist.com yoma.cn zhuiyi.com）虽无 A 记录，但**域名有效、NS 活跃**，
+#     与 2026-10-12 删掉的那批（NS 也在但同样无解析）特征相同 —— 判据不足以判定「死」，
+#     且删除无收益（.cn 的有 cn 泛匹配兜底、.com/.net 的多被 ChinaMax 单独收录）。故保留。
 
 # ============ 大模型 / 对话 ============
 DOMAIN-SUFFIX,deepseek.cn
@@ -21,11 +43,14 @@ DOMAIN-SUFFIX,deepseek.ai
 DOMAIN-SUFFIX,kimi.moonshot.cn
 DOMAIN-SUFFIX,platform.moonshot.cn
 DOMAIN-SUFFIX,zhipuai.com
+DOMAIN-SUFFIX,zhipu.cn
+DOMAIN-SUFFIX,chatglm.com
 DOMAIN-SUFFIX,z.ai
 DOMAIN-SUFFIX,open.bigmodel.cn
 DOMAIN-SUFFIX,baichuan-ai.com
 DOMAIN-SUFFIX,baichuan.com
 DOMAIN-SUFFIX,minimaxi.com
+DOMAIN-SUFFIX,minimaxi.cn
 DOMAIN-SUFFIX,hailuoai.com
 DOMAIN-SUFFIX,hailuo.com
 DOMAIN-SUFFIX,stepfun.cn
@@ -34,7 +59,9 @@ DOMAIN-SUFFIX,sensenova.cn
 DOMAIN-SUFFIX,sensenova.com
 DOMAIN-SUFFIX,sensetime.com
 DOMAIN-SUFFIX,xfyun.cn
+DOMAIN-SUFFIX,xfyun.com
 DOMAIN-SUFFIX,xinghuo.xfyun.cn
+DOMAIN-SUFFIX,iflytek.com
 DOMAIN-SUFFIX,tiangong.cn
 DOMAIN-SUFFIX,modelbest.cn
 DOMAIN-SUFFIX,openbmb.cn
@@ -43,6 +70,9 @@ DOMAIN-SUFFIX,4paradigm.com
 DOMAIN-SUFFIX,zhuiyi.com
 DOMAIN-SUFFIX,01.ai
 DOMAIN-SUFFIX,msai.cn
+DOMAIN-SUFFIX,lingyiwanwu.com
+DOMAIN-SUFFIX,wenxiaoyan.com
+DOMAIN-SUFFIX,dp.tech
 
 # ============ 平台 / 推理 / 云 API（收窄至 AI 子域，不用整个云平台域）============
 # 火山引擎方舟
@@ -50,16 +80,26 @@ DOMAIN-SUFFIX,ark.cn-beijing.volces.com
 DOMAIN-SUFFIX,maas-api.ml-platform-cn-beijing.volces.com
 # 阿里云百炼 / 通义
 DOMAIN-SUFFIX,bailian.console.aliyun.com
+DOMAIN-SUFFIX,bailian.aliyun.com
 DOMAIN-SUFFIX,dashscope.aliyuncs.com
 DOMAIN-SUFFIX,qianwen.aliyun.com
 DOMAIN-SUFFIX,tongyi.aliyun.com
+DOMAIN-SUFFIX,lingma.aliyun.com
+DOMAIN-SUFFIX,tingwu.aliyun.com
+DOMAIN-SUFFIX,wanx.aliyun.com
 # 腾讯混元
 DOMAIN-SUFFIX,hunyuan.tencentcloudapi.com
 DOMAIN-SUFFIX,hunyuan.tencent.com
+DOMAIN-SUFFIX,yuanbao.tencent.com
 # 百度千帆 / 文心
 DOMAIN-SUFFIX,qianfan.baidubce.com
 DOMAIN-SUFFIX,yiyan.baidu.com
 DOMAIN-SUFFIX,ernie.baidu.com
+DOMAIN-SUFFIX,comate.baidu.com
+DOMAIN-SUFFIX,wenxin.baidu.com
+# 编码助手 / 开发（腾讯 CodeBuddy 国内版；国际版 codebuddy.ai 走代理，见 lll.conf）
+DOMAIN-SUFFIX,codebuddy.cn
+DOMAIN-SUFFIX,workbuddy.cn
 # 模型社区 / 推理云（这些是 AI 专属品牌域，不是通用云平台）
 DOMAIN-SUFFIX,modelscope.cn
 DOMAIN-SUFFIX,siliconflow.cn
@@ -70,6 +110,31 @@ DOMAIN-SUFFIX,codegeex.cn
 DOMAIN-SUFFIX,marscode.cn
 DOMAIN-SUFFIX,trae.cn
 
+# ============ 语音 / 对话（2026-10-17 补：整条赛道此前全缺）============
+DOMAIN-SUFFIX,aispeech.com
+DOMAIN-SUFFIX,dui.ai
+DOMAIN-SUFFIX,unisound.com
+DOMAIN-SUFFIX,mobvoi.com
+
+# ============ 计算机视觉（2026-10-17 补：整条赛道此前全缺）============
+DOMAIN-SUFFIX,megvii.com
+DOMAIN-SUFFIX,cloudwalk.cn
+DOMAIN-SUFFIX,cloudwalk.com
+
+# ============ 搜索 / 助手（2026-10-17 补）============
+DOMAIN-SUFFIX,metaso.cn
+DOMAIN-SUFFIX,quark.cn
+DOMAIN-SUFFIX,quark.sm.cn
+DOMAIN-SUFFIX,n.cn
+DOMAIN-SUFFIX,ai.360.cn
+DOMAIN-SUFFIX,ai.360.com
+
+# ============ 数据智能 / 平台（2026-10-17 补）============
+DOMAIN-SUFFIX,datagrand.com
+DOMAIN-SUFFIX,mininglamp.com
+DOMAIN-SUFFIX,fuxi.netease.com
+DOMAIN-SUFFIX,paddlepaddle.org.cn
+
 # ============ 生成式 / 多模态 ============
 DOMAIN-SUFFIX,jimeng.jianying.com
 DOMAIN-SUFFIX,capcut.cn
@@ -77,3 +142,5 @@ DOMAIN-SUFFIX,vidu.com
 DOMAIN-SUFFIX,vidu.studio
 DOMAIN-SUFFIX,shengshu.com
 DOMAIN-SUFFIX,klingai.cn
+DOMAIN-SUFFIX,klingai.com
+DOMAIN-SUFFIX,liblib.art
