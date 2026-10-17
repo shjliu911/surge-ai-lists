@@ -53,16 +53,31 @@ jobs:
       - name: 校验产物（格式 / 关键国内 AI 域名 / SaaS 泄漏 / 隔离 / 去重 / 纯度）
         run: ./check-ai-lists.sh
 
+      # 两道增量闸门的基线按事件区分：
+      #   push       → HEAD~1（diff 就是本次提交，闸门审查刚进来的域名）
+      #   其他(schedule/dispatch) → HEAD（工作区由 refresh 重新生成，与 HEAD 的 diff = 上游漂移）
+      # 旧写法恒用 HEAD：push 时 HEAD 已含本次提交 → 永远「新增 0」→ 闸门空转（2026-10-17 实证：
+      # 19 条 Google 基础域因此绕过 check-novel 入库，次日 schedule 反而被同一批域名拦住）。
+      - name: 计算增量闸门基线
+        id: baseline
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && git rev-parse --verify -q HEAD~1 >/dev/null; then
+            BASE="HEAD~1"
+          else
+            BASE="HEAD"
+          fi
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "增量闸门基线: $BASE (event=${{ github.event_name }})"
+
       - name: 增量语义审查（新增域名命中 sso./login./telemetry. 等模式即失败）
         run: |
           chmod +x check-novel.sh
-          # 与本次 checkout 的 HEAD 比 —— CI 里 HEAD 就是 main 的上一次状态
-          ./check-novel.sh HEAD
+          ./check-novel.sh "${{ steps.baseline.outputs.base }}"
 
       - name: 存活性闸门（新增域名必须能解析）
         run: |
           chmod +x check-liveness.sh
-          ./check-liveness.sh HEAD
+          ./check-liveness.sh "${{ steps.baseline.outputs.base }}"
 
       - name: 品牌串表检查（提交前 —— 别家域名不得进本品牌表）
         run: |
