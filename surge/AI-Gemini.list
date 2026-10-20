@@ -1,5 +1,5 @@
 # NAME: AI-Gemini
-# GEN:  2026-10-14 07:17:35
+# GEN:  2026-10-20 17:59:56
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-Gemini.list
 
@@ -15,6 +15,10 @@ DOMAIN-SUFFIX,antigravity-unleash.goog
 DOMAIN-SUFFIX,antigravity.google
 DOMAIN,antigravity.googleapis.com
 DOMAIN-SUFFIX,bard.google.com
+DOMAIN,businessaicode.eu.rep.googleapis.com
+DOMAIN,businessaicode.googleapis.com
+DOMAIN,businessaicode.mtls.googleapis.com
+DOMAIN,businessaicode.us.rep.googleapis.com
 DOMAIN,cloudaicompanion.googleapis.com
 DOMAIN-SUFFIX,cloudcode-pa.googleapis.com
 DOMAIN,daily-cloudcode-pa.googleapis.com

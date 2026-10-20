@@ -2,7 +2,7 @@
 # SRC:  surge/AI-Overseas-Others.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-others,🤖 AI 服务   (Surge: RULE-SET,surge/AI-Overseas-Others.list,🤖 AI 服务)
-# GEN:  2026-10-17 10:22:39
+# GEN:  2026-10-20 18:00:03
 payload:
   - DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
   - DOMAIN,accounts.spacex.ai
@@ -10,6 +10,10 @@ payload:
   - DOMAIN,ai.developer.meta.com
   - DOMAIN,ai.meta.com
   - DOMAIN,aidemos.meta.com
+  - DOMAIN,aiplatform.eu.rep.googleapis.com
+  - DOMAIN,aiplatform.googleapis.com
+  - DOMAIN,aiplatform.mtls.googleapis.com
+  - DOMAIN,aiplatform.us.rep.googleapis.com
   - DOMAIN,anysphere-binaries.s3.us-east-1.amazonaws.com
   - DOMAIN,api.cloudflare.com
   - DOMAIN,api.github.com
@@ -25,6 +29,10 @@ payload:
   - DOMAIN-SUFFIX,cp4.cloudflare.com
   - DOMAIN,default.exp-tas.com
   - DOMAIN,developer.meta.com
+  - DOMAIN,discoveryengine.googleapis.com
+  - DOMAIN,discoveryengine.mtls.googleapis.com
+  - DOMAIN,eu-discoveryengine.googleapis.com
+  - DOMAIN,eu-discoveryengine.mtls.googleapis.com
   - DOMAIN,gateway.ai.cloudflare.com
   - DOMAIN,inference.codeium.com
   - DOMAIN,llama.developer.meta.com
@@ -35,6 +43,8 @@ payload:
   - DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
   - DOMAIN,server.codeium.com
   - DOMAIN,server.self-serve.windsurf.com
+  - DOMAIN,us-discoveryengine.googleapis.com
+  - DOMAIN,us-discoveryengine.mtls.googleapis.com
   - DOMAIN-SUFFIX,01.ai
   - DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
   - DOMAIN-SUFFIX,ai.azure.com

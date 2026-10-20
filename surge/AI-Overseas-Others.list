@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-17 10:22:39
+# GEN:  2026-10-20 18:00:02
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -9,6 +9,10 @@ DOMAIN,accounts.x.ai
 DOMAIN,ai.developer.meta.com
 DOMAIN,ai.meta.com
 DOMAIN,aidemos.meta.com
+DOMAIN,aiplatform.eu.rep.googleapis.com
+DOMAIN,aiplatform.googleapis.com
+DOMAIN,aiplatform.mtls.googleapis.com
+DOMAIN,aiplatform.us.rep.googleapis.com
 DOMAIN,anysphere-binaries.s3.us-east-1.amazonaws.com
 DOMAIN,api.cloudflare.com
 DOMAIN,api.github.com
@@ -24,6 +28,10 @@ DOMAIN,console.groq.com
 DOMAIN-SUFFIX,cp4.cloudflare.com
 DOMAIN,default.exp-tas.com
 DOMAIN,developer.meta.com
+DOMAIN,discoveryengine.googleapis.com
+DOMAIN,discoveryengine.mtls.googleapis.com
+DOMAIN,eu-discoveryengine.googleapis.com
+DOMAIN,eu-discoveryengine.mtls.googleapis.com
 DOMAIN,gateway.ai.cloudflare.com
 DOMAIN,inference.codeium.com
 DOMAIN,llama.developer.meta.com
@@ -34,6 +42,8 @@ DOMAIN-SUFFIX,q.eu-central-1.amazonaws.com
 DOMAIN-SUFFIX,q.us-east-1.amazonaws.com
 DOMAIN,server.codeium.com
 DOMAIN,server.self-serve.windsurf.com
+DOMAIN,us-discoveryengine.googleapis.com
+DOMAIN,us-discoveryengine.mtls.googleapis.com
 DOMAIN-SUFFIX,01.ai
 DOMAIN-SUFFIX,abtestvm-sg.bytedance.com
 DOMAIN-SUFFIX,ai.azure.com
