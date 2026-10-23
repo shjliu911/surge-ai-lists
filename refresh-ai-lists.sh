@@ -109,6 +109,7 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN/进程规则与宽
   | grep -vE '^[[:space:]]*IP-ASN,' \
   | grep -viE '^[[:space:]]*PROCESS-(NAME|PATH),' \
   | grep -viE "^[[:space:]]*DOMAIN-KEYWORD,($BAD_KW)([[:space:]]|$)" \
+  | grep -vE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*/" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,([a-z0-9.-]+[.-])?($BAD_DOMAIN)([[:space:]]|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,.*datadoghq\.(com|eu)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*(sso\.amazonaws\.com|awsstatic\.com|awsapps\.com|console\.aws\.a2z\.com|cognito-identity|client-telemetry|idetoolkits|toolkit-language-servers|aws-language-servers|q-developer-integration)" \

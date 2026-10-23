@@ -2,13 +2,14 @@
 # SRC:  surge/AI-Claude.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-claude,🎭 Claude   (Surge: RULE-SET,surge/AI-Claude.list,🎭 Claude)
-# GEN:  2026-10-13 11:59:12
+# GEN:  2026-10-23 14:14:10
 payload:
   - DOMAIN,anthropic-com.ghost.io
   - DOMAIN,anthropic.auth0.com
   - DOMAIN,anthropic.com.cdn.cloudflare.net
   - DOMAIN,servd-anthropic-website.b-cdn.net
   - DOMAIN,storage.googleapis.com
+  - DOMAIN-SUFFIX,ant.dev
   - DOMAIN-SUFFIX,anthropic.com
   - DOMAIN-SUFFIX,anthropic.com.cn
   - DOMAIN-SUFFIX,anthropic.team
@@ -21,6 +22,7 @@ payload:
   - DOMAIN-SUFFIX,claude.dev
   - DOMAIN-SUFFIX,claude.new
   - DOMAIN-SUFFIX,claude.site
+  - DOMAIN-SUFFIX,claudeacademy.com
   - DOMAIN-SUFFIX,claudemcpclient.com
   - DOMAIN-SUFFIX,claudemcpcontent.com
   - DOMAIN-SUFFIX,claudepages.dev

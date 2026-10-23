@@ -1,5 +1,5 @@
 # NAME: AI-Claude
-# GEN:  2026-10-13 10:44:53
+# GEN:  2026-10-23 14:13:51
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement-Claude.list
 
@@ -8,6 +8,7 @@ DOMAIN,anthropic.auth0.com
 DOMAIN,anthropic.com.cdn.cloudflare.net
 DOMAIN,servd-anthropic-website.b-cdn.net
 DOMAIN,storage.googleapis.com
+DOMAIN-SUFFIX,ant.dev
 DOMAIN-SUFFIX,anthropic.com
 DOMAIN-SUFFIX,anthropic.com.cn
 DOMAIN-SUFFIX,anthropic.team
@@ -20,6 +21,7 @@ DOMAIN-SUFFIX,claude.com
 DOMAIN-SUFFIX,claude.dev
 DOMAIN-SUFFIX,claude.new
 DOMAIN-SUFFIX,claude.site
+DOMAIN-SUFFIX,claudeacademy.com
 DOMAIN-SUFFIX,claudemcpclient.com
 DOMAIN-SUFFIX,claudemcpcontent.com
 DOMAIN-SUFFIX,claudepages.dev
