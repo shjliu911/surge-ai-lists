@@ -1,0 +1,26 @@
+# NAME: AI-Jetbrains
+# SRC:  surge/AI-Jetbrains.list（由 to-quanx.sh 自动生成，勿手改）
+# TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
+# USE:  QX: <本文件raw URL>, tag=AI-Jetbrains, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Jetbrains.list,🤖 AI 服务)
+# NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
+# GEN:  2026-10-27 12:20:34
+
+host, account.jetbrains.com, proxy
+host, api.app.prod.grazie.aws.intellij.net, proxy
+host, api.jetbrains.ai, proxy
+host, api.jetbrains.cloud, proxy
+host, oauth.account.jetbrains.com, proxy
+host-suffix, datalore.io, proxy
+host-suffix, grazie.ai, proxy
+host-suffix, intellij.com, proxy
+host-suffix, intellij.net, proxy
+host-suffix, intellij.org, proxy
+host-suffix, jetbrains.ai, proxy
+host-suffix, jetbrains.com, proxy
+host-suffix, jetbrains.io, proxy
+host-suffix, jetbrains.net, proxy
+host-suffix, jetbrains.org, proxy
+host-suffix, jetbrains.space, proxy
+host-suffix, jetbrains.team, proxy
+host-suffix, kotlinconf.com, proxy
+host-suffix, kotlinlang.org, proxy

@@ -39,6 +39,11 @@ fi
 say "转换 Clash/mihomo rule-provider（clash/*.yaml）"
 run '"$REPO/to-clash.sh"'
 
+# ── 1c. 由 Surge 表派生 Quantumult X 远程过滤表 ────────────────
+# 同理：surge/ 更新 → quanx/ 随之更新（三段式 host/host-suffix/…，剥 no-resolve、丢 URL-REGEX）。
+say "转换 Quantumult X 远程过滤表（quanx/*.list）"
+run '"$REPO/to-quanx.sh"'
+
 # ── 2. 同步到 Surge Profiles（本地备份副本，供离线查看/回滚）────────
 # 注意：lll.conf 现在用 RULE-SET,<仓库 URL> 引用，Surge **不再读**这里的 .list。
 # 这一步只是让 Profiles 目录留一份与仓库一致的副本，方便本地比对/手工回滚。
@@ -55,6 +60,17 @@ done
 if [ -d clash ]; then
   run "mkdir -p \"$PROFILES/clash\""
   for f in clash/*.yaml; do
+    [ -e "$f" ] || continue
+    if ! cmp -s "$f" "$PROFILES/$f"; then
+      run "cp \"$f\" \"$PROFILES/$f\""
+      echo "    ↑ $f"
+    fi
+  done
+fi
+# QX 产物同理留副本到 Profiles/quanx/（仅备份）
+if [ -d quanx ]; then
+  run "mkdir -p \"$PROFILES/quanx\""
+  for f in quanx/*.list; do
     [ -e "$f" ] || continue
     if ! cmp -s "$f" "$PROFILES/$f"; then
       run "cp \"$f\" \"$PROFILES/$f\""
@@ -79,7 +95,7 @@ say "检测到变化："
 if [ "$DRY" = 1 ]; then git --no-pager diff --stat; else git --no-pager diff --stat; fi
 
 # 生成变更摘要（新增/删除的规则条数）
-SUMMARY=$(git --no-pager diff --numstat -- '*.list' 'clash/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+SUMMARY=$(git --no-pager diff --numstat -- '*.list' 'clash/' 'quanx/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
 MSG="refresh: $(date +%F)  (${SUMMARY:-无行变})"
 
 run "git add -A"

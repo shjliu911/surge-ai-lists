@@ -13,6 +13,7 @@ Surge 的 AI 分流规则集。`lll.conf` 通过 **`RULE-SET,<本仓库 raw URL>
 ```
 surge/      ← Surge 生成表（refresh-ai-lists.sh 产出，Loon 直引用）
 clash/      ← Clash/mihomo rule-provider（to-clash.sh 从 surge/ 派生）
+quanx/      ← Quantumult X 远程过滤表（to-quanx.sh 从 surge/ 派生）
 *.sh        ← 生成 / 转换 / 校验脚本（引擎）
 AI-Supplement*.list  ← 手写补充表（人工，折进对应生成表）
 ```
@@ -27,6 +28,7 @@ AI-Supplement*.list  ← 手写补充表（人工，折进对应生成表）
 | `surge/AI-Overseas-Others.list` | 脚本生成 | 🤖 AI 服务 |
 | `surge/AI-CN.list` | 脚本生成 | DIRECT（国内 AI） |
 | `clash/AI-*.yaml` | 脚本生成 | Clash/mihomo rule-provider（由 `to-clash.sh` 从 `surge/` 派生）|
+| `quanx/AI-*.list` | 脚本生成 | Quantumult X [filter_remote]（由 `to-quanx.sh` 从 `surge/` 派生）|
 | `AI-Supplement-OpenAI.list` | **人工** | 折进 AI-OpenAI |
 | `AI-Supplement-Claude.list` | **人工** | 折进 AI-Claude |
 | `AI-Supplement-Gemini.list` | **人工** | 折进 AI-Gemini |
@@ -38,15 +40,17 @@ AI-Supplement*.list  ← 手写补充表（人工，折进对应生成表）
 | `check-ai-lists.sh` | 引擎 | CI 校验：格式 / 关键国内 AI 域名 / SaaS 泄漏 |
 | `to-clash.sh` | 引擎 | 把 `surge/` 表转成 Clash rule-provider（`clash/`）|
 | `check-clash.sh` | 引擎 | CI 校验：Clash 产物可解析 / 数量对账 / 类型白名单 |
+| `to-quanx.sh` | 引擎 | 把 `surge/` 表转成 Quantumult X 远程过滤表（`quanx/`）|
+| `check-quanx.sh` | 引擎 | CI 校验：QX 产物类型白名单 / 数量对账 / IP 规则 / 策略方向 |
 | `check-loon.sh` | 引擎 | CI 校验：7 张表类型均为 Loon 兼容（Loon 直引用 `surge/`，无副本）|
 | `check-novel.sh` | 引擎 | 增量语义审查（新增域名命中通用基础设施模式即拦）|
 | `check-liveness.sh` | 引擎 | 存活性闸门（新增域名必须能解析）|
 | `check-brand-isolation.sh` | 引擎 | 品牌串表检查（别家定义域不得进本品牌表）|
 | `sync.sh` | 引擎 | 本机一条命令：刷新 → 部署 → 提交推送 |
 
-**为什么分目录**：`surge/` 与 `clash/` 是**同一批数据的两种格式**，同一次 CI 落地
-（`refresh-ai-lists.sh` 写 `surge/`，`to-clash.sh` 随即派生 `clash/`）——目录分开后一眼
-看得出「谁是源、谁是派生」，也避免根目录堆 7 张表 + 7 份 yaml。
+**为什么分目录**：`surge/`、`clash/`、`quanx/` 是**同一批数据的三种格式**，同一次 CI 落地
+（`refresh-ai-lists.sh` 写 `surge/`，`to-clash.sh` / `to-quanx.sh` 随即派生各自目录）——目录分开后一眼
+看得出「谁是源、谁是派生」，也避免根目录堆 7 张表 + 7 份 yaml + 8 份 QX list。
 
 **生成 vs 人工**：`AI-Supplement*.list` 是**手写**的（留在根目录，与产物目录分开），脚本永不覆盖；
 `refresh-ai-lists.sh` 把多源拉下来、剔除宽泛规则后，再把对应的手写补充表折进去，
@@ -205,6 +209,46 @@ rules:
 匹配域名而非 URL 路径）→ Clash 端**不生成**该条（当前仅 Gemini 表有 1 条，产物头部会注明）。
 域名/IP 类规则（`DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD / IP-CIDR / IP-CIDR6 / IP-ASN`，
 含 `,no-resolve`）两套格式完全一致，逐条对得上。
+
+## Quantumult X 如何引用
+
+同样由 `to-quanx.sh` 从 `surge/` 派生一份 **QX [filter_remote] 远程过滤表**，放在 `quanx/` 下，
+**与 Surge/Clash 表同一次 CI 落地**。QX 在 `[filter_remote]` 段引用（8 张表）：
+
+```ini
+[filter_remote]
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-CN.list, tag=AI-CN, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-OpenAI.list, tag=AI-OpenAI, force-policy=🧠 ChatGPT, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-Claude.list, tag=AI-Claude, force-policy=🎭 Claude, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-Gemini.list, tag=AI-Gemini, force-policy=💎 Gemini, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-Copilot.list, tag=AI-Copilot, force-policy=🤖 AI 服务, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-Jetbrains.list, tag=AI-Jetbrains, force-policy=🤖 AI 服务, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/AI-Overseas-Others.list, tag=AI-Others, force-policy=🤖 AI 服务, enabled=true
+https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/quanx/Google-Supplement.list, tag=Google-Supplement, force-policy=🐱哈基米, enabled=true
+```
+
+> 引用顺序建议同 Surge：`AI-CN` 在前（直连），其余在后。
+> `force-policy=` 是**示例组名**——换成你 QX 里实际存在的策略/组名；整个不写也行（见下）。
+
+**格式与行内策略**（依据 2026-10-27 三方交叉实证：官方 sample.conf 全历史 + blackmatrix7
+QuantumultX/Surge 双目录 A/B 对照 + 社区资源解析器源码）：
+
+- 每行是 QX 原生三段式 `类型, 值, 策略`：`host / host-suffix / host-keyword / ip-cidr / ip6-cidr / ip-asn`。
+- **行内策略是 QX 内建策略**：`AI-CN` 全部 `direct`、其余表全部 `proxy` —— 不写 `force-policy`
+  也能正确工作（国内直连、海外代理）。要把某张表接到自己的策略组，在引用行上写
+  `force-policy=<你的组名>` 即可，官方语义是**覆盖**行内策略
+  （sample.conf 原文："the policy in filter of remote resource will be ignored and the
+  force-policy will be used"）。
+- **与 Surge 表的差异**：`URL-REGEX` QX 分流不支持（仅 [rewrite] 段可用）→ 丢弃并在产物头部
+  注明（当前仅 Gemini 1 条）；Surge 的 `,no-resolve` 后缀被剥离（QX 对 IP 规则无此参数，
+  BM7 的 QX 产物同样剥离、Loon 产物保留 —— 实证这是 QX 特有差异）；其余类型逐条 1:1 对得上。
+- 本仓库的 `surge/` 表是**无 policy 的两段式**（Surge RULE-SET 格式），QX 原生解析器对
+  这种行需要 `opt-parser=true` 外挂解析器才能读 —— 派生 `quanx/` 三段式后**不再需要**
+  opt-parser，原生直接引用。
+
+**与 Clash 的关键差异**：QX 原生认 `URL-REGEX` 的地方只有 [rewrite]（reject 类重写），
+分流侧没有等价物 → 和 Clash 一样丢这 1 条；但 QX 的 `host-suffix` 与 Surge `DOMAIN-SUFFIX`
+语义一致（连根域一起命中），域名规则无损失。
 
 ## Loon 如何引用
 

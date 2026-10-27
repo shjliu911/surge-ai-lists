@@ -1,0 +1,34 @@
+# NAME: AI-Copilot
+# SRC:  surge/AI-Copilot.list（由 to-quanx.sh 自动生成，勿手改）
+# TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
+# USE:  QX: <本文件raw URL>, tag=AI-Copilot, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Copilot.list,🤖 AI 服务)
+# NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
+# GEN:  2026-10-27 12:20:34
+
+host, api.githubcopilot.com, proxy
+host, api.msn.com, proxy
+host, assets.msn.com, proxy
+host, copilot-proxy.githubusercontent.com, proxy
+host, copilot-reports.github.com, proxy
+host, copilot-telemetry.githubusercontent.com, proxy
+host, copilot-workspace.githubnext.com, proxy
+host-suffix, copilot.microsoft.com, proxy
+host, copilotprodattachments.blob.core.windows.net, proxy
+host, gateway.bingviz.microsoft.net, proxy
+host, gateway.bingviz.microsoftapp.net, proxy
+host, in.appcenter.ms, proxy
+host, location.microsoft.com, proxy
+host, login.microsoftonline.com, proxy
+host, odc.officeapps.live.com, proxy
+host, r.bing.com, proxy
+host, self.events.data.microsoft.com, proxy
+host, services.bingapis.com, proxy
+host, sydney.bing.com, proxy
+host, www.bing.com, proxy
+host-keyword, openaicom-api, proxy
+host-suffix, api.microsoftapp.net, proxy
+host-suffix, bing-shopping.microsoft-falcon.io, proxy
+host-suffix, copilot.cloud.microsoft, proxy
+host-suffix, copilot.com, proxy
+host-suffix, edgeservices.bing.com, proxy
+host-suffix, githubcopilot.com, proxy

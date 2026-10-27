@@ -1,0 +1,33 @@
+# NAME: AI-OpenAI
+# SRC:  surge/AI-OpenAI.list（由 to-quanx.sh 自动生成，勿手改）
+# TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
+# USE:  QX: <本文件raw URL>, tag=AI-OpenAI, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-OpenAI.list,🧠 ChatGPT)
+# NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
+# GEN:  2026-10-27 12:21:51
+
+host, cdn.openaimerge.com, proxy
+host-suffix, openaiapi-site.azureedge.net, proxy
+host, openaiassets.blob.core.windows.net, proxy
+host, openaicomproductionae4b.blob.core.windows.net, proxy
+host, production-openaicom-storage.azureedge.net, proxy
+host-keyword, chatgpt-async-webps-prod, proxy
+host-suffix, ai.com, proxy
+host-suffix, chat.com, proxy
+host-suffix, chatgpt.com, proxy
+host-suffix, chatgpt.livekit.cloud, proxy
+host-suffix, chatgpt.site, proxy
+host-suffix, crixet.com, proxy
+host-suffix, host.livekit.cloud, proxy
+host-suffix, oaistatic.com, proxy
+host-suffix, oaistatsig.com, proxy
+host-suffix, oaiusercontent.com, proxy
+host-suffix, openai.com, proxy
+host-suffix, openai.com.cdn.cloudflare.net, proxy
+host-suffix, openai.org, proxy
+host-suffix, sora.com, proxy
+host-suffix, turn.livekit.cloud, proxy
+ip-asn, 401518, proxy
+ip-cidr, 199.47.142.0/23, proxy
+ip-cidr, 24.199.123.28/32, proxy
+ip-cidr, 64.23.132.171/32, proxy
+ip6-cidr, 2604:f20::/32, proxy

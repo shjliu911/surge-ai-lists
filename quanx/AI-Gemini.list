@@ -1,0 +1,74 @@
+# NAME: AI-Gemini
+# SRC:  surge/AI-Gemini.list（由 to-quanx.sh 自动生成，勿手改）
+# TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
+# USE:  QX: <本文件raw URL>, tag=AI-Gemini, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Gemini.list,💎 Gemini)
+# NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
+# GEN:  2026-10-27 12:20:34
+# NOTE: 已丢弃 1 条 QX filter 不支持的规则（URL-REGEX 等）
+
+host-suffix, ai.google.dev, proxy
+host-suffix, aisandbox-pa.googleapis.com, proxy
+host-suffix, aistudio.google.com, proxy
+host, alkalicore-pa.clients6.google.com, proxy
+host, alkalimakersuite-pa.googleapis.com, proxy
+host, antigravity-cli-auto-updater-974169037036.us-central1.run.app, proxy
+host, antigravity-hub-auto-updater-974169037036.us-central1.run.app, proxy
+host, antigravity-pa.googleapis.com, proxy
+host-suffix, antigravity-unleash.goog, proxy
+host-suffix, antigravity.google, proxy
+host, antigravity.googleapis.com, proxy
+host-suffix, bard.google.com, proxy
+host, businessaicode.eu.rep.googleapis.com, proxy
+host, businessaicode.googleapis.com, proxy
+host, businessaicode.mtls.googleapis.com, proxy
+host, businessaicode.us.rep.googleapis.com, proxy
+host, cloudaicompanion.googleapis.com, proxy
+host-suffix, cloudcode-pa.googleapis.com, proxy
+host, daily-cloudcode-pa.googleapis.com, proxy
+host, daily-cloudcode-pa.sandbox.googleapis.com, proxy
+host-suffix, gemini.google.com, proxy
+host, geminiweb-pa.clients.google.com, proxy
+host, geminiweb-pa.clients6.google.com, proxy
+host-suffix, generativelanguage.googleapis.com, proxy
+host, jetski-webchannel-pa.googleapis.com, proxy
+host-suffix, jules.google.com, proxy
+host, jules.googleapis.com, proxy
+host-suffix, makersuite.google.com, proxy
+host, notebooklm-pa.googleapis.com, proxy
+host-suffix, notebooklm.google.com, proxy
+host, notebooklm.googleapis.com, proxy
+host-suffix, robinfrontend-pa.googleapis.com, proxy
+host, waa-pa.clients6.google.com, proxy
+host, webchannel-alkalimakersuite-pa.clients6.google.com, proxy
+host-keyword, alkalimakersuite-pa.clients6.google.com, proxy
+host-suffix, ai.studio, proxy
+host-suffix, aicode.googleapis.com, proxy
+host-suffix, aida.googleapis.com, proxy
+host-suffix, aiplatform.googleapis.com, proxy
+host-suffix, antigravity.google.com, proxy
+host-suffix, apis.google.com, proxy
+host-suffix, deepmind.com, proxy
+host-suffix, deepmind.google, proxy
+host-suffix, flow.google, proxy
+host-suffix, flow.google.com, proxy
+host-suffix, g.ai, proxy
+host-suffix, geller-pa.googleapis.com, proxy
+host-suffix, gemini.google, proxy
+host-suffix, gemini.gstatic.com, proxy
+host-suffix, generativeai.google, proxy
+host-suffix, jetski-webchannel.googleapis.com, proxy
+host-suffix, jules.google, proxy
+host-suffix, labs.google, proxy
+host-suffix, labs.google.com, proxy
+host-suffix, labstailwind.pa.googleapis.com, proxy
+host-suffix, notebook.google, proxy
+host-suffix, notebook.google.com, proxy
+host-suffix, notebooklm.cloud.google.com, proxy
+host-suffix, notebooklm.google, proxy
+host-suffix, opal.goog, proxy
+host-suffix, opal.google, proxy
+host-suffix, opal.google.com, proxy
+host-suffix, opal.withgoogle.com, proxy
+host-suffix, proactivebackend-pa.googleapis.com, proxy
+host-suffix, stitch.withgoogle.com, proxy
+host-suffix, vertexai.googleapis.com, proxy

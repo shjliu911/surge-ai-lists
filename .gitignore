@@ -28,7 +28,12 @@
 !check-brand-isolation.sh
 !check-clash.sh
 !check-loon.sh
+!check-quanx.sh
 !to-clash.sh
+!to-quanx.sh
 # Clash/mihomo 产物（由 to-clash.sh 生成；嵌套路径需逐层放行父目录）
 !clash/
 !clash/*.yaml
+# Quantumult X 产物（由 to-quanx.sh 生成）
+!quanx/
+!quanx/*.list

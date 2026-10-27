@@ -16,6 +16,8 @@ on:
       - "to-clash.sh"
       - "check-clash.sh"
       - "check-loon.sh"
+      - "to-quanx.sh"
+      - "check-quanx.sh"
       - "AI-Supplement*.list"
       - "Google-Supplement.list"
       - ".github/workflows/generate.yml"
@@ -100,6 +102,18 @@ jobs:
           chmod +x check-clash.sh
           ./check-clash.sh
 
+      # Quantumult X 远程过滤表：由 to-quanx.sh 从 surge/ 派生（三段式 host/host-suffix/…，
+      # 剥 no-resolve、丢 URL-REGEX），check-quanx.sh 对账防静默丢行。
+      - name: 转换 Quantumult X 远程过滤表
+        run: |
+          chmod +x to-quanx.sh
+          ./to-quanx.sh
+
+      - name: 校验 QX 产物（类型白名单 / 数量对账 / IP 规则 / 策略方向）
+        run: |
+          chmod +x check-quanx.sh
+          ./check-quanx.sh
+
       # Loon 与 Surge 规则同构，直接引用现有 AI-*.list（不另生成）。此步守「表里别混入
       # Loon 不支持的类型（PROCESS-NAME / AND/OR/NOT …）」，否则 Loon 用户会静默漏规则。
       - name: 校验 Loon 兼容性（表内类型必须都是 Loon 支持的）
@@ -111,14 +125,14 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # 两套产物一起提交：Surge 表（surge/）+ Clash provider（clash/），
-          # 同一次 CI 落地，保证二者同源同版本。
-          git add 'surge/' 'clash/'
+          # 三套产物一起提交：Surge 表（surge/）+ Clash provider（clash/）+ QX 过滤表（quanx/），
+          # 同一次 CI 落地，保证三者同源同版本。
+          git add 'surge/' 'clash/' 'quanx/'
           if git diff --cached --quiet; then
             echo "无变化，跳过提交"
             exit 0
           fi
-          SUMMARY=$(git diff --cached --numstat -- 'surge/' 'clash/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
+          SUMMARY=$(git diff --cached --numstat -- 'surge/' 'clash/' 'quanx/' | awk '{a+=$1;d+=$2} END{printf "+%d/-%d 行", a, d}')
           git commit -m "chore: refresh AI rules ($SUMMARY) [skip ci]"
           # 竞态兜底：checkout 期间若有人手动 push，远端会领先。
           # 重试：先 rebase 到最新 main（规则表不会被手动改动，冲突概率极低），再 push。
@@ -140,13 +154,14 @@ jobs:
       # 这道是确认（rebase 重试、并发推送等情况下，落地内容可能与本地不同）。
       - name: 提交后再查（拉回远端内容重验，确认落地无串表）
         run: |
-          chmod +x check-brand-isolation.sh check-clash.sh check-loon.sh
+          chmod +x check-brand-isolation.sh check-clash.sh check-loon.sh check-quanx.sh
           git fetch -q origin main
           # 用远端 main 的内容重建工作区文件再验（不改 HEAD，只取文件）
-          git checkout -q origin/main -- 'surge/' 'clash/' 2>/dev/null || true
+          git checkout -q origin/main -- 'surge/' 'clash/' 'quanx/' 2>/dev/null || true
           echo "── 校验远端 main 的实际内容 ──"
           git log -1 --format='  commit: %h  %s' origin/main
           ./check-brand-isolation.sh
           ./check-ai-lists.sh | tail -4
           ./check-clash.sh | tail -2
           ./check-loon.sh | tail -2
+          ./check-quanx.sh | tail -2
