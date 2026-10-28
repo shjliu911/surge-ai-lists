@@ -3,7 +3,7 @@
 # TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
 # USE:  QX: <本文件raw URL>, tag=AI-Gemini, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Gemini.list,💎 Gemini)
 # NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
-# GEN:  2026-10-27 12:20:34
+# GEN:  2026-10-28 06:51:47
 # NOTE: 已丢弃 1 条 QX filter 不支持的规则（URL-REGEX 等）
 
 host-suffix, ai.google.dev, proxy
@@ -17,6 +17,8 @@ host, antigravity-pa.googleapis.com, proxy
 host-suffix, antigravity-unleash.goog, proxy
 host-suffix, antigravity.google, proxy
 host, antigravity.googleapis.com, proxy
+host, appsgenaiserver-pa.clients.google.com, proxy
+host, appsgenaiserver-pa.googleapis.com, proxy
 host-suffix, bard.google.com, proxy
 host, businessaicode.eu.rep.googleapis.com, proxy
 host, businessaicode.googleapis.com, proxy

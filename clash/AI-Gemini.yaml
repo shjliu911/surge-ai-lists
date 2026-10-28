@@ -2,7 +2,7 @@
 # SRC:  surge/AI-Gemini.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-gemini,💎 Gemini   (Surge: RULE-SET,surge/AI-Gemini.list,💎 Gemini)
-# GEN:  2026-10-20 18:00:02
+# GEN:  2026-10-28 06:51:47
 # NOTE: 已丢弃 1 条 mihomo 不支持的规则类型（URL-REGEX）
 payload:
   - DOMAIN-SUFFIX,ai.google.dev
@@ -16,6 +16,8 @@ payload:
   - DOMAIN-SUFFIX,antigravity-unleash.goog
   - DOMAIN-SUFFIX,antigravity.google
   - DOMAIN,antigravity.googleapis.com
+  - DOMAIN,appsgenaiserver-pa.clients.google.com
+  - DOMAIN,appsgenaiserver-pa.googleapis.com
   - DOMAIN-SUFFIX,bard.google.com
   - DOMAIN,businessaicode.eu.rep.googleapis.com
   - DOMAIN,businessaicode.googleapis.com
