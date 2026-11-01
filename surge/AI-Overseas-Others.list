@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-10-28 06:51:46
+# GEN:  2026-11-01 18:26:01
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -84,6 +84,7 @@ DOMAIN-SUFFIX,crewai.com
 DOMAIN-SUFFIX,cursor-cdn.com
 DOMAIN-SUFFIX,cursor.com
 DOMAIN-SUFFIX,cursor.sh
+DOMAIN-SUFFIX,cursor.sh# ======= 上游同步规则 ========
 DOMAIN-SUFFIX,cursorapi.com
 DOMAIN-SUFFIX,cursorvm.com
 DOMAIN-SUFFIX,deepgram.com
