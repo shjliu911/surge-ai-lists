@@ -21,7 +21,7 @@ BRAND = {
  'AI-OpenAI':   r'(^|\.)openai\.com$|(^|\.)openai\.(?:dev)$|chatgpt|oaistatic|oaiusercontent|(^|\.)sora\.com$|(^|\.)ai\.com$|(^|\.)chat\.com$|crixet',
  'AI-Claude':   r'claude|anthropic|(^|\.)clau\.de$|chatbotclaude|modelcontextprotocol|claudemcp|claudeusercontent|claudepages|claudestudio',
  'AI-Gemini':   r'gemini|(^|\.)bard\.|makersuite|notebooklm|deepmind|(^|\.)jules\.|(^|\.)opal\.|antigravity|aistudio|aisandbox|cloudcode|generativelanguage|labstailwind|(^|\.)labs\.google$|flow\.google',
- 'AI-Copilot':  r'copilot|(^|\.)bing\.com$|bingapis|bingviz|bing-shopping|(^|\.)msn\.com$|microsoft|githubcopilot',
+ 'AI-Copilot':  r'copilot|githubcopilot|(^|\.)bing\.com$|bingapis|bingviz|bing-shopping|(^|\.)msn\.com$',
  'AI-Jetbrains':r'jetbrains|intellij|grazie|datalore|kotlin',
 }
 # 允许的跨品牌例外（域名模式 : 理由）。保持**极简** —— 每加一条都是放松防线。

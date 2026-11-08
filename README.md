@@ -306,6 +306,12 @@ https://raw.githubusercontent.com/shjliu911/surge-ai-lists/main/surge/AI-Oversea
 ## 敏感点（改脚本前先看）
 
 - `filter()` **全剔 `IP-ASN`**，但**保留 `IP-CIDR`**——那是服务商自有精确网段（如 Anthropic `160.79.104.0/21`）。
+- `BAD_MS_INFRA` 剔的是**微软共用基础设施**，不是 Copilot 专属：`login.microsoftonline.com`
+  （Entra ID 统一登录，M365/Teams/Office/Azure 工作账号全走它）、`odc.officeapps.live.com`、
+  `location.microsoft.com`、`self.events.data.microsoft.com`、`api.microsoftapp.net`、
+  `in.appcenter.ms`、`api.github.com`。**别加回 AI 表**——它们会把 Outlook/M365/GitHub 的
+  普通流量截进 Copilot 代理组，并遮蔽排在后面的 `Microsoft.list`。Copilot 依赖的 Bing/MSN 端点
+  （`www.bing.com` / `sydney.bing.com` / `api.msn.com` / `assets.msn.com`）**不在**剔除范围。
 - `oaistatsig.com` 是 **OpenAI 自己的**，会被 `statsig` 正则误伤（假阳性），**别删**。
 - `[Host]` 段不认 `DOMAIN-SUFFIX,x = server:...`，要写 `*x = server:...`。
 - 改 Surge 配置的标准流程：`surge-cli --check <file>` → `reload` → `flush dns`。

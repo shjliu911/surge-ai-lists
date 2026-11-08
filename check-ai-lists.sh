@@ -138,7 +138,7 @@ SIG={
  'AI-OpenAI':  r'openai|chatgpt|oaistatic|oaiusercontent|sora\.com|crixet|livekit|oaistatsig|(^|\.)ai\.com$|(^|\.)chat\.com$',
  'AI-Claude':  r'claude|anthropic|(^|\.)clau\.de$|modelcontextprotocol|mcpserver|antspace|lcic|interface\.feedback|chatbotclaude|muthos|sillylittleguy',
  'AI-Gemini':  r'gemini|bard|makersuite|notebooklm|deepmind|jules|opal|antigravity|aisandbox|cloudcode|aistudio|generativelanguage|stitch|labstailwind|aicode|robinfrontend|jetski|geller|proactivebackend|generativeai|flow\.google|notebook\.google|gemini\.gstatic|(^|\.)ai\.google|(^|\.)ai\.studio|(^|\.)g\.ai$|apis\.google|clients6|goog$',
- 'AI-Copilot': r'copilot|bing|microsoft|msn|github|openai|chatgpt|oaistatic|oaiuser|livekit|appcenter|officeapps',
+ 'AI-Copilot': r'copilot|githubcopilot|bingapis|bingviz|bing-shopping|(^|\.)bing\.com$|(^|\.)msn\.com$',
  'AI-Jetbrains':r'jetbrains|intellij|grazie|jedi|junie|kotlin|datalore',
 }
 THRESHOLD=0.80   # 品牌域名占比下限（留足余量；实测均 ≥80%）
@@ -205,6 +205,19 @@ if [ -n "$NONAI" ]; then
   echo "✗ 混入非 AI 的账号/系统域："; echo "$NONAI"; fail=1
 else
   echo "✓ 无非 AI 账号/系统域混入"
+fi
+
+# ── 8b) 断言：不得混入微软共用基础设施（2026-11-08 审计）──────
+# Copilot 品牌签名曾含 `microsoft`，把微软身份/办公/系统级共用域吸进 AI-Copilot，
+# 使排在后面的 Microsoft.list 失效 —— 普通 Outlook/M365 登录、Bing/MSN、GitHub API
+# 都被拽进 Copilot 代理组。filter() 的 BAD_MS_INFRA 已在源头剔除，此断言兜底。
+# 保留边界：Copilot 自身的 Bing/MSN 端点（www.bing.com / sydney.bing.com /
+#           api.msn.com / assets.msn.com …）**不在此列**。
+BAD_MS=$(grep -rhE '^DOMAIN[^,]*,[^,]*(microsoftonline|odc\.officeapps\.live\.com|location\.microsoft\.com|self\.events\.data\.microsoft\.com|api\.microsoftapp\.net|in\.appcenter\.ms|api\.github\.com)' surge/AI-*.list || true)
+if [ -n "$BAD_MS" ]; then
+  echo "✗ 微软共用基础设施混入 AI 表（会截走 Outlook/M365/GitHub 流量）："; echo "$BAD_MS"; fail=1
+else
+  echo "✓ 无微软共用基础设施混入（login.microsoftonline.com / api.github.com 等）"
 fi
 
 exit $fail

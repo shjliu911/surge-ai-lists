@@ -95,6 +95,25 @@ BAD_MISC_SUBSTR="login\.live\.com|humb\.apple\.com|gspe1-ssl\.ls\.apple\.com|ori
 # webchannel-alkalimakersuite-…）必须保留，故按精确后缀剔，不用子串。
 BAD_MISC_EXACT="augment\.com|llama\.com|atmeta\.com|byteoversea\.com|clients6\.google\.com"
 
+# 微软**共用基础设施** —— 不是 Copilot 专属，2026-11-08 审计后从所有 AI 表剔除。
+# 背景：Copilot 品牌签名曾写成 `copilot|bing|microsoft|msn`，等于「域名里带 microsoft
+# 就算 Copilot」。聚合源里的微软身份/办公/系统级共用域因此被吸进 AI-Copilot，又被
+# 排在其后的 Microsoft.list 遮蔽 —— 结果是普通微软业务被拽进 Copilot 代理组：
+#   login.microsoftonline.com      —— Microsoft Entra ID 统一登录（M365 / Teams / Office /
+#                                     Azure 的工作或学校账号全走它）；与已剔除的
+#                                     login.live.com（个人 MSA 登录）是同一类问题
+#   odc.officeapps.live.com        —— Office 客户端服务端点
+#   location.microsoft.com         —— Windows 定位服务
+#   self.events.data.microsoft.com —— 1DS 遥测（Windows / Office 共用）
+#   api.microsoftapp.net           —— 微软 App 深链服务（Outlook / Teams 移动端）
+#   in.appcenter.ms                —— App Center
+#   api.github.com                 —— GitHub API（微软旗下）；应跟随 github.com 走
+#                                     「全球代理」，而不是被 AI 表截到「AI平台」组
+# 保留边界：Copilot 自身端点（copilot.* / githubcopilot / bingapis / bingviz /
+#           www.bing.com / sydney.bing.com / r.bing.com / api.msn.com / assets.msn.com）
+#           **不在此列**，仍归 Copilot —— Copilot 网页版依赖 Bing/MSN 后端。
+BAD_MS_INFRA="microsoftonline|odc\.officeapps\.live\.com|location\.microsoft\.com|self\.events\.data\.microsoft\.com|api\.microsoftapp\.net|in\.appcenter\.ms|api\.github\.com"
+
 fetch() { # $1=url  → stdout；失败重试 3 次（源变多了，得抗上游抖动）
   local i body
   for i in 1 2 3; do
@@ -118,6 +137,7 @@ filter() { # stdin → stdout：去注释/空行、剔 IP-ASN/进程规则与宽
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_DEAD)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,($BAD_GOOGLE_INFRA)([[:space:]]|,|$)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*($BAD_MISC_SUBSTR)" \
+  | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,[^,]*($BAD_MS_INFRA)" \
   | grep -viE "^[[:space:]]*DOMAIN(-SUFFIX)?,(.*\.)?($BAD_MISC_EXACT)([[:space:]]|,|$)" \
   | sed -E 's/[[:space:]]+$//' \
   | grep -vE '^[[:space:]]*$'
@@ -191,7 +211,9 @@ SIG = {
  'AI-OpenAI':   r'openai|chatgpt|oaistatic|oaiusercontent|sora\.com|(^|\.)ai\.com$|(^|\.)chat\.com$',
  'AI-Claude':   r'claude|anthropic|(^|\.)clau\.de$',
  'AI-Gemini':   r'gemini|bard|makersuite|notebooklm|deepmind|jules|opal|antigravity|aisandbox|cloudcode|aistudio|generativelanguage|stitch|labstailwind|aicode|robinfrontend|jetski|geller|proactivebackend|generativeai|flow\.google|notebook\.google|gemini\.gstatic|(^|\.)ai\.google|(^|\.)ai\.studio|(^|\.)g\.ai$',
- 'AI-Copilot':  r'copilot|bing|microsoft|msn',
+ # 注意 Copilot 的签名**不能**写 `microsoft` —— 那等于把微软全家桶都判给 Copilot；
+ # 共用基础设施由 BAD_MS_INFRA 统一剔除，这里只留 Copilot / Bing / MSN 的产品面。
+ 'AI-Copilot':  r'copilot|githubcopilot|bingapis|bingviz|bing-shopping|(^|\.)bing\.com$|(^|\.)msn\.com$',
  'AI-Jetbrains':r'jetbrains|intellij|grazie|jedi|junie',
 }
 rx = re.compile(SIG[sys.argv[1]], re.I)
