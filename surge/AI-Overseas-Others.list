@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-11-02 07:40:30
+# GEN:  2026-11-08 04:50:46
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -14,7 +14,6 @@ DOMAIN,aiplatform.mtls.googleapis.com
 DOMAIN,aiplatform.us.rep.googleapis.com
 DOMAIN,anysphere-binaries.s3.us-east-1.amazonaws.com
 DOMAIN,api.cloudflare.com
-DOMAIN,api.github.com
 DOMAIN,api.groq.com
 DOMAIN,api.together.xyz
 DOMAIN-SUFFIX,arc.net

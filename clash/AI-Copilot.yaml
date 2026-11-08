@@ -2,7 +2,7 @@
 # SRC:  surge/AI-Copilot.list（由 to-clash.sh 自动生成，勿手改）
 # TYPE: mihomo rule-provider / behavior: classical / format: yaml
 # USE:  Clash: RULE-SET,ai-copilot,🤖 AI 服务   (Surge: RULE-SET,surge/AI-Copilot.list,🤖 AI 服务)
-# GEN:  2026-10-13 11:59:12
+# GEN:  2026-11-08 04:50:46
 payload:
   - DOMAIN,api.githubcopilot.com
   - DOMAIN,api.msn.com
@@ -15,17 +15,11 @@ payload:
   - DOMAIN,copilotprodattachments.blob.core.windows.net
   - DOMAIN,gateway.bingviz.microsoft.net
   - DOMAIN,gateway.bingviz.microsoftapp.net
-  - DOMAIN,in.appcenter.ms
-  - DOMAIN,location.microsoft.com
-  - DOMAIN,login.microsoftonline.com
-  - DOMAIN,odc.officeapps.live.com
   - DOMAIN,r.bing.com
-  - DOMAIN,self.events.data.microsoft.com
   - DOMAIN,services.bingapis.com
   - DOMAIN,sydney.bing.com
   - DOMAIN,www.bing.com
   - DOMAIN-KEYWORD,openaicom-api
-  - DOMAIN-SUFFIX,api.microsoftapp.net
   - DOMAIN-SUFFIX,bing-shopping.microsoft-falcon.io
   - DOMAIN-SUFFIX,copilot.cloud.microsoft
   - DOMAIN-SUFFIX,copilot.com

@@ -3,7 +3,7 @@
 # TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
 # USE:  QX: <本文件raw URL>, tag=AI-Overseas-Others, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Overseas-Others.list,🤖 AI 服务)
 # NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
-# GEN:  2026-11-02 07:40:30
+# GEN:  2026-11-08 04:50:46
 
 host, 7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe, proxy
 host, accounts.spacex.ai, proxy
@@ -16,7 +16,6 @@ host, aiplatform.mtls.googleapis.com, proxy
 host, aiplatform.us.rep.googleapis.com, proxy
 host, anysphere-binaries.s3.us-east-1.amazonaws.com, proxy
 host, api.cloudflare.com, proxy
-host, api.github.com, proxy
 host, api.groq.com, proxy
 host, api.together.xyz, proxy
 host-suffix, arc.net, proxy
