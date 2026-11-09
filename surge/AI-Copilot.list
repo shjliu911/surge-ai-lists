@@ -1,5 +1,5 @@
 # NAME: AI-Copilot
-# GEN:  2026-11-08 04:50:43
+# GEN:  2026-11-09 07:58:09
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 
 DOMAIN,api.githubcopilot.com
@@ -13,6 +13,7 @@ DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN,copilotprodattachments.blob.core.windows.net
 DOMAIN,gateway.bingviz.microsoft.net
 DOMAIN,gateway.bingviz.microsoftapp.net
+DOMAIN,production-copilot-host-westus.webpubsub.azure.com
 DOMAIN,r.bing.com
 DOMAIN,services.bingapis.com
 DOMAIN,sydney.bing.com

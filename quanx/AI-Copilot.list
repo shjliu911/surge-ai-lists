@@ -3,7 +3,7 @@
 # TYPE: Quantumult X [filter_remote] 远程过滤（host/host-suffix/host-keyword/ip-cidr/ip6-cidr/ip-asn；UA/GEOIP 备用）
 # USE:  QX: <本文件raw URL>, tag=AI-Copilot, force-policy=<你的策略组或direct/proxy>, enabled=true   (Surge: RULE-SET,surge/AI-Copilot.list,🤖 AI 服务)
 # NOTE: 行内策略为 QX 内建 "proxy"（AI-CN 直连、其余代理）；引用时 force-policy= 会覆盖它
-# GEN:  2026-11-08 04:50:46
+# GEN:  2026-11-09 07:58:13
 
 host, api.githubcopilot.com, proxy
 host, api.msn.com, proxy
@@ -16,6 +16,7 @@ host-suffix, copilot.microsoft.com, proxy
 host, copilotprodattachments.blob.core.windows.net, proxy
 host, gateway.bingviz.microsoft.net, proxy
 host, gateway.bingviz.microsoftapp.net, proxy
+host, production-copilot-host-westus.webpubsub.azure.com, proxy
 host, r.bing.com, proxy
 host, services.bingapis.com, proxy
 host, sydney.bing.com, proxy

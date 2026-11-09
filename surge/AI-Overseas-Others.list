@@ -1,5 +1,5 @@
 # NAME: AI-Overseas-Others
-# GEN:  2026-11-08 04:50:46
+# GEN:  2026-11-09 07:58:12
 # NOTE: 多源合并(blackmatrix7 + VPSDance + SukkaW + dler-io + ACL4SSR + Rabbit-Spec)；已剔宽泛KEYWORD/通用SaaS；IP-ASN 仅保留厂商自有网段
 # 含本机手动补充：AI-Supplement.list
 
@@ -110,6 +110,7 @@ DOMAIN-SUFFIX,glean.com
 DOMAIN-SUFFIX,grammarly.com
 DOMAIN-SUFFIX,grok.com
 DOMAIN-SUFFIX,grok.x.com
+DOMAIN-SUFFIX,grokbot.com
 DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,grokusercontent.com
 DOMAIN-SUFFIX,groq.com
